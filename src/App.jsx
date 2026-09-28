@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import RegisterPage from './pages/RegisterPage'
+import SportsDetailPage from './pages/SportsDetailPage'
 import { clearSession, getSession, saveSession } from './utils/auth'
 import { logout as logoutRequest } from './utils/api'
 
@@ -41,8 +42,18 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage user={user} onLogout={logout} />} />
         <Route path="/dang-nhap" element={user ? <Navigate to="/" replace /> : <LoginPage onLogin={authenticate} />} />
+        <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage onLogin={authenticate} />} />
         <Route path="/dang-ky" element={user ? <Navigate to="/" replace /> : <RegisterPage onRegister={authenticate} />} />
-        <Route path="/tai-khoan" element={user ? <ProfilePage user={user} onProfile={updateProfile} onUnauthorized={logout} /> : <Navigate to="/dang-nhap" replace />} />
+        <Route path="/register" element={user ? <Navigate to="/" replace /> : <RegisterPage onRegister={authenticate} />} />
+        <Route
+          path="/tai-khoan"
+          element={user ? <ProfilePage user={user} onProfile={updateProfile} onUnauthorized={logout} /> : <Navigate to="/dang-nhap" replace />}
+        />
+        <Route
+          path="/profile"
+          element={user ? <ProfilePage user={user} onProfile={updateProfile} onUnauthorized={logout} /> : <Navigate to="/login" replace />}
+        />
+        <Route path="/sports-detail" element={<SportsDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ToastContainer position="top-right" autoClose={3200} hideProgressBar theme="light" />
