@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { scrollToSection } from '../utils/scroll'
 
 const links = [
   ['#venues', 'Sân & Địa điểm'],
@@ -67,9 +68,7 @@ export default function Header({ user, onLogout }) {
     toast.success('Đã đăng xuất thành công')
   }
 
-  const scrollToVenues = () => {
-    document.querySelector('#venues')?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const scrollToVenues = () => scrollToSection('venues')
 
   return (
     <>
