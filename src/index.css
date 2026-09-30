@@ -3,6 +3,7 @@
 :root{
   --background:#ffffff; --foreground:#0a0a0a;
   --brand:#2563c9; --brand-deep:#0f2f63; --brand-light:#5790e6;
+  --accent:#ff4d12;
   --accent-teal:#0b6e97; --surface:#f4f4f4; --surface-card:#ffffff;
   --ink:#0a0a0a; --ink-soft:#717784; --ghost:#d7dae1; --hairline:#e6e8ec;
   --on-brand:#ffffff;
@@ -346,15 +347,7 @@ main.auth-page{display:grid;min-height:calc(100svh - 1.5rem);grid-template-colum
 .form-columns .field{min-width:0}
 .register-content{padding-top:55px;padding-bottom:25px}
 .register-content .auth-title{margin-bottom:20px}
-.profile-page{display:grid;min-height:calc(100svh - 1.5rem);place-items:center;padding:90px 20px 40px;background:var(--surface);border-radius:var(--radius-card-lg);position:relative}
-.profile-back{position:absolute;top:28px;left:32px;display:flex;align-items:center;gap:7px;color:var(--brand-deep);font-weight:500}
-.profile-card{width:min(100%,620px);padding:clamp(28px,5vw,54px);border-radius:24px;background:#fff;box-shadow:0 24px 70px rgba(11,40,82,.13)}
-.profile-card .auth-form{width:100%}
 .field input:disabled{cursor:not-allowed;color:var(--muted);background:var(--paper)}
-.profile-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 0 22px}
-.profile-meta div{padding:13px;border-radius:12px;background:var(--paper)}
-.profile-meta dt{color:var(--muted);font-size:12px;font-weight:500;text-transform:uppercase}
-.profile-meta dd{margin:5px 0 0;color:var(--brand-deep);font-size:14px;font-weight:500}
 .brand{display:inline-flex;align-items:center;gap:9px;font-size:17px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
 .brand-light{color:#fff}
 
@@ -381,9 +374,6 @@ main.auth-page{display:grid;min-height:calc(100svh - 1.5rem);grid-template-colum
   .auth-visual p{font-size:14px}
   .auth-content{display:block;padding:80px 20px 45px}
   .back-link{top:25px;left:20px;right:auto}
-  .profile-back{top:20px;left:20px}
-  .profile-card{padding:28px 20px}
-  .profile-meta{grid-template-columns:1fr}
   .form-columns{grid-template-columns:1fr;gap:0}
   .search-widget{display:none !important}
 }
