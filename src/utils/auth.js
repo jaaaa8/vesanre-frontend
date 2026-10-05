@@ -27,8 +27,14 @@ export function clearSession() {
   storage().forEach((item) => item.removeItem(AUTH_KEY))
 }
 
+// Kept identical to AuthPatterns.java in the backend.
 export function validEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+}
+
+// Vietnamese mobile: 0 or +84, then a 3/5/7/8/9 prefix and 8 digits.
+export function validPhone(value) {
+  return /^(0|\+84)[35789][0-9]{8}$/.test(value.trim())
 }
 
 export function toBackendRole(role) {
