@@ -2,21 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import '../styles/Auth.css'
+import { ApiError, login, register } from '../utils/api'
+import { validEmail } from '../utils/auth'
 
-const AUTH_KEY = 'sporthub_user'
 const BG_URL = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=2000&q=80&auto=format&fit=crop'
-
-function validContact(c) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c) || /^[0-9+\s.()-]{9,15}$/.test(c)
-}
-
-function saveSession(user) {
-  try {
-    localStorage.setItem(AUTH_KEY, JSON.stringify(user))
-  } catch {
-    // Storage may be unavailable; navigation still proceeds.
-  }
-}
 
 export default function RegisterPage({ onRegister }) {
   const navigate = useNavigate()
@@ -29,29 +18,40 @@ export default function RegisterPage({ onRegister }) {
   const [showPw2, setShowPw2] = useState(false)
   const [terms, setTerms] = useState(false)
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const redirect =
     searchParams.get('next') || searchParams.get('redirect') || searchParams.get('from') || searchParams.get('returnUrl') || '/'
   const loginHref = redirect !== '/' ? `/login?next=${encodeURIComponent(redirect)}` : '/login'
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
     const trimmedName = name.trim()
-    const trimmedContact = contact.trim()
+    const email = contact.trim()
     if (trimmedName.length < 2) return setError('Vui lòng nhập họ và tên.')
-    if (!validContact(trimmedContact)) return setError('Vui lòng nhập email hoặc số điện thoại hợp lệ.')
-    if (password.length < 6) return setError('Mật khẩu cần ít nhất 6 ký tự.')
+    if (!validEmail(email)) return setError('Vui lòng nhập email hợp lệ.')
+    if (password.length < 8) return setError('Mật khẩu cần ít nhất 8 ký tự.')
     if (password !== confirmPassword) return setError('Mật khẩu xác nhận chưa khớp.')
     if (!terms) return setError('Bạn cần đồng ý với Điều khoản & Chính sách của SportHub.')
     setError('')
-
-    const user = { name: trimmedName, contact: trimmedContact, provider: 'local', loginAt: new Date().toISOString() }
-    saveSession(user)
-    if (typeof onRegister === 'function') {
-      onRegister({ accessToken: 'demo-token', user: { name: trimmedName, email: trimmedContact } }, true)
+    setSubmitting(true)
+    try {
+      await register({ email, password, displayName: trimmedName })
+      // Register returns only the profile; log in to obtain the access token.
+      onRegister?.(await login(email, password), true)
+      toast.success(`Chào mừng ${trimmedName} đến với SportHub!`)
+      navigate(redirect, { replace: true })
+    } catch (cause) {
+      setError(
+        cause instanceof ApiError && cause.status === 409
+          ? 'Email đã được đăng ký.'
+          : cause instanceof ApiError
+            ? cause.message
+            : 'Không thể kết nối máy chủ. Vui lòng thử lại.',
+      )
+    } finally {
+      setSubmitting(false)
     }
-    toast.success(`Chào mừng ${trimmedName} đến với SportHub!`)
-    navigate(redirect, { replace: true })
   }
 
   return (
@@ -93,7 +93,7 @@ export default function RegisterPage({ onRegister }) {
           </div>
           <div>
             <label className="flabel" htmlFor="regContact">
-              Email / Số điện thoại
+              Email
             </label>
             <input
               className="finput"
@@ -101,8 +101,8 @@ export default function RegisterPage({ onRegister }) {
               type="text"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
-              placeholder="ten@email.com hoặc 0901234567"
-              autoComplete="username"
+              placeholder="ten@email.com"
+              autoComplete="email"
             />
           </div>
           <div>
@@ -116,7 +116,7 @@ export default function RegisterPage({ onRegister }) {
                 type={showPw ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Tối thiểu 6 ký tự"
+                placeholder="Tối thiểu 8 ký tự"
                 autoComplete="new-password"
               />
               <button
@@ -173,7 +173,7 @@ export default function RegisterPage({ onRegister }) {
           <div className="ferr" role="alert">
             {error}
           </div>
-          <button className="authSubmit" type="submit">
+          <button className="authSubmit" type="submit" disabled={submitting}>
             TẠO TÀI KHOẢN NGƯỜI CHƠI ↗
           </button>
         </form>

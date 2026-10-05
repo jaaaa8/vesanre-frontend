@@ -346,3 +346,36 @@
 @media (prefers-reduced-motion: reduce) {
   * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+/* ---------- PROVIDER CTA + MODAL (ported from update/Giaodien/profile.html) ---------- */
+.provider-cta{position:relative;overflow:hidden;border-radius:var(--radius-card);padding:1.25rem;color:#fff;background:linear-gradient(135deg,#0f2f63 0%,#1e4b8f 55%,#0f2f63 100%);border:1px solid rgba(255,77,18,.55);box-shadow:0 0 0 1px rgba(255,77,18,.25),0 1.5rem 3rem -1.25rem rgba(255,77,18,.55),0 1.5rem 3rem -1.25rem rgba(15,47,99,.55),inset 0 1px 0 rgba(255,255,255,.22);transition:transform .35s var(--spring),box-shadow .35s var(--spring)}
+.provider-cta:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,77,18,.4),0 0 28px rgba(255,77,18,.45),0 1.75rem 3.25rem -1.25rem rgba(15,47,99,.6)}
+.pv-badge-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.65rem}
+.pv-mini{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:62.5rem;padding:.32rem .65rem;color:#ffd9c7}
+.provider-cta h3{font-size:1.08rem;font-weight:700;letter-spacing:-0.01em;line-height:1.25}
+.provider-cta p{font-size:.8rem;line-height:1.6;color:rgba(255,255,255,.82);margin:.5rem 0 .95rem}
+.provider-cta p b{color:#fecaca}
+.pv-cta-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:#ff4d12;color:#fff;border-radius:62.5rem;padding:.8rem 1rem;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:background .3s var(--spring),transform .3s var(--spring),box-shadow .3s;box-shadow:0 .8rem 1.8rem -.8rem rgba(255,77,18,.8)}
+.pv-cta-btn:hover{background:#fff;color:#0f2f63;transform:translateY(-1px)}
+.pv-modal-wrap{position:fixed;inset:0;z-index:95;display:flex;align-items:flex-end;justify-content:center;padding:.75rem;pointer-events:none}
+@media(min-width:640px){.pv-modal-wrap{align-items:center;padding:1.5rem}}
+.pv-modal-wrap.open{pointer-events:auto}
+.pv-modal-bg{position:absolute;inset:0;background:rgba(15,47,99,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .35s var(--spring)}
+.pv-modal-panel{position:relative;width:100%;max-height:92svh;overflow-y:auto;background:var(--surface-card);color:var(--ink);border-radius:1.5rem;border-top:.3rem solid #ff4d12;padding:1.5rem;box-shadow:0 3rem 6rem -2rem rgba(15,47,99,.5);opacity:0;transform:translateY(1.75rem) scale(.96);transition:opacity .4s var(--spring),transform .45s var(--spring)}
+@media(min-width:640px){.pv-modal-panel{padding:2rem;max-width:34rem}}
+.pv-modal-wrap.open .pv-modal-bg{opacity:1}
+.pv-modal-wrap.open .pv-modal-panel{opacity:1;transform:none}
+.pv-modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.pv-modal-title{font-size:1.7rem;font-weight:500;line-height:1.02;letter-spacing:-0.02em;margin-top:.7rem}
+@media(min-width:640px){.pv-modal-title{font-size:2.1rem}}
+.pv-modal-sub{font-size:.85rem;color:var(--ink-soft);margin:.45rem 0 0;line-height:1.6}
+.pv-x{width:2.5rem;height:2.5rem;border-radius:50%;background:var(--surface);display:grid;place-items:center;flex-shrink:0;transition:background .3s}
+.pv-x:hover{background:var(--hairline)}
+.pv-x svg{width:1.1rem;height:1.1rem}
+.pv-form{margin-top:1.5rem;display:flex;flex-direction:column;gap:1.05rem}
+.pv-form textarea.finput{resize:vertical}
+.pv-grid{display:grid;gap:1.05rem}
+@media(min-width:640px){.pv-grid.two{grid-template-columns:1fr 1fr}}
+.pv-submit{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:#ff4d12;color:#fff;border-radius:62.5rem;padding:.9rem 1.75rem;font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:background .3s,transform .3s var(--spring);box-shadow:0 .8rem 1.8rem -.8rem rgba(255,77,18,.6)}
+.pv-submit:hover{background:#0f2f63;transform:translateY(-1px)}
+.pv-submit:disabled{opacity:.6;transform:none}

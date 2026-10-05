@@ -46,3 +46,7 @@ export function getProfile() {
 export function updateProfile(payload) {
   return request('/api/profile/me', { method: 'PATCH', body: JSON.stringify(payload) })
 }
+
+export function applyProvider(payload) {
+  return request('/api/profile/provider-application', { method: 'POST', body: JSON.stringify(payload) })
+}

@@ -78,7 +78,7 @@ export default function ProfileInfoTab({ active, form, profileErr, onField, onTo
                 placeholder="ten@email.com"
                 autoComplete="email"
                 value={form.fEmail}
-                onChange={(e) => onField('fEmail', e.target.value)}
+                readOnly
               />
             </div>
           </div>

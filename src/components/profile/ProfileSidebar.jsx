@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { TABS } from './profileUtils'
 
-export default function ProfileSidebar({ displayName, initials, contact, sideId, activeTab, onTabChange }) {
+export default function ProfileSidebar({ displayName, initials, contact, sideId, activeTab, onTabChange, children }) {
   return (
     <aside className="side">
       <div className="user-card">
@@ -22,6 +22,7 @@ export default function ProfileSidebar({ displayName, initials, contact, sideId,
           <span className="rank">Silver</span>
         </div>
       </div>
+      {children}
       <nav className="tabnav" id="tabNav" aria-label="Điều hướng hồ sơ">
         {TABS.map((tab) => (
           <button

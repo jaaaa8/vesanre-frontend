@@ -2,38 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import '../styles/Auth.css'
+import { ApiError, login } from '../utils/api'
+import { validEmail } from '../utils/auth'
 
-const AUTH_KEY = 'sporthub_user'
 const BG_URL = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=2000&q=80&auto=format&fit=crop'
-
-function prettyName(contact) {
-  const c = (contact || '').trim()
-  if (c.includes('@')) {
-    return (
-      c
-        .split('@')[0]
-        .split(/[._-]+/)
-        .filter(Boolean)
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ') || 'Thành viên'
-    )
-  }
-  const d = c.replace(/\D/g, '')
-  return 'Người chơi ' + (d.slice(-4) || 'mới')
-}
-
-function saveSession(user, remember) {
-  try {
-    if (remember === false) {
-      sessionStorage.setItem(AUTH_KEY, JSON.stringify(user))
-      localStorage.removeItem(AUTH_KEY)
-    } else {
-      localStorage.setItem(AUTH_KEY, JSON.stringify(user))
-    }
-  } catch {
-    // Storage may be unavailable (private mode); navigation still proceeds.
-  }
-}
 
 export default function LoginPage({ onLogin }) {
   const navigate = useNavigate()
@@ -42,32 +14,37 @@ export default function LoginPage({ onLogin }) {
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [remember, setRemember] = useState(true)
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const redirect =
     searchParams.get('next') || searchParams.get('redirect') || searchParams.get('from') || searchParams.get('returnUrl') || '/'
   const registerHref = redirect !== '/' ? `/register?next=${encodeURIComponent(redirect)}` : '/register'
 
-  const go = (user, rememberMe) => {
-    saveSession(user, rememberMe)
-    if (typeof onLogin === 'function') {
-      onLogin({ accessToken: 'demo-token', user: { name: user.name, email: user.contact } }, rememberMe)
-    }
-    navigate(redirect, { replace: true })
-  }
-
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
-    // DEMO: skip validation / API — submit navigates immediately (matches login.html).
-    const value = contact.trim() || 'member@sporthub.vn'
-    go({ name: prettyName(value), contact: value, provider: 'local', loginAt: new Date().toISOString() }, remember)
+    if (!validEmail(contact)) return setError('Vui lòng nhập email hợp lệ.')
+    if (!password) return setError('Vui lòng nhập mật khẩu.')
+    setError('')
+    setSubmitting(true)
+    try {
+      const session = await login(contact.trim(), password)
+      onLogin?.(session, remember)
+      navigate(redirect, { replace: true })
+    } catch (cause) {
+      setError(
+        cause instanceof ApiError && cause.status === 401
+          ? 'Email hoặc mật khẩu không đúng.'
+          : cause instanceof ApiError
+            ? cause.message
+            : 'Không thể kết nối máy chủ. Vui lòng thử lại.',
+      )
+    } finally {
+      setSubmitting(false)
+    }
   }
 
-  const social = (provider) => {
-    go(
-      { name: prettyName(contact.trim()), contact: contact.trim() || `${provider}@sporthub.vn`, provider, loginAt: new Date().toISOString() },
-      remember,
-    )
-  }
+  const social = (provider) => toast.info(`Đăng nhập bằng ${provider} chưa được hỗ trợ.`)
 
   return (
     <main className="auth-page">
@@ -94,7 +71,7 @@ export default function LoginPage({ onLogin }) {
         <form className="modal-form" onSubmit={submit} noValidate>
           <div>
             <label className="flabel" htmlFor="loginContact">
-              Email / S&#7889; &#273;i&#7879;n tho&#7841;i
+              Email
             </label>
             <input
               className="finput"
@@ -102,7 +79,7 @@ export default function LoginPage({ onLogin }) {
               type="text"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
-              placeholder="ten@email.com ho&#7863;c 0901234567"
+              placeholder="ten@email.com"
               autoComplete="username"
             />
           </div>
@@ -147,8 +124,10 @@ export default function LoginPage({ onLogin }) {
               Qu&ecirc;n m&#7853;t kh&#7849;u?
             </button>
           </div>
-          <div className="ferr" role="alert" />
-          <button className="authSubmit" type="submit">
+          <div className="ferr" role="alert">
+            {error}
+          </div>
+          <button className="authSubmit" type="submit" disabled={submitting}>
             ĐĂNG NHẬP ↗
           </button>
         </form>
@@ -159,7 +138,7 @@ export default function LoginPage({ onLogin }) {
           <span />
         </div>
         <div className="socRow">
-          <button type="button" className="socBtn" onClick={() => social('google')}>
+          <button type="button" className="socBtn" onClick={() => social('Google')}>
             <svg viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
@@ -180,7 +159,7 @@ export default function LoginPage({ onLogin }) {
             </svg>
             Google
           </button>
-          <button type="button" className="socBtn" onClick={() => social('apple')}>
+          <button type="button" className="socBtn" onClick={() => social('Apple')}>
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M16.36 12.76c0-2.3 1.88-3.4 1.97-3.45-1.07-1.57-2.74-1.78-3.34-1.81-1.42-.14-2.77.84-3.49.84-.72 0-1.83-.82-3.02-.8-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.76 1.1 1.67 2.34 2.87 2.3 1.15-.05 1.59-.74 2.98-.74s1.78.74 3 .72c1.24-.02 2.02-1.12 2.78-2.23.88-1.28 1.24-2.52 1.26-2.59-.03-.01-2.42-.93-2.39-3.74zM14.16 5.53c.64-.77 1.07-1.84.95-2.91-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.81 1.02.08 2.07-.52 2.71-1.28z" />
             </svg>

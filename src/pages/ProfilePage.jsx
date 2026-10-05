@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Toast from '../components/common/Toast'
 import ProfileHero from '../components/profile/ProfileHero'
 import ProfileSidebar from '../components/profile/ProfileSidebar'
+import ProviderApplication from '../components/profile/ProviderApplication'
 import BookingsTab from '../components/profile/tabs/BookingsTab'
 import NotificationsTab from '../components/profile/tabs/NotificationsTab'
 import PaymentsTab from '../components/profile/tabs/PaymentsTab'
@@ -10,7 +11,7 @@ import ProfileInfoTab from '../components/profile/tabs/ProfileInfoTab'
 import SecurityTab from '../components/profile/tabs/SecurityTab'
 import '../components/profile/Profile.css'
 import { useFluidRem } from '../hooks/useFluidRem'
-import { ApiError, getProfile } from '../utils/api'
+import { ApiError, getProfile, updateProfile } from '../utils/api'
 import {
   BOOKINGS_KEY,
   INITIAL_NOTIFS,
@@ -165,12 +166,10 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
     }
   }
 
-  const handleProfileSubmit = (event) => {
+  const handleProfileSubmit = async (event) => {
     event.preventDefault()
     const name = form.fFullName.trim()
     const phone = form.fPhone.trim()
-    const email = form.fEmail.trim()
-    const dob = form.fDob
     if (name.length < 2) {
       setProfileErr('Vui lòng nhập họ và tên.')
       return
@@ -179,29 +178,41 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
       setProfileErr('Số điện thoại chưa hợp lệ.')
       return
     }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setProfileErr('Email chưa hợp lệ.')
+    setProfileErr('')
+    let remote
+    try {
+      remote = await updateProfile({ displayName: name, phone })
+    } catch (cause) {
+      if (cause instanceof ApiError && cause.status === 401) return onUnauthorized?.()
+      setProfileErr(
+        cause instanceof ApiError && cause.status === 409
+          ? 'Số điện thoại đã được sử dụng.'
+          : cause instanceof ApiError
+            ? cause.message
+            : 'Không thể kết nối máy chủ. Vui lòng thử lại.',
+      )
       return
     }
-    setProfileErr('')
+    // dob/gender/sports are not stored by the backend yet; keep them in the browser.
     const nextUser = {
       ...(storedUser || {}),
-      name,
-      displayName: name,
-      phone,
-      email,
-      dob,
+      ...remote,
+      name: remote.displayName,
+      dob: form.fDob,
       gender: form.gender || 'Nam',
       sports: form.sports,
-      contact: email || phone || storedUser?.contact || '',
+      contact: remote.email,
     }
-    if (!saveStoredUser(nextUser)) {
-      setProfileErr('Không thể lưu hồ sơ: bộ nhớ trình duyệt bị chặn.')
-      return
-    }
+    saveStoredUser(nextUser)
     setStoredUser(nextUser)
-    onProfile?.(nextUser)
+    onProfile?.(remote)
     pushToast('Cập nhật thông tin thành công!')
+  }
+
+  const handleProviderApplied = (remote) => {
+    setStoredUser((current) => ({ ...current, ...remote }))
+    onProfile?.(remote)
+    pushToast('Đã gửi đăng ký chủ sân, vui lòng chờ admin duyệt.')
   }
 
   const handleReset = () => {
@@ -257,7 +268,14 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
               sideId={sideIdOf(storedUser)}
               activeTab={activeTab}
               onTabChange={switchTab}
-            />
+            >
+              <ProviderApplication
+                status={storedUser?.providerStatus}
+                roles={storedUser?.roles}
+                onApplied={handleProviderApplied}
+                onUnauthorized={onUnauthorized}
+              />
+            </ProfileSidebar>
             <div className="content">
               <ProfileInfoTab
                 active={activeTab === 'profile'}
