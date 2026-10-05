@@ -14,7 +14,6 @@ export default function ProfileHero({
 }) {
   const bgRef = useRef(null)
 
-  // Parallax on own bg node — no getElementById, no cross-component queries.
   useEffect(() => {
     const node = bgRef.current
     if (!node) return undefined

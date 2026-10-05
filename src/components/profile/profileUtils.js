@@ -186,11 +186,9 @@ export function persistBookings(next) {
   try {
     window.localStorage.setItem(BOOKINGS_KEY, JSON.stringify(next))
   } catch {
-    /* storage blocked — state still updates */
   }
 }
 
-/* Centralized user persistence. Returns false when browser storage is blocked. */
 export function saveStoredUser(nextUser) {
   try {
     window.localStorage.setItem(USER_KEY, JSON.stringify(nextUser))
@@ -205,7 +203,6 @@ export function resolveInitialTab() {
     if (window.location.hash === '#bookings') return 'bookings'
     if (new URLSearchParams(window.location.search).get('tab') === 'bookings') return 'bookings'
   } catch {
-    /* ignore */
   }
   return 'profile'
 }

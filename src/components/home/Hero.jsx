@@ -11,13 +11,11 @@ export default function Hero({ user, onLogout }) {
   const [entered, setEntered] = useState(false)
 
   useEffect(() => {
-    // Word / line entrance — mirrors index_2.html timing via state, not DOM queries
     const timer = window.setTimeout(() => setEntered(true), 60)
     return () => window.clearTimeout(timer)
   }, [])
 
   useEffect(() => {
-    // Lightweight parallax for hero background (refs only, no selectors)
     let raf = 0
     const onScroll = () => {
       cancelAnimationFrame(raf)
