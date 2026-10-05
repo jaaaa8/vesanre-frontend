@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { clearSession, getSession, saveSession, toBackendRole, validEmail } from './auth.js'
+import { clearSession, getSession, saveSession, toBackendRole, validEmail, validPhone } from './auth.js'
 
 function memoryStorage() {
   const values = new Map()
@@ -10,6 +10,11 @@ function memoryStorage() {
 test('email và vai trò UI được ánh xạ đúng contract backend', () => {
   assert.equal(validEmail('minh.tran@example.com'), true)
   assert.equal(validEmail('0901234567'), false)
+  assert.equal(validEmail('a@b'), false)
+  assert.equal(validPhone('0901234567'), true)
+  assert.equal(validPhone('+84381234567'), true)
+  assert.equal(validPhone('0201234567'), false)
+  assert.equal(validPhone('090 123 4567'), false)
   assert.equal(toBackendRole('player'), 'CUSTOMER')
   assert.equal(toBackendRole('owner'), 'PROVIDER')
 })
