@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
+import { scrollToSection } from '../utils/scroll'
 
 export default function Footer() {
-  const scrollToVenues = () => {
-    document.querySelector('#venues')?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const scrollToVenues = () => scrollToSection('venues')
 
   return (
     <footer className="footer" id="contact">

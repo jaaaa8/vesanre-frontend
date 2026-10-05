@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { scrollToSection } from '../../utils/scroll'
 
 const sportOptions = ['Bóng đá', 'Pickleball', 'Cầu lông', 'Tennis', 'Bóng rổ', 'Bóng chuyền']
 
@@ -28,7 +29,7 @@ export default function SearchPanel() {
   const search = () => {
     if (!city || city.startsWith('Chọn')) return toast.error('Vui lòng chọn khu vực')
     toast.success(`Đang tìm sân ${sport} · ${city} · ${slot}`)
-    document.querySelector('#venues')?.scrollIntoView({ behavior: 'smooth' })
+    scrollToSection('venues')
   }
 
   return (

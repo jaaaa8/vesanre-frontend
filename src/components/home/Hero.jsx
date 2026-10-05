@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Header from '../Header'
 import SearchPanel from './SearchPanel'
 
@@ -6,43 +6,21 @@ const TITLE_WORDS = ['ĐẶT', 'SÂN', 'NGAY']
 const TAGLINE_LINES = ['CHƠI GẦN NHÀ,', 'THI ĐẤU MỌI NƠI']
 
 export default function Hero({ user, onLogout }) {
+  const heroRef = useRef(null)
   const bgRef = useRef(null)
+  const [entered, setEntered] = useState(false)
 
   useEffect(() => {
-    // Word / line entrance — mirrors index_2.html timing
-    const t1 = setTimeout(() => {
-      document.querySelectorAll('#hero-title .wmask').forEach((m, i) => {
-        const inner = m.firstChild
-        if (inner) {
-          inner.style.transition = 'transform 1100ms cubic-bezier(0.16,1,0.3,1),opacity 1100ms cubic-bezier(0.16,1,0.3,1)'
-          inner.style.transitionDelay = `${i * 140}ms`
-        }
-        requestAnimationFrame(() => m.classList.add('in'))
-      })
-    }, 60)
-    const t2 = setTimeout(() => {
-      document.querySelectorAll('#tagline .lmask').forEach((m, i) => {
-        const inner = m.firstChild
-        if (inner) {
-          inner.style.transition = 'transform 900ms cubic-bezier(0.16,1,0.3,1),opacity 900ms cubic-bezier(0.16,1,0.3,1)'
-          inner.style.transitionDelay = `${350 + i * 110}ms`
-        }
-        requestAnimationFrame(() => m.classList.add('in'))
-      })
-    }, 60)
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
+    const timer = window.setTimeout(() => setEntered(true), 60)
+    return () => window.clearTimeout(timer)
   }, [])
 
   useEffect(() => {
-    // Lightweight parallax for hero background
     let raf = 0
     const onScroll = () => {
       cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
-        const hero = document.querySelector('.hero')
+        const hero = heroRef.current
         if (!hero || !bgRef.current) return
         const r = hero.getBoundingClientRect()
         const total = window.innerHeight + r.height
@@ -59,7 +37,7 @@ export default function Hero({ user, onLogout }) {
   }, [])
 
   return (
-    <section className="hero" id="top">
+    <section className="hero" id="top" ref={heroRef}>
       <div className="hero-bg">
         <div className="hero-bg-inner" ref={bgRef}>
           <img
@@ -75,8 +53,16 @@ export default function Hero({ user, onLogout }) {
         <h1 id="hero-title" aria-label="Đặt Sân Ngay">
           {TITLE_WORDS.map((w, i) => (
             <span key={w}>
-              <span className="wmask">
-                <span>{w}</span>
+              <span className={`wmask${entered ? ' in' : ''}`}>
+                <span
+                  style={{
+                    transition:
+                      'transform 1100ms cubic-bezier(0.16,1,0.3,1),opacity 1100ms cubic-bezier(0.16,1,0.3,1)',
+                    transitionDelay: `${i * 140}ms`,
+                  }}
+                >
+                  {w}
+                </span>
               </span>
               {i < TITLE_WORDS.length - 1 ? ' ' : null}
             </span>
@@ -85,9 +71,17 @@ export default function Hero({ user, onLogout }) {
       </div>
       <div className="hero-bottom">
         <p className="tagline" id="tagline" aria-label="Chơi Gần Nhà, Thi Đấu Mọi Nơi">
-          {TAGLINE_LINES.map((ln) => (
-            <span key={ln} className="lmask">
-              <span>{ln}</span>
+          {TAGLINE_LINES.map((ln, i) => (
+            <span key={ln} className={`lmask${entered ? ' in' : ''}`}>
+              <span
+                style={{
+                  transition:
+                    'transform 900ms cubic-bezier(0.16,1,0.3,1),opacity 900ms cubic-bezier(0.16,1,0.3,1)',
+                  transitionDelay: `${350 + i * 110}ms`,
+                }}
+              >
+                {ln}
+              </span>
             </span>
           ))}
         </p>
