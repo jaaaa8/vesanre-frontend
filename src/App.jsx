@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import RegisterPage from './pages/RegisterPage'
 import SportsDetailPage from './pages/SportsDetailPage'
+import RequireRole from './components/RequireRole'
+import './components/common/common.css'
 import { clearSession, getSession, saveSession } from './utils/auth'
 import { logout as logoutRequest } from './utils/api'
 
@@ -52,6 +54,14 @@ function App() {
         <Route
           path="/profile"
           element={user ? <ProfilePage user={user} onProfile={updateProfile} onUnauthorized={logout} /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/provider/*"
+          element={
+            <RequireRole session={session} role="PROVIDER">
+              <div>Quản lý sân</div>
+            </RequireRole>
+          }
         />
         <Route path="/sports-detail" element={<SportsDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
