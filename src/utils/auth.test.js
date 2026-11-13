@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { clearSession, getSession, saveSession, toBackendRole, validEmail, validPhone } from './auth.js'
+import { clearSession, getSession, hasRole, saveSession, tokenRoles, toBackendRole, validEmail, validPhone } from './auth.js'
 
 function memoryStorage() {
   const values = new Map()
@@ -30,4 +30,26 @@ test('phiên ghi nhớ dùng localStorage, phiên tạm dùng sessionStorage', (
   clearSession()
   assert.equal(getSession(), null)
   delete globalThis.window
+})
+
+function token(payload) {
+  const bytes = new TextEncoder().encode(JSON.stringify(payload))
+  const json = btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return `h.${json}.s`
+}
+
+test('tokenRoles đọc roles từ JWT, không tin session.user.roles', () => {
+  assert.deepEqual(tokenRoles({ accessToken: token({ roles: ['CUSTOMER', 'PROVIDER'] }) }), ['CUSTOMER', 'PROVIDER'])
+  assert.deepEqual(tokenRoles({ accessToken: 'bad' }), [])
+  assert.deepEqual(tokenRoles(null), [])
+  const stale = { accessToken: token({ roles: ['CUSTOMER'] }), user: { roles: ['PROVIDER'] } }
+  assert.equal(hasRole(stale, 'PROVIDER'), false)
+  assert.equal(hasRole(stale, 'CUSTOMER'), true)
+})
+
+test('tokenRoles decode base64url có ký tự - _ và UTF-8', () => {
+  const payload = { displayName: 'Nguyễn Văn Ơ ~~~???>>>', roles: ['ADMIN'] }
+  const t = token(payload)
+  assert.match(t, /[-_]/)
+  assert.deepEqual(tokenRoles({ accessToken: t }), ['ADMIN'])
 })
