@@ -28,6 +28,13 @@ export function clearSession() {
 }
 
 // Kept identical to AuthPatterns.java in the backend.
+export const SESSION_EXPIRED = 'sporthub:session-expired'
+
+export function expireSession() {
+  clearSession()
+  window.dispatchEvent(new Event(SESSION_EXPIRED))
+}
+
 export function validEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
 }

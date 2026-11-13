@@ -13,7 +13,7 @@ export const courtToForm = (court) => Object.fromEntries(Object.keys(EMPTY_COURT
 export const courtPayload = (form) => ({
   code: form.code.trim(),
   name: form.name.trim(),
-  description: form.description.trim() || null,
+  description: form.description.trim(),
   capacity: Number(form.capacity),
   bookingStepMinutes: Number(form.bookingStepMinutes),
   minBookingMinutes: Number(form.minBookingMinutes),

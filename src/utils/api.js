@@ -1,4 +1,4 @@
-import { clearSession, getSession } from './auth'
+import { expireSession, getSession } from './auth'
 
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -20,10 +20,10 @@ async function request(path, options = {}) {
       ...options.headers,
     },
   })
-  if (response.status === 401) clearSession()
+  if (response.status === 401 && session) expireSession()
   if (!response.ok) {
     const body = await response.json().catch(() => null)
-    throw new ApiError(body?.detail || body?.message || 'Không thể xử lý yêu cầu. Vui lòng thử lại.', response.status)
+    throw new ApiError(body?.detail || body?.message || (response.status === 401 ? 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.' : null) || 'Không thể xử lý yêu cầu. Vui lòng thử lại.', response.status)
   }
   return response.status === 204 ? null : response.json()
 }

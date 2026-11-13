@@ -20,13 +20,15 @@ export function validateSports(items) {
   return null
 }
 
+const TIME = /^\d{2}:\d{2}(:\d{2})?$/
+
 export function validateOperatingHours(items) {
   const days = new Set(items.map((d) => d.weekday))
   if (items.length !== 7 || days.size !== 7 || [...days].some((d) => d < 0 || d > 6)) return 'Cần đủ giờ mở cửa cho 7 ngày'
   for (const d of items) {
     if (d.closed) {
       if (d.opensAt != null || d.closesAt != null) return 'Ngày nghỉ không được có giờ mở/đóng'
-    } else if (!d.opensAt || !d.closesAt || timeToMinutes(d.opensAt) >= timeToMinutes(d.closesAt)) {
+    } else if (!TIME.test(d.opensAt ?? '') || !TIME.test(d.closesAt ?? '') || timeToMinutes(d.opensAt) >= timeToMinutes(d.closesAt)) {
       return 'Giờ mở cửa phải trước giờ đóng cửa'
     }
   }

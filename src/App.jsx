@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import HomePage from './pages/HomePage'
@@ -9,12 +9,18 @@ import RegisterPage from './pages/RegisterPage'
 import SportsDetailPage from './pages/SportsDetailPage'
 import RequireRole from './components/RequireRole'
 import './components/common/common.css'
-import { clearSession, getSession, saveSession } from './utils/auth'
+import { clearSession, getSession, saveSession, SESSION_EXPIRED } from './utils/auth'
 import { logout as logoutRequest } from './utils/api'
 
 function App() {
   const [session, setSession] = useState(getSession)
   const user = session?.user
+
+  useEffect(() => {
+    const expire = () => setSession(null)
+    window.addEventListener(SESSION_EXPIRED, expire)
+    return () => window.removeEventListener(SESSION_EXPIRED, expire)
+  }, [])
 
   const authenticate = useCallback((nextSession, remember) => {
     saveSession(nextSession, remember)
