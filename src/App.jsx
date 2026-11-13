@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
+import ProviderPage from './pages/ProviderPage'
 import RegisterPage from './pages/RegisterPage'
 import SportsDetailPage from './pages/SportsDetailPage'
 import RequireRole from './components/RequireRole'
@@ -59,7 +60,7 @@ function App() {
           path="/provider/*"
           element={
             <RequireRole session={session} role="PROVIDER">
-              <div>Quản lý sân</div>
+              <ProviderPage onLogout={logout} />
             </RequireRole>
           }
         />
