@@ -38,7 +38,7 @@ export default function ImageManager({ kind, ownerId, images, onChange }) {
   return (
     <div className="pv-grid">
       <div className="pv-row">
-        <ImageField count={images.length} onFile={upload} busy={busy || images.length >= MAX_IMAGES} />
+        <ImageField count={images.length} onFile={upload} busy={busy} disabled={images.length >= MAX_IMAGES} label={images.length >= MAX_IMAGES ? 'Đã đủ 10 ảnh' : undefined} />
         <span className="pv-muted">
           {images.length}/{MAX_IMAGES} ảnh · JPEG, PNG, WebP tối đa 5MB · ảnh đầu tiên là ảnh bìa
         </span>

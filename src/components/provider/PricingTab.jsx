@@ -91,7 +91,7 @@ export default function PricingTab({ value, onSave, busy }) {
         <button type="button" className="ui-btn ghost" onClick={add} disabled={busy}>
           + Thêm dòng
         </button>
-        <button type="button" className="ui-btn ghost" onClick={copyToAll} disabled={busy}>
+        <button type="button" className="ui-btn ghost" onClick={copyToAll} disabled={busy || !rows.some((r) => r.weekday === sourceDay)}>
           Sao chép sang mọi ngày
         </button>
         <button type="submit" className="ui-btn primary" disabled={busy || Boolean(error)}>

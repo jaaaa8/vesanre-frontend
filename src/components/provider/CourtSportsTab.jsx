@@ -8,7 +8,7 @@ export default function CourtSportsTab({ value, onSave, busy }) {
   const catalog = useApi(getSports, [])
   const [selected, setSelected] = useState(() => new Set(value.map((s) => s.sportId)))
   const [primary, setPrimary] = useState(() => value.find((s) => s.primary)?.sportId ?? null)
-  const items = [...selected].map((sportId) => ({ sportId, primary: sportId === primary }))
+  const items = [...selected].filter((id) => !catalog.data || catalog.data.some((s) => s.id === id)).map((sportId) => ({ sportId, primary: sportId === primary }))
   const error = validateSports(items)
 
   const toggle = (id) => {

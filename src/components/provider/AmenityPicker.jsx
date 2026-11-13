@@ -20,7 +20,7 @@ export default function AmenityPicker({ scope, value, onSave, busy }) {
 
   const save = (event) => {
     event.preventDefault()
-    onSave([...selected].map(([amenityId, details]) => ({ amenityId, details: details.trim() || null })))
+    onSave([...selected].filter(([id]) => options.some((a) => a.id === id)).map(([amenityId, details]) => ({ amenityId, details: details.trim() || null })))
   }
 
   return (

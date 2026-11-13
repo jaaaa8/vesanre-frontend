@@ -97,7 +97,7 @@ function CreateCourtDialog({ venueId, open, onClose, onCreated }) {
       <form onSubmit={submit}>
         <h3>Thêm sân con</h3>
         <CourtForm value={form} onChange={setForm} />
-        {error && form.capacity !== '' && <p className="pv-error">{error}</p>}
+        {form.capacity === '' ? <p className="pv-muted">Nhập sức chứa để tạo sân con.</p> : error && <p className="pv-error">{error}</p>}
         <div className="ui-actions">
           <button type="button" className="ui-btn ghost" onClick={onClose} disabled={busy}>
             Hủy

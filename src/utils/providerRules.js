@@ -39,6 +39,7 @@ export function validatePricing(items) {
   for (const r of items) {
     if (!(r.startMinute >= 0 && r.startMinute < r.endMinute && r.endMinute <= 1440)) return 'Khung giờ không hợp lệ'
     if (!(Number(r.pricePerHour) > 0)) return 'Giá phải lớn hơn 0'
+    if (!Number.isInteger(Number(r.pricePerHour)) || Number(r.pricePerHour) >= 1e10) return 'Giá phải là số nguyên, tối đa 10 chữ số'
   }
   const sorted = [...items].sort((a, b) => a.weekday - b.weekday || a.startMinute - b.startMinute)
   for (let i = 1; i < sorted.length; i++) {
