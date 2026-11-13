@@ -11,10 +11,11 @@ export class ApiError extends Error {
 
 async function request(path, options = {}) {
   const session = getSession()
+  const isForm = options.body instanceof FormData
   const response = await fetch(`${baseUrl}${path}`, {
     ...options,
     headers: {
-      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(options.body && !isForm ? { 'Content-Type': 'application/json' } : {}),
       ...(session ? { Authorization: `Bearer ${session.accessToken}` } : {}),
       ...options.headers,
     },
@@ -50,3 +51,47 @@ export function updateProfile(payload) {
 export function applyProvider(payload) {
   return request('/api/profile/provider-application', { method: 'POST', body: JSON.stringify(payload) })
 }
+
+const json = (method, body) => ({ method, body: JSON.stringify(body) })
+
+function fileForm(file) {
+  const form = new FormData()
+  form.append('file', file)
+  return form
+}
+
+// Catalog
+export const getSports = () => request('/api/catalog/sports')
+export const getAmenities = () => request('/api/catalog/amenities')
+
+// Provider: shop
+export const getShop = () => request('/api/provider/shop')
+export const updateShop = (body) => request('/api/provider/shop', json('PATCH', body))
+export const uploadShopLogo = (file) => request('/api/provider/shop/logo', { method: 'PUT', body: fileForm(file) })
+export const deleteShopLogo = () => request('/api/provider/shop/logo', { method: 'DELETE' })
+export const submitShopChange = (body) => request('/api/provider/shop/change-request', json('POST', body))
+export const cancelChangeRequest = (id) => request(`/api/provider/change-requests/${id}/cancel`, { method: 'POST' })
+
+// Provider: venues
+export const listVenues = () => request('/api/provider/venues')
+export const createVenue = (body) => request('/api/provider/venues', json('POST', body))
+export const getVenue = (id) => request(`/api/provider/venues/${id}`)
+export const updateVenue = (id, body) => request(`/api/provider/venues/${id}`, json('PATCH', body))
+export const submitVenueChange = (id, body) => request(`/api/provider/venues/${id}/change-request`, json('POST', body))
+export const deleteVenue = (id) => request(`/api/provider/venues/${id}`, { method: 'DELETE' })
+export const submitVenue = (id) => request(`/api/provider/venues/${id}/submit`, { method: 'POST' })
+export const setVenueAmenities = (id, items) => request(`/api/provider/venues/${id}/amenities`, json('PUT', items))
+
+// Provider: courts
+export const createCourt = (venueId, body) => request(`/api/provider/venues/${venueId}/courts`, json('POST', body))
+export const getCourt = (id) => request(`/api/provider/courts/${id}`)
+export const updateCourt = (id, body) => request(`/api/provider/courts/${id}`, json('PATCH', body))
+export const setCourtSports = (id, items) => request(`/api/provider/courts/${id}/sports`, json('PUT', items))
+export const setCourtAmenities = (id, items) => request(`/api/provider/courts/${id}/amenities`, json('PUT', items))
+export const setOperatingHours = (id, items) => request(`/api/provider/courts/${id}/operating-hours`, json('PUT', items))
+export const setPricingRules = (id, items) => request(`/api/provider/courts/${id}/pricing-rules`, json('PUT', items))
+
+// Provider: images. kind is 'venues' or 'courts'.
+export const uploadImage = (kind, id, file) => request(`/api/provider/${kind}/${id}/images`, { method: 'POST', body: fileForm(file) })
+export const reorderImages = (kind, id, items) => request(`/api/provider/${kind}/${id}/images`, json('PUT', items))
+export const deleteImage = (kind, id, imageId) => request(`/api/provider/${kind}/${id}/images/${imageId}`, { method: 'DELETE' })

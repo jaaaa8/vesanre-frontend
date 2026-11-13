@@ -40,3 +40,19 @@ export function validPhone(value) {
 export function toBackendRole(role) {
   return role === 'owner' ? 'PROVIDER' : 'CUSTOMER'
 }
+
+// Backend authorizes from the JWT "roles" claim; session.user.roles can be refreshed from the DB and run ahead of it.
+export function tokenRoles(session) {
+  try {
+    const part = session.accessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    const binary = atob(part.padEnd(part.length + ((4 - (part.length % 4)) % 4), '='))
+    const payload = JSON.parse(new TextDecoder().decode(Uint8Array.from(binary, (c) => c.charCodeAt(0))))
+    return Array.isArray(payload.roles) ? payload.roles : []
+  } catch {
+    return []
+  }
+}
+
+export function hasRole(session, role) {
+  return tokenRoles(session).includes(role)
+}
