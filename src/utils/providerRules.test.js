@@ -106,3 +106,11 @@ test('validateOperatingHours chặn ô giờ bị xóa hoặc gõ dở', () => {
     assert.equal(validateOperatingHours(days), 'Giờ mở cửa phải trước giờ đóng cửa')
   }
 })
+
+test('validatePricing: giá VND phải là số nguyên, tối đa 10 chữ số', () => {
+  const r = (pricePerHour) => [{ weekday: 0, startMinute: 360, endMinute: 720, pricePerHour }]
+  assert.equal(validatePricing(r(150000)), null)
+  assert.equal(validatePricing(r(9999999999)), null)
+  assert.equal(validatePricing(r(150000.5)), 'Giá phải là số nguyên, tối đa 10 chữ số')
+  assert.equal(validatePricing(r(1e10)), 'Giá phải là số nguyên, tối đa 10 chữ số')
+})
