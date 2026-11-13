@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useApi } from '../../hooks/useApi'
-import { getCourt, setCourtAmenities, setCourtSports, updateCourt } from '../../utils/api'
+import { getCourt, setCourtAmenities, setCourtSports, setOperatingHours, setPricingRules, updateCourt } from '../../utils/api'
 import { validateCourt } from '../../utils/providerRules'
 import AsyncView from '../common/AsyncView'
 import StatusBadge from '../common/StatusBadge'
@@ -11,6 +11,8 @@ import CourtForm from './CourtForm'
 import CourtSportsTab from './CourtSportsTab'
 import { courtPayload, courtToForm } from './courtFields'
 import ImageManager from './ImageManager'
+import OperatingHoursTab from './OperatingHoursTab'
+import PricingTab from './PricingTab'
 
 const TABS = [
   ['info', 'Thông tin'],
@@ -78,6 +80,22 @@ function CourtBody({ court, setCourt }) {
           value={court.amenities}
           busy={busy}
           onSave={(items) => save(() => setCourtAmenities(court.id, items), 'Đã lưu tiện ích')}
+        />
+      )}
+      {tab === 'hours' && (
+        <OperatingHoursTab
+          key={JSON.stringify(court.operatingHours)}
+          value={court.operatingHours}
+          busy={busy}
+          onSave={(items) => save(() => setOperatingHours(court.id, items), 'Đã lưu giờ mở cửa')}
+        />
+      )}
+      {tab === 'pricing' && (
+        <PricingTab
+          key={JSON.stringify(court.pricingRules)}
+          value={court.pricingRules}
+          busy={busy}
+          onSave={(items) => save(() => setPricingRules(court.id, items), 'Đã lưu bảng giá')}
         />
       )}
       {tab === 'images' && <ImageManager kind="courts" ownerId={court.id} images={court.images} onChange={(images) => setCourt({ ...court, images })} />}
