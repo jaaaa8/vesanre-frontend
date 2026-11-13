@@ -1,5 +1,7 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import ShopSection from '../components/provider/ShopSection'
+import VenueDetail from '../components/provider/VenueDetail'
+import VenueList from '../components/provider/VenueList'
 import '../components/provider/provider.css'
 
 export default function ProviderPage({ onLogout }) {
@@ -24,6 +26,8 @@ export default function ProviderPage({ onLogout }) {
         <main className="pv-main">
           <Routes>
             <Route index element={<ShopSection onLogout={onLogout} />} />
+            <Route path="venues" element={<VenueList onLogout={onLogout} />} />
+            <Route path="venues/:id" element={<VenueDetail onLogout={onLogout} />} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
         </main>
