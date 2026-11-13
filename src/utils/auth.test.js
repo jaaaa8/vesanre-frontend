@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { clearSession, getSession, hasRole, saveSession, tokenRoles, toBackendRole, validEmail, validPhone } from './auth.js'
+import { clearSession, expireSession, SESSION_EXPIRED, getSession, hasRole, saveSession, tokenRoles, toBackendRole, validEmail, validPhone } from './auth.js'
 
 function memoryStorage() {
   const values = new Map()
@@ -52,4 +52,14 @@ test('tokenRoles decode base64url có ký tự - _ và UTF-8', () => {
   const t = token(payload)
   assert.match(t, /[-_]/)
   assert.deepEqual(tokenRoles({ accessToken: t }), ['ADMIN'])
+})
+
+test('expireSession xóa phiên và báo SESSION_EXPIRED cho App', () => {
+  const events = []
+  globalThis.window = { localStorage: memoryStorage(), sessionStorage: memoryStorage(), dispatchEvent: (e) => events.push(e.type) }
+  saveSession({ accessToken: 'token', user: {} }, true)
+  expireSession()
+  assert.equal(getSession(), null)
+  assert.deepEqual(events, [SESSION_EXPIRED])
+  delete globalThis.window
 })

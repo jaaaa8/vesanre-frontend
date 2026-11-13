@@ -98,3 +98,11 @@ test('imageOrderPayload giữ altText; moveItem đổi chỗ và chặn biên', 
   assert.deepEqual(moveItem(arr, 0, -1), ['a', 'b'])
   assert.deepEqual(arr, ['a', 'b'])
 })
+
+test('validateOperatingHours chặn ô giờ bị xóa hoặc gõ dở', () => {
+  for (const bad of [':00', '', '6:00:00']) {
+    const days = week()
+    days[0] = { ...days[0], closed: false, opensAt: bad, closesAt: '22:00:00' }
+    assert.equal(validateOperatingHours(days), 'Giờ mở cửa phải trước giờ đóng cửa')
+  }
+})
