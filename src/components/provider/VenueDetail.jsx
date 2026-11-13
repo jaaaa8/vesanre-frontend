@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useApi } from '../../hooks/useApi'
-import { deleteVenue, getVenue, submitVenue } from '../../utils/api'
+import { deleteVenue, getVenue, setVenueAmenities, submitVenue } from '../../utils/api'
 import AsyncView from '../common/AsyncView'
 import ConfirmDialog from '../common/ConfirmDialog'
 import StatusBadge from '../common/StatusBadge'
+import AmenityPicker from './AmenityPicker'
+import ImageManager from './ImageManager'
 import VenueInfoTab from './VenueInfoTab'
 
 const TABS = [
@@ -39,6 +41,18 @@ function VenueBody({ venue, setVenue, reload }) {
     try {
       setVenue(await submitVenue(venue.id))
       toast.success('Đã gửi duyệt')
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const saveAmenities = async (items) => {
+    setBusy(true)
+    try {
+      setVenue(await setVenueAmenities(venue.id, items))
+      toast.success('Đã lưu tiện ích')
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -92,6 +106,10 @@ function VenueBody({ venue, setVenue, reload }) {
       </div>
 
       {tab === 'info' && <VenueInfoTab key={JSON.stringify(venue)} venue={venue} onSaved={setVenue} reload={reload} />}
+      {tab === 'amenities' && <AmenityPicker scope="VENUE" value={venue.amenities} onSave={saveAmenities} busy={busy} />}
+      {tab === 'images' && (
+        <ImageManager kind="venues" ownerId={venue.id} images={venue.images} onChange={(images) => setVenue({ ...venue, images })} />
+      )}
 
       <ConfirmDialog
         open={confirmDelete}
