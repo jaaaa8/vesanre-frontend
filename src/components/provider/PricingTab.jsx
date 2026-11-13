@@ -65,7 +65,7 @@ export default function PricingTab({ value, onSave, busy }) {
                     </td>
                   ))}
                   <td>
-                    <input type="number" aria-label="Giá mỗi giờ" min={1} step={1000} value={r.pricePerHour} onChange={(e) => set(r.key, { pricePerHour: e.target.value })} />
+                    <input type="number" aria-label="Giá mỗi giờ" min={1} step="any" value={r.pricePerHour} onChange={(e) => set(r.key, { pricePerHour: e.target.value })} />
                     {Number(r.pricePerHour) > 0 && <div className="pv-muted">{formatVnd(r.pricePerHour)}</div>}
                   </td>
                   <td>
