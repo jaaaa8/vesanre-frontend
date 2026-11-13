@@ -1,4 +1,5 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
+import CourtDetail from '../components/provider/CourtDetail'
 import ShopSection from '../components/provider/ShopSection'
 import VenueDetail from '../components/provider/VenueDetail'
 import VenueList from '../components/provider/VenueList'
@@ -28,6 +29,7 @@ export default function ProviderPage({ onLogout }) {
             <Route index element={<ShopSection onLogout={onLogout} />} />
             <Route path="venues" element={<VenueList onLogout={onLogout} />} />
             <Route path="venues/:id" element={<VenueDetail onLogout={onLogout} />} />
+            <Route path="courts/:id" element={<CourtDetail onLogout={onLogout} />} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
         </main>

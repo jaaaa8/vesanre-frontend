@@ -7,6 +7,7 @@ import AsyncView from '../common/AsyncView'
 import ConfirmDialog from '../common/ConfirmDialog'
 import StatusBadge from '../common/StatusBadge'
 import AmenityPicker from './AmenityPicker'
+import CourtList from './CourtList'
 import ImageManager from './ImageManager'
 import VenueInfoTab from './VenueInfoTab'
 
@@ -107,6 +108,7 @@ function VenueBody({ venue, setVenue, reload }) {
 
       {tab === 'info' && <VenueInfoTab key={JSON.stringify(venue)} venue={venue} onSaved={setVenue} reload={reload} />}
       {tab === 'amenities' && <AmenityPicker scope="VENUE" value={venue.amenities} onSave={saveAmenities} busy={busy} />}
+      {tab === 'courts' && <CourtList venueId={venue.id} courts={venue.courts} />}
       {tab === 'images' && (
         <ImageManager kind="venues" ownerId={venue.id} images={venue.images} onChange={(images) => setVenue({ ...venue, images })} />
       )}
