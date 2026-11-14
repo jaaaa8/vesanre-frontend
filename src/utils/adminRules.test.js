@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { changeRows, fallbackPage, parseDocuments, readListParams } from './adminRules.js'
+import { changeRows, fallbackPage, parseDocuments, readListParams, needsRewrite } from './adminRules.js'
 
 const S = ['PENDING', 'VERIFIED']
 const read = (qs, statuses = S, extra) => readListParams(new URLSearchParams(qs), statuses, extra)
@@ -40,4 +40,18 @@ test('parseDocuments không làm vỡ khi dữ liệu xấu', () => {
   assert.deepEqual(parseDocuments('[]'), [])
   assert.deepEqual(parseDocuments('[{"url":"x"}]'), [{ url: 'x' }])
   for (const bad of ['{bad', null, '{"a":1}']) assert.deepEqual(parseDocuments(bad), [])
+})
+
+test('needsRewrite: true only when a present param differs from its normalized value', () => {
+  const S = ['PENDING', 'APPROVED']
+  const extra = [{ key: 'targetType', values: ['SHOP', 'VENUE'] }]
+  const check = (qs) => {
+    const search = new URLSearchParams(qs)
+    return needsRewrite(search, readListParams(search, S, extra))
+  }
+  assert.equal(check(''), false)
+  assert.equal(check('status=APPROVED&page=2&targetType=SHOP'), false)
+  assert.equal(check('status=FOO'), true)
+  assert.equal(check('page=abc'), true)
+  assert.equal(check('targetType=X'), true)
 })
