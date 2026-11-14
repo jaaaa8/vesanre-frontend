@@ -1,4 +1,5 @@
 import { expireSession, getSession } from './auth'
+import { toQuery } from './query'
 
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -95,3 +96,21 @@ export const setPricingRules = (id, items) => request(`/api/provider/courts/${id
 export const uploadImage = (kind, id, file) => request(`/api/provider/${kind}/${id}/images`, { method: 'POST', body: fileForm(file) })
 export const reorderImages = (kind, id, items) => request(`/api/provider/${kind}/${id}/images`, json('PUT', items))
 export const deleteImage = (kind, id, imageId) => request(`/api/provider/${kind}/${id}/images/${imageId}`, { method: 'DELETE' })
+
+// Admin
+const post = (path, body) => request(path, body === undefined ? { method: 'POST' } : json('POST', body))
+
+export const listAdminProviders = (q) => request(`/api/admin/providers${toQuery(q)}`)
+export const approveProvider = (userId) => post(`/api/admin/providers/${userId}/approve`)
+export const rejectProvider = (userId, reason) => post(`/api/admin/providers/${userId}/reject`, { reason })
+
+export const listAdminVenues = (q) => request(`/api/admin/venues${toQuery(q)}`)
+export const getAdminVenue = (id) => request(`/api/admin/venues/${id}`)
+export const approveVenue = (id) => post(`/api/admin/venues/${id}/approve`)
+export const rejectVenue = (id, reason) => post(`/api/admin/venues/${id}/reject`, { reason })
+export const suspendVenue = (id, reason) => post(`/api/admin/venues/${id}/suspend`, { reason })
+export const reactivateVenue = (id) => post(`/api/admin/venues/${id}/reactivate`)
+
+export const listChangeRequests = (q) => request(`/api/admin/change-requests${toQuery(q)}`)
+export const approveChangeRequest = (id) => post(`/api/admin/change-requests/${id}/approve`)
+export const rejectChangeRequest = (id, reason) => post(`/api/admin/change-requests/${id}/reject`, { reason })
