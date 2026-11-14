@@ -1,10 +1,9 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
+import ChangeRequestReview from '../components/admin/ChangeRequestReview'
 import AdminVenueDetail from '../components/admin/AdminVenueDetail'
 import ProviderReview from '../components/admin/ProviderReview'
 import VenueReview from '../components/admin/VenueReview'
 import '../components/provider/provider.css'
-
-const building = <p className="pv-muted">Đang xây dựng.</p>
 
 export default function AdminPage({ onLogout }) {
   return (
@@ -31,7 +30,7 @@ export default function AdminPage({ onLogout }) {
             <Route index element={<ProviderReview onLogout={onLogout} />} />
             <Route path="venues" element={<VenueReview onLogout={onLogout} />} />
             <Route path="venues/:id" element={<AdminVenueDetail onLogout={onLogout} />} />
-            <Route path="change-requests" element={building} />
+            <Route path="change-requests" element={<ChangeRequestReview onLogout={onLogout} />} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
         </main>
