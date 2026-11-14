@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
+import AdminPage from './pages/AdminPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
@@ -67,6 +68,14 @@ function App() {
           element={
             <RequireRole session={session} role="PROVIDER">
               <ProviderPage onLogout={logout} />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin/*"
+          element={
+            <RequireRole session={session} role="ADMIN">
+              <AdminPage onLogout={logout} />
             </RequireRole>
           }
         />

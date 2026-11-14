@@ -36,6 +36,7 @@ export default function Header({ user, onLogout }) {
   const [profileOpen, setProfileOpen] = useState(false)
   const name = displayNameOf(user)
   const isProvider = Boolean(user) && hasRole(getSession(), 'PROVIDER')
+  const isAdmin = Boolean(user) && hasRole(getSession(), 'ADMIN')
 
   useEffect(() => {
     if (!profileOpen) return
@@ -118,6 +119,11 @@ export default function Header({ user, onLogout }) {
                     ▦ Quản lý sân
                   </Link>
                 )}
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setProfileOpen(false)}>
+                    ◆ Quản trị
+                  </Link>
+                )}
                 <button type="button" className="danger" onClick={logout}>
                   ↩ Đăng xuất
                 </button>
@@ -186,6 +192,11 @@ export default function Header({ user, onLogout }) {
                     {isProvider && (
                       <Link className="pill-btn light" to="/provider" onClick={() => setMenuOpen(false)}>
                         Quản lý sân
+                      </Link>
+                    )}
+                    {isAdmin && (
+                      <Link className="pill-btn light" to="/admin" onClick={() => setMenuOpen(false)}>
+                        Quản trị
                       </Link>
                     )}
                     <button type="button" className="pill-btn orange" onClick={logout}>
