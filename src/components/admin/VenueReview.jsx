@@ -35,6 +35,7 @@ export default function VenueReview({ onLogout }) {
       <h2>Cơ sở</h2>
       <StatusTabs options={TABS} value={status} onChange={(s) => setParams({ status: s })} />
       <AsyncView state={list} empty={list.data?.items.length === 0} emptyText="Không có cơ sở nào ở trạng thái này." onLogout={onLogout}>
+        <div aria-busy={list.loading} className={list.loading ? 'pv-reloading' : undefined}>
         <div className="pv-table-wrap">
           <table className="pv-table">
             <thead>
@@ -64,6 +65,7 @@ export default function VenueReview({ onLogout }) {
           </table>
         </div>
         <Pagination page={page} totalPages={list.data?.totalPages ?? 0} onChange={(p) => setParams({ page: p })} />
+        </div>
       </AsyncView>
     </section>
   )

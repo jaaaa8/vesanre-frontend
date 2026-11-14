@@ -33,3 +33,6 @@ export function parseDocuments(text) {
     return []
   }
 }
+
+// True when the URL carries a param whose raw value was discarded by readListParams.
+export const needsRewrite = (search, params) => Object.entries(params).some(([k, v]) => search.has(k) && search.get(k) !== String(v))

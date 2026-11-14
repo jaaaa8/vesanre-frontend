@@ -60,6 +60,7 @@ export default function ChangeRequestReview({ onLogout }) {
         <StatusTabs options={TABS} value={status} onChange={(s) => setParams({ status: s })} />
       </div>
       <AsyncView state={list} empty={list.data?.items.length === 0} emptyText="Không có yêu cầu nào." onLogout={onLogout}>
+        <div aria-busy={list.loading} className={list.loading ? 'pv-reloading' : undefined}>
         {list.data?.items.map((r) => (
           <article key={r.id} className="pv-card">
             <div className="pv-card-head">
@@ -70,10 +71,10 @@ export default function ChangeRequestReview({ onLogout }) {
                 <StatusBadge status={r.status} />
                 {r.status === 'PENDING' && (
                   <>
-                    <button type="button" className="ui-btn primary" disabled={busy} onClick={() => setDialog({ kind: 'approve', item: r })}>
+                    <button type="button" className="ui-btn primary" disabled={busy || list.loading} onClick={() => setDialog({ kind: 'approve', item: r })}>
                       Duyệt
                     </button>
-                    <button type="button" className="ui-btn" disabled={busy} onClick={() => setDialog({ kind: 'reject', item: r })}>
+                    <button type="button" className="ui-btn" disabled={busy || list.loading} onClick={() => setDialog({ kind: 'reject', item: r })}>
                       Từ chối
                     </button>
                   </>
@@ -106,6 +107,7 @@ export default function ChangeRequestReview({ onLogout }) {
           </article>
         ))}
         <Pagination page={page} totalPages={list.data?.totalPages ?? 0} onChange={(p) => setParams({ page: p })} />
+        </div>
       </AsyncView>
       <ConfirmDialog
         open={Boolean(dialog)}

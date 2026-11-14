@@ -45,6 +45,7 @@ export default function ProviderReview({ onLogout }) {
       <h2>Chủ sân</h2>
       <StatusTabs options={TABS} value={status} onChange={(s) => setParams({ status: s })} />
       <AsyncView state={list} empty={list.data?.items.length === 0} emptyText="Không có chủ sân nào ở trạng thái này." onLogout={onLogout}>
+        <div aria-busy={list.loading} className={list.loading ? 'pv-reloading' : undefined}>
         <div className="pv-table-wrap">
           <table className="pv-table">
             <thead>
@@ -79,10 +80,10 @@ export default function ProviderReview({ onLogout }) {
                         </button>
                         {p.status === 'PENDING' && (
                           <>
-                            <button type="button" className="ui-btn primary" disabled={busy} onClick={() => setDialog({ kind: 'approve', item: p })}>
+                            <button type="button" className="ui-btn primary" disabled={busy || list.loading} onClick={() => setDialog({ kind: 'approve', item: p })}>
                               Duyệt
                             </button>
-                            <button type="button" className="ui-btn" disabled={busy} onClick={() => setDialog({ kind: 'reject', item: p })}>
+                            <button type="button" className="ui-btn" disabled={busy || list.loading} onClick={() => setDialog({ kind: 'reject', item: p })}>
                               Từ chối
                             </button>
                           </>
@@ -103,6 +104,7 @@ export default function ProviderReview({ onLogout }) {
           </table>
         </div>
         <Pagination page={page} totalPages={list.data?.totalPages ?? 0} onChange={(p) => setParams({ page: p })} />
+        </div>
       </AsyncView>
       <ConfirmDialog
         open={Boolean(dialog)}

@@ -33,10 +33,10 @@ export default function AdminVenueDetail({ onLogout }) {
   return (
     <AsyncView state={detail} onLogout={onLogout}>
       {detail.data && (
-        <>
+        <div aria-busy={detail.loading} className={detail.loading ? 'pv-reloading' : undefined}>
           <VenueView venue={detail.data.venue} courts={detail.data.courts}>
             {(ACTIONS[detail.data.venue.status] || []).map((a) => (
-              <button key={a.key} type="button" className={a.reason ? 'ui-btn' : 'ui-btn primary'} disabled={busy} onClick={() => setAction(a)}>
+              <button key={a.key} type="button" className={a.reason ? 'ui-btn' : 'ui-btn primary'} disabled={busy || detail.loading} onClick={() => setAction(a)}>
                 {a.label}
               </button>
             ))}
@@ -51,7 +51,7 @@ export default function AdminVenueDetail({ onLogout }) {
             onConfirm={confirm}
             onCancel={() => setAction(null)}
           />
-        </>
+        </div>
       )}
     </AsyncView>
   )
