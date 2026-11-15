@@ -17,3 +17,34 @@
 .pub-card-body p{color:var(--ink-soft);font-size:.875rem}
 .pub-card-body .pub-price{color:var(--brand);font-weight:500}
 .pub-reloading{opacity:.55;transition:opacity .15s}
+.pub-muted{color:var(--ink-soft);font-size:.875rem}
+.pub-gallery{display:grid;gap:.5rem}
+.pub-hero{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:var(--radius-card)}
+.pub-thumbs{display:flex;gap:.5rem;overflow-x:auto}
+.pub-thumbs button{flex:0 0 5rem;border-radius:.75rem;overflow:hidden;border:2px solid transparent;padding:0}
+.pub-thumbs button[aria-pressed=true]{border-color:var(--brand)}
+.pub-thumbs img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.pub-info{display:grid;gap:.4rem}
+.pub-info a,.pub-tags+a{color:var(--brand)}
+.pub-price{color:var(--brand);font-weight:500}
+.pub-desc{white-space:pre-line;color:var(--ink-soft)}
+.pub-shop{display:flex;align-items:center;gap:.75rem}
+.pub-shop img{width:2.5rem;height:2.5rem;border-radius:50%;object-fit:cover}
+.pub-main h2{font-size:1.25rem;font-weight:500;margin-bottom:.5rem}
+.pub-tags{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none}
+.pub-tags li{padding:.3rem .8rem;border-radius:var(--radius-pill);background:var(--surface-card);font-size:.875rem}
+.pub-courts{display:grid;gap:1rem}
+.pub-court{display:grid;gap:.6rem;padding:1.25rem;background:var(--surface-card);border-radius:var(--radius-card);min-width:0}
+.pub-court h3{font-size:1.1rem;font-weight:500}
+.pub-court small{color:var(--ink-soft);font-weight:400}
+.pub-hours{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(9rem,100%),1fr));gap:.25rem .75rem;list-style:none;font-size:.85rem}
+.pub-hours span{color:var(--ink-soft)}
+.pub-slots{display:grid;gap:.75rem;border-top:1px solid var(--hairline);padding-top:.75rem}
+.pub-date{max-width:14rem}
+.pub-slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(7rem,1fr));gap:.5rem;list-style:none}
+.pub-slot-grid li{display:grid;gap:.15rem;padding:.5rem .6rem;border:1px solid var(--hairline);border-radius:.75rem;font-size:.85rem}
+.pub-slot-grid li span{color:var(--brand)}
+.pub-slot-grid li.off{opacity:.45}
+.pub-slot-grid li.off span{color:var(--ink-soft)}
+.pub-slot-note{color:var(--ink-soft);font-size:.8rem;margin-top:.5rem}
+.pub-book{display:flex;align-items:center;gap:.75rem;font-size:.85rem;color:var(--ink-soft)}

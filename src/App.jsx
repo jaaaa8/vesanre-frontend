@@ -8,6 +8,7 @@ import ProfilePage from './pages/ProfilePage'
 import ProviderPage from './pages/ProviderPage'
 import RegisterPage from './pages/RegisterPage'
 import SearchPage from './pages/SearchPage'
+import VenueDetailPage from './pages/VenueDetailPage'
 import SportsDetailPage from './pages/SportsDetailPage'
 import RequireRole from './components/RequireRole'
 import './components/common/common.css'
@@ -81,6 +82,7 @@ function App() {
           }
         />
         <Route path="/san" element={<SearchPage />} />
+        <Route path="/san/:id" element={<VenueDetailPage />} />
         <Route path="/sports-detail" element={<SportsDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
