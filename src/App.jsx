@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import ProviderPage from './pages/ProviderPage'
 import RegisterPage from './pages/RegisterPage'
+import SearchPage from './pages/SearchPage'
 import SportsDetailPage from './pages/SportsDetailPage'
 import RequireRole from './components/RequireRole'
 import './components/common/common.css'
@@ -79,6 +80,7 @@ function App() {
             </RequireRole>
           }
         />
+        <Route path="/san" element={<SearchPage />} />
         <Route path="/sports-detail" element={<SportsDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
