@@ -10,15 +10,17 @@ export class ApiError extends Error {
   }
 }
 
+// auth: false skips the bearer token: an expired token on a permitAll endpoint still gets 401 from the resource server.
 async function request(path, options = {}) {
-  const session = getSession()
-  const isForm = options.body instanceof FormData
+  const { auth = true, ...init } = options
+  const session = auth ? getSession() : null
+  const isForm = init.body instanceof FormData
   const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
+    ...init,
     headers: {
-      ...(options.body && !isForm ? { 'Content-Type': 'application/json' } : {}),
+      ...(init.body && !isForm ? { 'Content-Type': 'application/json' } : {}),
       ...(session ? { Authorization: `Bearer ${session.accessToken}` } : {}),
-      ...options.headers,
+      ...init.headers,
     },
   })
   if (response.status === 401 && session) expireSession()
@@ -62,8 +64,14 @@ function fileForm(file) {
 }
 
 // Catalog
-export const getSports = () => request('/api/catalog/sports')
-export const getAmenities = () => request('/api/catalog/amenities')
+const PUBLIC = { auth: false }
+export const getSports = () => request('/api/catalog/sports', PUBLIC)
+export const getAmenities = () => request('/api/catalog/amenities', PUBLIC)
+export const searchVenues = (params) => request(`/api/catalog/venues${toQuery(params)}`, PUBLIC)
+export const getLocations = () => request('/api/catalog/locations', PUBLIC)
+export const getPublicVenue = (id) => request(`/api/catalog/venues/${id}`, PUBLIC)
+export const getCourtAvailability = (courtId, date) =>
+  request(`/api/catalog/courts/${courtId}/availability${toQuery({ date })}`, PUBLIC)
 
 // Provider: shop
 export const getShop = () => request('/api/provider/shop')
