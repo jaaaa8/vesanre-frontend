@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import AdminPage from './pages/AdminPage'
 import HomePage from './pages/HomePage'
@@ -9,11 +9,16 @@ import ProviderPage from './pages/ProviderPage'
 import RegisterPage from './pages/RegisterPage'
 import SearchPage from './pages/SearchPage'
 import VenueDetailPage from './pages/VenueDetailPage'
-import SportsDetailPage from './pages/SportsDetailPage'
 import RequireRole from './components/RequireRole'
 import './components/common/common.css'
 import { clearSession, getSession, saveSession, SESSION_EXPIRED } from './utils/auth'
 import { logout as logoutRequest } from './utils/api'
+import { legacySportCode, searchHref } from './utils/publicRules'
+
+function SportsDetailRedirect() {
+  const slug = new URLSearchParams(useLocation().search).get('sport')
+  return <Navigate to={searchHref({ sport: legacySportCode(slug) })} replace />
+}
 
 function App() {
   const [session, setSession] = useState(getSession)
@@ -83,7 +88,7 @@ function App() {
         />
         <Route path="/san" element={<SearchPage />} />
         <Route path="/san/:id" element={<VenueDetailPage />} />
-        <Route path="/sports-detail" element={<SportsDetailPage />} />
+        <Route path="/sports-detail" element={<SportsDetailRedirect />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ToastContainer position="top-right" autoClose={3200} hideProgressBar theme="light" />
