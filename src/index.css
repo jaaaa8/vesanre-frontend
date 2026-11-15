@@ -352,8 +352,6 @@ main.auth-page{display:grid;min-height:calc(100svh - 1.5rem);grid-template-colum
 .brand{display:inline-flex;align-items:center;gap:9px;font-size:17px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
 .brand-light{color:#fff}
 
-/* Sports detail page */
-
 .Toastify__toast{border-radius:12px;font-family:inherit}
 .Toastify__toast-icon svg{fill:var(--brand)}
 

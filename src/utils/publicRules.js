@@ -48,3 +48,7 @@ export const mapsUrl = (lat, lng) =>
 const LEGACY_SPORTS = { football: 'FOOTBALL_5', pickleball: 'PICKLEBALL', badminton: 'BADMINTON', basketball: 'BASKETBALL' }
 
 export const legacySportCode = (slug) => (Object.hasOwn(LEGACY_SPORTS, slug) ? LEGACY_SPORTS[slug] : '')
+
+// 404/400 from availability are dead ends (venue gone, date rejected): retrying cannot help.
+const SLOT_ERRORS = { 404: 'Sân không còn hoạt động', 400: 'Ngày không hợp lệ, hãy chọn ngày khác' }
+export const slotErrorText = (status) => SLOT_ERRORS[status] ?? null

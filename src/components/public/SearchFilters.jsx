@@ -19,6 +19,7 @@ export default function SearchFilters({ params, sports, locations, loading, onSu
       setError('Giá từ không được lớn hơn giá đến')
       return
     }
+    setError('')
     onSubmit({ ...form, page: 0 })
   }
 
@@ -63,11 +64,11 @@ export default function SearchFilters({ params, sports, locations, loading, onSu
       </label>
       <label className="ui-field">
         <span>Giá từ</span>
-        <input type="number" min={0} step={1000} value={form.minPrice} onChange={set('minPrice')} />
+        <input type="number" min={0} step={1} value={form.minPrice} onChange={set('minPrice')} />
       </label>
       <label className="ui-field">
         <span>Giá đến</span>
-        <input type="number" min={0} step={1000} value={form.maxPrice} onChange={set('maxPrice')} />
+        <input type="number" min={0} step={1} value={form.maxPrice} onChange={set('maxPrice')} />
       </label>
       <label className="ui-field">
         <span>Sắp xếp</span>
