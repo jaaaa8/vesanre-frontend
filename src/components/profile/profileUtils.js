@@ -14,33 +14,6 @@ export const TABS = [
 export const SPORT_OPTIONS = ['Bóng đá', 'Pickleball', 'Cầu lông', 'Tennis']
 export const GENDER_OPTIONS = ['Nam', 'Nữ', 'Khác']
 
-export const INITIAL_NOTIFS = [
-  {
-    id: 'reminder',
-    title: 'Nhắc lịch trước giờ đấu',
-    desc: 'SMS + Push trước 2 giờ thi đấu.',
-    on: true,
-    dotActive: true,
-    label: 'Bật nhắc lịch',
-  },
-  {
-    id: 'promo',
-    title: 'Ưu đãi giờ vàng',
-    desc: 'Giảm 20% khung 07:00 – 09:00 mỗi cuối tuần.',
-    on: false,
-    dotActive: false,
-    label: 'Bật ưu đãi',
-  },
-  {
-    id: 'sms',
-    title: 'Xác nhận đặt sân qua SMS',
-    desc: 'Luôn bật để giữ chỗ đảm bảo.',
-    on: true,
-    dotActive: true,
-    label: 'Bật SMS',
-  },
-]
-
 export function initialsOf(name) {
   const parts = (name || '').trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return 'A'

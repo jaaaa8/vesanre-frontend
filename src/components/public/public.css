@@ -1,6 +1,7 @@
 .pub-page{min-height:100vh;background:var(--surface);color:var(--ink)}
 .pub-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem clamp(1rem,4vw,3rem);background:var(--surface-card);border-bottom:1px solid var(--hairline)}
-.pub-top>a:last-child{font-size:.9rem;color:var(--brand);text-decoration:none}
+.pub-top-actions{display:flex;align-items:center;gap:.75rem}
+.pub-top-actions>a:last-child{font-size:.9rem;color:var(--brand);text-decoration:none}
 .pub-main{max-width:75rem;margin:0 auto;padding:1.5rem clamp(1rem,4vw,3rem) 3rem;display:grid;gap:1.25rem;min-width:0}
 .pub-main h1{font-size:1.75rem;font-weight:500}
 .pub-filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(11rem,100%),1fr));gap:.75rem;padding:1rem;background:var(--surface-card);border-radius:var(--radius-card)}
