@@ -5,7 +5,6 @@ import { HERO_IMG } from './profileUtils'
 export default function ProfileHero({
   displayName,
   initials,
-  bookingCount,
   profileOpen,
   onToggleProfile,
   onBookings,
@@ -112,13 +111,6 @@ export default function ProfileHero({
             <div>
               <b>Silver</b>
               <span>Hạng thành viên</span>
-            </div>
-          </div>
-          <div className="glass">
-            <div style={{ fontSize: '1.6rem' }}>⚡</div>
-            <div>
-              <b id="statBookings">{bookingCount}</b>
-              <span>Lượt đặt sân</span>
             </div>
           </div>
         </div>
