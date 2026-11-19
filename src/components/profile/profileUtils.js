@@ -6,8 +6,8 @@ export const HERO_IMG =
 
 export const TABS = [
   { id: 'profile', label: 'Thông tin cá nhân', icon: '👤' },
-  { id: 'bookings', label: 'Lịch sử đặt sân', icon: '📅' },
-  { id: 'payments', label: 'Phương thức thanh toán', icon: '💳' },
+  { id: 'bookings', label: 'Lịch đặt sân', icon: '📅' },
+  { id: 'wallet', label: 'Ví coin', icon: '🪙' },
   { id: 'notifications', label: 'Thông báo', icon: '🔔' },
   { id: 'security', label: 'Đổi mật khẩu', icon: '🔒' },
 ]
@@ -199,10 +199,13 @@ export function saveStoredUser(nextUser) {
   }
 }
 
-export function resolveInitialTab() {
+export const HASH_TABS = ['bookings', 'wallet', 'notifications']
+
+export function resolveInitialTab(location = window.location) {
   try {
-    if (window.location.hash === '#bookings') return 'bookings'
-    if (new URLSearchParams(window.location.search).get('tab') === 'bookings') return 'bookings'
+    const hashTab = location.hash.slice(1)
+    if (HASH_TABS.includes(hashTab)) return hashTab
+    if (new URLSearchParams(location.search).get('tab') === 'bookings') return 'bookings'
   } catch {
     // Malformed location: fall back to the default tab.
   }
