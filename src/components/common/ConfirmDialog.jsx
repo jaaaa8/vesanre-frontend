@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function ConfirmDialog({ open, title, message, requireReason, confirmText = 'Xác nhận', onConfirm, onCancel, busy }) {
+export default function ConfirmDialog({ open, title, message, requireReason, confirmText = 'Xác nhận', onConfirm, onCancel, busy, confirmDisabled }) {
   const ref = useRef(null)
   const [reason, setReason] = useState('')
 
@@ -33,7 +33,7 @@ export default function ConfirmDialog({ open, title, message, requireReason, con
     >
       <form onSubmit={submit}>
         <h3>{title}</h3>
-        {message && <p>{message}</p>}
+        {message && <div>{message}</div>}
         {requireReason && (
           <label className="ui-field">
             <span>Lý do</span>
@@ -44,7 +44,7 @@ export default function ConfirmDialog({ open, title, message, requireReason, con
           <button type="button" className="ui-btn ghost" onClick={cancel} disabled={busy}>
             Hủy
           </button>
-          <button type="submit" className="ui-btn primary" disabled={busy || (requireReason && !reason.trim())}>
+          <button type="submit" className="ui-btn primary" disabled={busy || confirmDisabled || (requireReason && !reason.trim())}>
             {busy ? 'Đang xử lý…' : confirmText}
           </button>
         </div>
