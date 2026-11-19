@@ -1,6 +1,9 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import CourtDetail from '../components/provider/CourtDetail'
+import ProviderBookingDetail from '../components/provider/ProviderBookingDetail'
+import ProviderBookings from '../components/provider/ProviderBookings'
 import ShopSection from '../components/provider/ShopSection'
+import ShopWallet from '../components/provider/ShopWallet'
 import VenueDetail from '../components/provider/VenueDetail'
 import VenueList from '../components/provider/VenueList'
 import '../components/provider/provider.css'
@@ -23,6 +26,8 @@ export default function ProviderPage({ onLogout }) {
             Cửa hàng
           </NavLink>
           <NavLink to="/provider/venues">Cơ sở</NavLink>
+          <NavLink to="/provider/bookings">Lịch đặt</NavLink>
+          <NavLink to="/provider/wallet">Ví shop</NavLink>
         </nav>
         <main className="pv-main">
           <Routes>
@@ -30,6 +35,9 @@ export default function ProviderPage({ onLogout }) {
             <Route path="venues" element={<VenueList onLogout={onLogout} />} />
             <Route path="venues/:id" element={<VenueDetail onLogout={onLogout} />} />
             <Route path="courts/:id" element={<CourtDetail onLogout={onLogout} />} />
+            <Route path="bookings" element={<ProviderBookings onLogout={onLogout} />} />
+            <Route path="bookings/:id" element={<ProviderBookingDetail onLogout={onLogout} />} />
+            <Route path="wallet" element={<ShopWallet onLogout={onLogout} />} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
         </main>
