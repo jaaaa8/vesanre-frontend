@@ -26,7 +26,7 @@ export default function BookingsTab({ active, onToast, openBookingId, onOpenHand
   const open = (id) =>
     getBooking(id).then(setDetail, (e) => {
       // A provider following a notification about a customer's booking lands on the shop view instead.
-      if (e.status === 404 && hasRole(getSession(), 'PROVIDER')) navigate(`/provider/bookings/${id}`)
+      if ((e.status === 404 || e.status === 403) && hasRole(getSession(), 'PROVIDER')) navigate(`/provider/bookings/${id}`)
       else onToast('Không mở được booking này')
     })
 

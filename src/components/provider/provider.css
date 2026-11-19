@@ -45,3 +45,8 @@
   opacity: 0.55;
   transition: opacity 0.15s;
 }
+.pv-filters{display:flex;flex-wrap:wrap;gap:.75rem 1rem;margin:1rem 0}
+.pv-filters label{display:grid;gap:.25rem;font-size:.875rem}
+.pv-filters select,.pv-filters input{font:inherit;padding:.45rem .6rem;border:1px solid var(--hairline);border-radius:.5rem;background:#fff}
+.pv-filters small{font-size:.75rem}
+.pv-balance{font-size:1.5rem;margin:1rem 0 .5rem}
