@@ -15,7 +15,6 @@ import { ApiError, getProfile, updateProfile } from '../utils/api'
 import { validPhone } from '../utils/auth'
 import {
   HASH_TABS,
-  INITIAL_NOTIFS,
   initialsOf,
   normalizeForm,
   readStoredUser,
@@ -33,7 +32,6 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
   const [form, setForm] = useState(() => normalizeForm(user || readStoredUser()))
   const [profileErr, setProfileErr] = useState('')
   const [openBookingId, setOpenBookingId] = useState(null)
-  const [notifs, setNotifs] = useState(INITIAL_NOTIFS)
   const [toasts, setToasts] = useState([])
   const [profileOpen, setProfileOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -210,13 +208,9 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
     setProfileErr('')
   }
 
-  const toggleNotif = (id) => {
-    setNotifs((current) => {
-      const next = current.map((n) => (n.id === id ? { ...n, on: !n.on } : n))
-      const changed = next.find((n) => n.id === id)
-      pushToast(changed.on ? 'Đã bật thông báo!' : 'Đã tắt thông báo.')
-      return next
-    })
+  const openBookingFromNotification = (id) => {
+    setOpenBookingId(id)
+    switchTab('bookings')
   }
 
   return (
@@ -266,7 +260,11 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
                 onOpenHandled={() => setOpenBookingId(null)}
               />
               <WalletTab active={activeTab === 'wallet'} onToast={pushToast} />
-              <NotificationsTab active={activeTab === 'notifications'} notifs={notifs} onToggle={toggleNotif} />
+              <NotificationsTab
+                active={activeTab === 'notifications'}
+                onToast={pushToast}
+                onOpenBooking={openBookingFromNotification}
+              />
               <SecurityTab active={activeTab === 'security'} onToast={pushToast} />
             </div>
           </div>
