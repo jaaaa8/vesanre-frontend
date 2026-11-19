@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useApi } from '../../hooks/useApi'
 import { createBooking, getCourtAvailability, getWallet } from '../../utils/api'
-import { getSession } from '../../utils/auth'
+import { getSession, hasRole } from '../../utils/auth'
 import { DEPOSIT_PERCENT, rangeInfo, selectRange } from '../../utils/bookingRules'
 import { formatVnd } from '../../utils/format'
 import { addDays, clampDate, slotErrorText, todayIn } from '../../utils/publicRules'
@@ -28,7 +28,10 @@ export default function CourtSlots({ court }) {
   const info = data && rangeInfo(data.slots, selection, data)
   const [confirm, setConfirm] = useState(null)
   const [busy, setBusy] = useState(false)
-  const loggedIn = !!getSession()
+  const session = getSession()
+  const loggedIn = !!session
+  // Booking endpoints require CUSTOMER; a provider-only or admin-only account would get 403.
+  const canBook = hasRole(session, 'CUSTOMER')
 
   const pick = (index) => setPicked({ date, range: selectRange(data.slots, selection, index, data.maxBookingMinutes) })
 
@@ -128,7 +131,9 @@ export default function CourtSlots({ court }) {
         </div>
       )}
       <div className="pub-book">
-        {loggedIn ? (
+        {loggedIn && !canBook ? (
+          <span className="ui-muted">Tài khoản này không đặt sân được, hãy dùng tài khoản khách hàng.</span>
+        ) : loggedIn ? (
           <button type="button" className="ui-btn primary" disabled={!info || !!info.error || busy} onClick={openConfirm}>
             Đặt sân
           </button>

@@ -21,7 +21,9 @@ export default function BookingsTab({ active, onToast, openBookingId, onOpenHand
   const [detail, setDetail] = useState(null)
   const [cancelOpen, setCancelOpen] = useState(false)
   const [busy, setBusy] = useState(false)
-  const list = useApi(active ? () => listBookings({ status, page, size: 10 }) : idle, [active, status, page])
+  // Booking endpoints require CUSTOMER; provider-only or admin-only accounts would get 403.
+  const isCustomer = hasRole(getSession(), 'CUSTOMER')
+  const list = useApi(active && isCustomer ? () => listBookings({ status, page, size: 10 }) : idle, [active, isCustomer, status, page])
 
   const open = (id) =>
     getBooking(id).then(setDetail, (e) => {
@@ -88,6 +90,14 @@ export default function BookingsTab({ active, onToast, openBookingId, onOpenHand
             onConfirm={cancel}
           />
         </>
+      ) : !isCustomer ? (
+        <EmptyState text="Tài khoản này không có lịch đặt sân cá nhân.">
+          {hasRole(getSession(), 'PROVIDER') && (
+            <Link to="/provider/bookings" className="ui-btn primary">
+              Xem lịch đặt của sân bạn
+            </Link>
+          )}
+        </EmptyState>
       ) : (
         <>
           <StatusTabs options={BOOKING_FILTERS} value={status} onChange={filter} />
