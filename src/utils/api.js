@@ -122,3 +122,25 @@ export const reactivateVenue = (id) => post(`/api/admin/venues/${id}/reactivate`
 export const listChangeRequests = (q) => request(`/api/admin/change-requests${toQuery(q)}`)
 export const approveChangeRequest = (id) => post(`/api/admin/change-requests/${id}/approve`)
 export const rejectChangeRequest = (id, reason) => post(`/api/admin/change-requests/${id}/reject`, { reason })
+
+// Wallet
+export const getWallet = () => request('/api/wallet')
+export const getWalletEntries = (q) => request(`/api/wallet/entries${toQuery(q)}`)
+export const createTopUp = (coins) => post('/api/wallet/top-ups', { coins })
+export const getTopUp = (id) => request(`/api/wallet/top-ups/${id}`)
+
+// Bookings (customer)
+export const createBooking = (body) => post('/api/bookings', body)
+export const listBookings = (q) => request(`/api/bookings${toQuery(q)}`)
+export const getBooking = (id) => request(`/api/bookings/${id}`)
+export const cancelBooking = (id, reason) => post(`/api/bookings/${id}/cancel`, reason ? { reason } : undefined)
+
+// Notifications
+export const listNotifications = (q) => request(`/api/notifications${toQuery(q)}`)
+export const markNotificationRead = (id) => post(`/api/notifications/${id}/read`)
+
+// Provider: bookings and shop wallet
+export const listProviderBookings = (q) => request(`/api/provider/bookings${toQuery(q)}`)
+export const getProviderBooking = (id) => request(`/api/provider/bookings/${id}`)
+export const cancelProviderBooking = (id, reason) => post(`/api/provider/bookings/${id}/cancel`, { reason })
+export const getShopWallet = () => request('/api/provider/wallet')
