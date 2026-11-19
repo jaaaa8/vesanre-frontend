@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import '../styles/Auth.css'
@@ -29,7 +29,8 @@ export default function LoginPage({ onLogin }) {
     setSubmitting(true)
     try {
       const session = await login(contact.trim(), password)
-      onLogin?.(session, remember)
+      // Same transition as the router's location update, so the /dang-nhap route never renders a logged-in user and bounces to "/".
+      startTransition(() => onLogin?.(session, remember))
       navigate(redirect, { replace: true })
     } catch (cause) {
       setError(
