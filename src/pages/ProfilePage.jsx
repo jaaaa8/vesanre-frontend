@@ -6,15 +6,16 @@ import ProfileSidebar from '../components/profile/ProfileSidebar'
 import ProviderApplication from '../components/profile/ProviderApplication'
 import BookingsTab from '../components/profile/tabs/BookingsTab'
 import NotificationsTab from '../components/profile/tabs/NotificationsTab'
-import PaymentsTab from '../components/profile/tabs/PaymentsTab'
 import ProfileInfoTab from '../components/profile/tabs/ProfileInfoTab'
 import SecurityTab from '../components/profile/tabs/SecurityTab'
+import WalletTab from '../components/wallet/WalletTab'
 import '../components/profile/Profile.css'
 import { useFluidRem } from '../hooks/useFluidRem'
 import { ApiError, getProfile, updateProfile } from '../utils/api'
 import { validPhone } from '../utils/auth'
 import {
   BOOKINGS_KEY,
+  HASH_TABS,
   INITIAL_NOTIFS,
   initialsOf,
   normalizeForm,
@@ -144,7 +145,8 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
   const switchTab = (name) => {
     setActiveTab(name)
     try {
-      if (name === 'bookings') window.history.replaceState(null, '', '#bookings')
+      if (HASH_TABS.includes(name)) window.history.replaceState(null, '', `#${name}`)
+      else window.history.replaceState(null, '', window.location.pathname + window.location.search)
     } catch {
       /* ignore */
     }
@@ -295,11 +297,7 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
                 onCancel={handleCancelBooking}
                 onCloseQr={() => setQrBooking(null)}
               />
-              <PaymentsTab
-                active={activeTab === 'payments'}
-                onAddCard={() => pushToast('Liên kết thẻ mới — đang mở cổng thanh toán...')}
-                onSetDefault={() => pushToast('Đã đặt MoMo làm mặc định!')}
-              />
+              <WalletTab active={activeTab === 'wallet'} onToast={pushToast} />
               <NotificationsTab active={activeTab === 'notifications'} notifs={notifs} onToggle={toggleNotif} />
               <SecurityTab active={activeTab === 'security'} onToast={pushToast} />
             </div>
