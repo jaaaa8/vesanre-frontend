@@ -4,6 +4,7 @@ import ChangeRequestReview from '../components/admin/ChangeRequestReview'
 import AdminVenueDetail from '../components/admin/AdminVenueDetail'
 import ProviderReview from '../components/admin/ProviderReview'
 import ReviewModeration from '../components/admin/ReviewModeration'
+import UserAdmin from '../components/admin/UserAdmin'
 import VenueReview from '../components/admin/VenueReview'
 import WithdrawalReview from '../components/admin/WithdrawalReview'
 import '../components/provider/provider.css'
@@ -45,7 +46,7 @@ export default function AdminPage({ onLogout }) {
             <Route path="change-requests" element={<ChangeRequestReview onLogout={onLogout} />} />
             <Route path="withdrawals" element={<WithdrawalReview onLogout={onLogout} />} />
             <Route path="reviews" element={<ReviewModeration onLogout={onLogout} />} />
-            <Route path="users" element={TODO} />
+            <Route path="users" element={<UserAdmin onLogout={onLogout} />} />
             <Route path="reports" element={TODO} />
             <Route path="audit" element={TODO} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
