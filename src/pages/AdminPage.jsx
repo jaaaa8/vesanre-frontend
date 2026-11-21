@@ -3,14 +3,13 @@ import AdminOverview from '../components/admin/AdminOverview'
 import AdminReports from '../components/admin/AdminReports'
 import ChangeRequestReview from '../components/admin/ChangeRequestReview'
 import AdminVenueDetail from '../components/admin/AdminVenueDetail'
+import AuditLog from '../components/admin/AuditLog'
 import ProviderReview from '../components/admin/ProviderReview'
 import ReviewModeration from '../components/admin/ReviewModeration'
 import UserAdmin from '../components/admin/UserAdmin'
 import VenueReview from '../components/admin/VenueReview'
 import WithdrawalReview from '../components/admin/WithdrawalReview'
 import '../components/provider/provider.css'
-
-const TODO = <p className="pv-muted">Đang làm…</p>
 
 export default function AdminPage({ onLogout }) {
   return (
@@ -49,7 +48,7 @@ export default function AdminPage({ onLogout }) {
             <Route path="reviews" element={<ReviewModeration onLogout={onLogout} />} />
             <Route path="users" element={<UserAdmin onLogout={onLogout} />} />
             <Route path="reports" element={<AdminReports onLogout={onLogout} />} />
-            <Route path="audit" element={TODO} />
+            <Route path="audit" element={<AuditLog onLogout={onLogout} />} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
         </main>

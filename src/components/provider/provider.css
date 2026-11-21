@@ -60,3 +60,4 @@ a.pv-stat:not(.is-hot){opacity:.6}
 .pv-bar{display:grid;grid-template-columns:minmax(6rem,12rem) 1fr 2.5rem;gap:.75rem;align-items:center;font-size:.875rem}
 .pv-bar-track{background:var(--surface);border-radius:var(--radius-pill);height:.75rem;overflow:hidden}
 .pv-bar-fill{background:var(--brand);height:100%;border-radius:var(--radius-pill)}
+.pv-json{overflow:auto;max-height:20rem;background:var(--surface);border-radius:.75rem;padding:.75rem;font-size:.75rem;white-space:pre}
