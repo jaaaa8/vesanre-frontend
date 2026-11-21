@@ -15,6 +15,8 @@
 .ui-badge.is-suspended{background:#ece9f8;color:#4b3a9a}
 .ui-badge.is-inactive,.ui-badge.is-cancelled{background:var(--surface);color:var(--ink-soft)}
 .ui-badge.is-draft{background:var(--blue-soft);color:var(--brand-deep)}
+.ui-badge.is-paid,.ui-badge.is-published{background:#e6f6ec;color:#146c2e}
+.ui-badge.is-hidden{background:var(--surface);color:var(--ink-soft)}
 .ui-dialog{margin:auto;border:none;border-radius:var(--radius-card);padding:1.5rem;width:min(30rem,calc(100vw - 2rem));box-shadow:0 20px 60px rgba(0,0,0,.2)}
 .ui-dialog::backdrop{background:rgba(10,10,10,.45)}
 .ui-dialog form{display:grid;gap:1rem}

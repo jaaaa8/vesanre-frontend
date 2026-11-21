@@ -4,6 +4,7 @@ import ChangeRequestReview from '../components/admin/ChangeRequestReview'
 import AdminVenueDetail from '../components/admin/AdminVenueDetail'
 import ProviderReview from '../components/admin/ProviderReview'
 import VenueReview from '../components/admin/VenueReview'
+import WithdrawalReview from '../components/admin/WithdrawalReview'
 import '../components/provider/provider.css'
 
 const TODO = <p className="pv-muted">Đang làm…</p>
@@ -41,7 +42,7 @@ export default function AdminPage({ onLogout }) {
             <Route path="venues" element={<VenueReview onLogout={onLogout} />} />
             <Route path="venues/:id" element={<AdminVenueDetail onLogout={onLogout} />} />
             <Route path="change-requests" element={<ChangeRequestReview onLogout={onLogout} />} />
-            <Route path="withdrawals" element={TODO} />
+            <Route path="withdrawals" element={<WithdrawalReview onLogout={onLogout} />} />
             <Route path="reviews" element={TODO} />
             <Route path="users" element={TODO} />
             <Route path="reports" element={TODO} />
