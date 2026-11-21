@@ -123,6 +123,24 @@ export const listChangeRequests = (q) => request(`/api/admin/change-requests${to
 export const approveChangeRequest = (id) => post(`/api/admin/change-requests/${id}/approve`)
 export const rejectChangeRequest = (id, reason) => post(`/api/admin/change-requests/${id}/reject`, { reason })
 
+// Admin: Sprint 4
+export const listAdminUsers = (q) => request(`/api/admin/users${toQuery(q)}`)
+export const suspendUser = (id, reason) => post(`/api/admin/users/${id}/suspend`, { reason })
+export const reactivateUser = (id) => post(`/api/admin/users/${id}/reactivate`)
+
+export const listAuditLogs = (q) => request(`/api/admin/audit-logs${toQuery(q)}`)
+
+export const listAdminReviews = (q) => request(`/api/admin/reviews${toQuery(q)}`)
+export const hideReview = (id, reason) => post(`/api/admin/reviews/${id}/hide`, { reason })
+export const unhideReview = (id) => post(`/api/admin/reviews/${id}/unhide`)
+
+export const listAdminWithdrawals = (q) => request(`/api/admin/withdrawals${toQuery(q)}`)
+export const markWithdrawalPaid = (id, bankTransactionRef) => post(`/api/admin/withdrawals/${id}/mark-paid`, { bankTransactionRef })
+export const rejectWithdrawal = (id, reason) => post(`/api/admin/withdrawals/${id}/reject`, { reason })
+
+export const getTopShops = (q) => request(`/api/admin/reports/top-shops${toQuery(q)}`)
+export const getFinanceReport = (q) => request(`/api/admin/reports/finance${toQuery(q)}`)
+
 // Wallet
 export const getWallet = () => request('/api/wallet')
 export const getWalletEntries = (q) => request(`/api/wallet/entries${toQuery(q)}`)

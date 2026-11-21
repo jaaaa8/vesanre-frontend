@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { needsRewrite, readListParams } from '../../utils/adminRules'
+import { needsRewrite, patchParams, readListParams } from '../../utils/adminRules'
 
 const toSearch = (params) => Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null).map(([k, v]) => [k, String(v)]))
 
@@ -15,9 +15,7 @@ export function useListParams(statuses, extra) {
   }, [search])
 
   const setParams = (patch) => {
-    const next = { ...params, ...patch }
-    if ('status' in patch || 'targetType' in patch) next.page = 0
-    setSearch(toSearch(next), { replace: true })
+    setSearch(toSearch(patchParams(params, patch)), { replace: true })
   }
 
   return { params, setParams }

@@ -6,6 +6,7 @@ export default function ConfirmDialog({
   message,
   requireReason,
   reasonOptional,
+  reasonLabel,
   maxLength = 1000,
   confirmText = 'Xác nhận',
   onConfirm,
@@ -48,8 +49,12 @@ export default function ConfirmDialog({
         {message && <div>{message}</div>}
         {(requireReason || reasonOptional) && (
           <label className="ui-field">
-            <span>{requireReason ? 'Lý do' : 'Lý do (không bắt buộc)'}</span>
-            <textarea required={!!requireReason} maxLength={maxLength} rows={4} value={reason} onChange={(e) => setReason(e.target.value)} />
+            <span>{reasonLabel ?? (requireReason ? 'Lý do' : 'Lý do (không bắt buộc)')}</span>
+            {reasonLabel ? (
+              <input required={!!requireReason} maxLength={maxLength} value={reason} onChange={(e) => setReason(e.target.value)} />
+            ) : (
+              <textarea required={!!requireReason} maxLength={maxLength} rows={4} value={reason} onChange={(e) => setReason(e.target.value)} />
+            )}
           </label>
         )}
         <div className="ui-actions">
