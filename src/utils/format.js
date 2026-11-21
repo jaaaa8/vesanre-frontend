@@ -34,3 +34,5 @@ export function formatTimeIn(iso, timeZone) {
 }
 
 export const formatCoins = (n) => `${vnd.format(Number(n)).replace(/\s/g, '.')} coin`
+
+export const formatStars = (rating) => '★'.repeat(rating) + '☆'.repeat(5 - rating)
