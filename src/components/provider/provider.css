@@ -50,3 +50,13 @@
 .pv-filters select,.pv-filters input{font:inherit;padding:.45rem .6rem;border:1px solid var(--hairline);border-radius:.5rem;background:#fff}
 .pv-filters small{font-size:.75rem}
 .pv-balance{font-size:1.5rem;margin:1rem 0 .5rem}
+.pv-stats{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr))}
+.pv-stat{display:grid;gap:.25rem;padding:1rem;border:1px solid var(--hairline);border-radius:1rem;color:var(--ink-soft)}
+.pv-stat strong{font-size:1.5rem;font-weight:500;color:var(--ink)}
+a.pv-stat:not(.is-hot){opacity:.6}
+.pv-stat.is-hot{border-color:var(--accent);background:#fff4ef}
+.pv-stat.is-hot strong{color:var(--accent)}
+.pv-bars{display:grid;gap:.5rem}
+.pv-bar{display:grid;grid-template-columns:minmax(6rem,12rem) 1fr 2.5rem;gap:.75rem;align-items:center;font-size:.875rem}
+.pv-bar-track{background:var(--surface);border-radius:var(--radius-pill);height:.75rem;overflow:hidden}
+.pv-bar-fill{background:var(--brand);height:100%;border-radius:var(--radius-pill)}

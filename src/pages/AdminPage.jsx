@@ -1,9 +1,12 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
+import AdminOverview from '../components/admin/AdminOverview'
 import ChangeRequestReview from '../components/admin/ChangeRequestReview'
 import AdminVenueDetail from '../components/admin/AdminVenueDetail'
 import ProviderReview from '../components/admin/ProviderReview'
 import VenueReview from '../components/admin/VenueReview'
 import '../components/provider/provider.css'
+
+const TODO = <p className="pv-muted">Đang làm…</p>
 
 export default function AdminPage({ onLogout }) {
   return (
@@ -20,17 +23,29 @@ export default function AdminPage({ onLogout }) {
       <div className="pv-body">
         <nav className="pv-nav" aria-label="Quản trị">
           <NavLink to="/admin" end>
-            Chủ sân
+            Tổng quan
           </NavLink>
+          <NavLink to="/admin/providers">Chủ sân</NavLink>
           <NavLink to="/admin/venues">Cơ sở</NavLink>
           <NavLink to="/admin/change-requests">Yêu cầu thay đổi</NavLink>
+          <NavLink to="/admin/withdrawals">Lệnh rút</NavLink>
+          <NavLink to="/admin/reviews">Đánh giá</NavLink>
+          <NavLink to="/admin/users">Người dùng</NavLink>
+          <NavLink to="/admin/reports">Báo cáo</NavLink>
+          <NavLink to="/admin/audit">Nhật ký</NavLink>
         </nav>
         <main className="pv-main">
           <Routes>
-            <Route index element={<ProviderReview onLogout={onLogout} />} />
+            <Route index element={<AdminOverview />} />
+            <Route path="providers" element={<ProviderReview onLogout={onLogout} />} />
             <Route path="venues" element={<VenueReview onLogout={onLogout} />} />
             <Route path="venues/:id" element={<AdminVenueDetail onLogout={onLogout} />} />
             <Route path="change-requests" element={<ChangeRequestReview onLogout={onLogout} />} />
+            <Route path="withdrawals" element={TODO} />
+            <Route path="reviews" element={TODO} />
+            <Route path="users" element={TODO} />
+            <Route path="reports" element={TODO} />
+            <Route path="audit" element={TODO} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
         </main>
