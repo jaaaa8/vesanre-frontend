@@ -1,5 +1,6 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import AdminOverview from '../components/admin/AdminOverview'
+import AdminReports from '../components/admin/AdminReports'
 import ChangeRequestReview from '../components/admin/ChangeRequestReview'
 import AdminVenueDetail from '../components/admin/AdminVenueDetail'
 import ProviderReview from '../components/admin/ProviderReview'
@@ -47,7 +48,7 @@ export default function AdminPage({ onLogout }) {
             <Route path="withdrawals" element={<WithdrawalReview onLogout={onLogout} />} />
             <Route path="reviews" element={<ReviewModeration onLogout={onLogout} />} />
             <Route path="users" element={<UserAdmin onLogout={onLogout} />} />
-            <Route path="reports" element={TODO} />
+            <Route path="reports" element={<AdminReports onLogout={onLogout} />} />
             <Route path="audit" element={TODO} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
