@@ -52,3 +52,8 @@
 .pub-summary .err,.pub-short{color:#b42318}
 .pub-slot-note{color:var(--ink-soft);font-size:.8rem;margin-top:.5rem}
 .pub-book{display:flex;align-items:center;gap:.75rem;font-size:.85rem;color:var(--ink-soft)}
+.pub-rating{color:#b26b00;font-weight:500}
+.pub-reviews{display:grid;gap:.75rem;justify-items:start}
+.pub-review-list{display:grid;gap:.75rem;list-style:none;width:100%}
+.pub-review{display:grid;gap:.4rem;padding:1rem 1.25rem;background:var(--surface-card);border-radius:var(--radius-card);font-size:.9rem}
+.pub-reply{background:var(--surface);border-radius:.75rem;padding:.6rem .75rem;color:var(--ink-soft)}
