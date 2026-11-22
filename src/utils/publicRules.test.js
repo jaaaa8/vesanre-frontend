@@ -84,3 +84,13 @@ test('formatRating', () => {
   assert.equal(formatRating(4.25, 12), '★ 4,3 (12 đánh giá)')
   assert.equal(formatRating(null, 0), 'Chưa có đánh giá')
 })
+
+test('venueCover giữ ảnh thật, ảnh mặc định ổn định theo id', async () => {
+  const { venueCover } = await import('./publicRules.js')
+  assert.equal(venueCover({ id: 'a', coverImageUrl: 'x.jpg' }), 'x.jpg')
+  const fallback = venueCover({ id: 'abc', coverImageUrl: null })
+  assert.match(fallback, /^https:\/\/images\.unsplash\.com\//)
+  assert.equal(venueCover({ id: 'abc' }), fallback)
+  const ids = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+  assert.ok(new Set(ids.map((id) => venueCover({ id }))).size > 1)
+})
