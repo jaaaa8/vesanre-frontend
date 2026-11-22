@@ -9,7 +9,7 @@ import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
 import { getPublicVenue } from '../utils/api'
 import { formatVnd, WEEKDAYS } from '../utils/format'
-import { formatRating, mapsUrl, venueCover } from '../utils/publicRules'
+import { addDays, clampDate, formatRating, mapsUrl, todayIn, venueCover } from '../utils/publicRules'
 
 function Gallery({ images, name, venue }) {
   const [selected, setSelected] = useState(0)
@@ -34,7 +34,7 @@ function Gallery({ images, name, venue }) {
 const hoursText = (h) => (h.closed ? 'Nghỉ' : `${h.opensAt.slice(0, 5)}–${h.closesAt.slice(0, 5)}`)
 const amenityText = (a) => (a.details ? `${a.name} (${a.details})` : a.name)
 
-function Court({ court }) {
+function Court({ court, date }) {
   const sports = [...court.sports].sort((a, b) => b.primary - a.primary)
   const hours = [...court.operatingHours].sort((a, b) => a.weekday - b.weekday)
   return (
@@ -56,13 +56,17 @@ function Court({ court }) {
           ))}
         </ul>
       )}
-      <CourtSlots court={court} />
+      <CourtSlots court={court} date={date} />
     </article>
   )
 }
 
 function VenueDetail({ venue }) {
   const map = mapsUrl(venue.latitude, venue.longitude)
+  // Recomputed each render so a page left open past midnight never asks for a past date.
+  const today = todayIn()
+  const [raw, setRaw] = useState(today)
+  const date = clampDate(raw, today)
   return (
     <>
       <Gallery images={venue.images} name={venue.name} venue={venue} />
@@ -95,7 +99,20 @@ function VenueDetail({ venue }) {
       )}
       <section className="pub-courts">
         <h2>Sân con</h2>
-        {venue.courts.length === 0 ? <p className="ui-muted">Chưa có sân con đang hoạt động</p> : venue.courts.map((c) => <Court key={c.id} court={c} />)}
+        {venue.courts.length === 0 ? (
+          <p className="ui-muted">Chưa có sân con đang hoạt động</p>
+        ) : (
+          <>
+            <label className="ui-field pub-date">
+              <span>Ngày đặt sân</span>
+              {/* No clamping in onChange: Chrome fires it while each date segment is still being typed. */}
+              <input type="date" min={today} max={addDays(today, 30)} value={raw} onChange={(e) => setRaw(e.target.value)} onBlur={() => setRaw(date)} />
+            </label>
+            {venue.courts.map((c) => (
+              <Court key={c.id} court={c} date={date} />
+            ))}
+          </>
+        )}
       </section>
       <VenueReviews venueId={venue.id} />
     </>
