@@ -5,7 +5,7 @@ import '../public/public.css'
 import { useApi } from '../../hooks/useApi'
 import { searchVenues } from '../../utils/api'
 import { formatVnd } from '../../utils/format'
-import { searchHref } from '../../utils/publicRules'
+import { searchHref, venueCover } from '../../utils/publicRules'
 import { stats, testimonials } from '../../data/content'
 
 const SPORT_ROWS = [
@@ -211,7 +211,7 @@ export function VenuesSection() {
             {featured.data?.items.map((v, i) => (
               <Link key={v.id} className="court" to={`/san/${v.id}`}>
                 <figure>
-                  {v.coverImageUrl ? <img src={v.coverImageUrl} alt={v.name} loading="lazy" /> : <div className="pub-noimg" />}
+                  <img src={venueCover(v)} alt={v.name} loading="lazy" />
                   <figcaption className={i % 2 ? 'cap-blue' : 'cap-clay'}>
                     <b>{v.name}</b>
                     <span>
