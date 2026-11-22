@@ -350,9 +350,6 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
                 <li>
                   <Link to="/#owners">Cổng chủ sân</Link>
                 </li>
-                <li>
-                  <Link to="/#contact">Ứng dụng di động</Link>
-                </li>
               </ul>
             </nav>
             <nav className="fnav">
@@ -365,9 +362,6 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
                   <Link to="/#owners">Hợp tác cùng SportHub</Link>
                 </li>
                 <li>
-                  <Link to="/#contact">Tuyển dụng</Link>
-                </li>
-                <li>
                   <Link to="/#contact">Liên hệ</Link>
                 </li>
               </ul>
@@ -375,16 +369,6 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
           </div>
           <div className="foot-bottom">
             <span>© 2026 SportHub. Bảo lưu mọi quyền.</span>
-            <nav>
-              <a href="#instagram">Instagram</a>
-              <a href="#x">X</a>
-              <a href="#youtube">YouTube</a>
-              <a href="#linkedin">LinkedIn</a>
-            </nav>
-            <nav>
-              <a href="#privacy">Quyền riêng tư</a>
-              <a href="#terms">Điều khoản</a>
-            </nav>
           </div>
         </footer>
       </main>
@@ -470,12 +454,6 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
               </Link>
-              <nav className="menu-social">
-                <a href="#instagram">Instagram</a>
-                <a href="#x">X</a>
-                <a href="#youtube">YouTube</a>
-                <a href="#linkedin">LinkedIn</a>
-              </nav>
             </div>
           </div>
         </div>

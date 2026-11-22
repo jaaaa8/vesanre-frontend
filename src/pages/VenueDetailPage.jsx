@@ -3,16 +3,17 @@ import { Link, useParams } from 'react-router-dom'
 import AsyncView from '../components/common/AsyncView'
 import EmptyState from '../components/common/EmptyState'
 import CourtSlots from '../components/public/CourtSlots'
+import VenueReviews from '../components/public/VenueReviews'
 import PublicTopbar from '../components/public/PublicTopbar'
 import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
 import { getPublicVenue } from '../utils/api'
 import { formatVnd, WEEKDAYS } from '../utils/format'
-import { mapsUrl } from '../utils/publicRules'
+import { addDays, clampDate, formatRating, mapsUrl, todayIn, venueCover } from '../utils/publicRules'
 
-function Gallery({ images, name }) {
+function Gallery({ images, name, venue }) {
   const [selected, setSelected] = useState(0)
-  if (images.length === 0) return <div className="pub-noimg pub-hero">Chưa có ảnh</div>
+  if (images.length === 0) return <img className="pub-hero" src={venueCover(venue)} alt={name} />
   const current = images[Math.min(selected, images.length - 1)]
   return (
     <div className="pub-gallery">
@@ -33,7 +34,7 @@ function Gallery({ images, name }) {
 const hoursText = (h) => (h.closed ? 'Nghỉ' : `${h.opensAt.slice(0, 5)}–${h.closesAt.slice(0, 5)}`)
 const amenityText = (a) => (a.details ? `${a.name} (${a.details})` : a.name)
 
-function Court({ court }) {
+function Court({ court, date }) {
   const sports = [...court.sports].sort((a, b) => b.primary - a.primary)
   const hours = [...court.operatingHours].sort((a, b) => a.weekday - b.weekday)
   return (
@@ -55,18 +56,23 @@ function Court({ court }) {
           ))}
         </ul>
       )}
-      <CourtSlots court={court} />
+      <CourtSlots court={court} date={date} />
     </article>
   )
 }
 
 function VenueDetail({ venue }) {
   const map = mapsUrl(venue.latitude, venue.longitude)
+  // Recomputed each render so a page left open past midnight never asks for a past date.
+  const today = todayIn()
+  const [raw, setRaw] = useState(today)
+  const date = clampDate(raw, today)
   return (
     <>
-      <Gallery images={venue.images} name={venue.name} />
+      <Gallery images={venue.images} name={venue.name} venue={venue} />
       <section className="pub-info">
         <h1>{venue.name}</h1>
+        <p className="pub-rating">{formatRating(venue.ratingAverage, venue.ratingCount)}</p>
         <p>{[venue.addressLine, venue.ward, venue.district, venue.city].filter(Boolean).join(', ')}</p>
         {venue.phone && <a href={`tel:${venue.phone}`}>{venue.phone}</a>}
         {venue.fromPrice != null && <p className="pub-price">Từ {formatVnd(venue.fromPrice)}/giờ</p>}
@@ -93,8 +99,22 @@ function VenueDetail({ venue }) {
       )}
       <section className="pub-courts">
         <h2>Sân con</h2>
-        {venue.courts.length === 0 ? <p className="ui-muted">Chưa có sân con đang hoạt động</p> : venue.courts.map((c) => <Court key={c.id} court={c} />)}
+        {venue.courts.length === 0 ? (
+          <p className="ui-muted">Chưa có sân con đang hoạt động</p>
+        ) : (
+          <>
+            <label className="ui-field pub-date">
+              <span>Ngày đặt sân</span>
+              {/* No clamping in onChange: Chrome fires it while each date segment is still being typed. */}
+              <input type="date" min={today} max={addDays(today, 30)} value={raw} onChange={(e) => setRaw(e.target.value)} onBlur={() => setRaw(date)} />
+            </label>
+            {venue.courts.map((c) => (
+              <Court key={c.id} court={c} date={date} />
+            ))}
+          </>
+        )}
       </section>
+      <VenueReviews venueId={venue.id} />
     </>
   )
 }

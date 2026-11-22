@@ -5,20 +5,16 @@ import { useApi } from '../../hooks/useApi'
 import { createBooking, getCourtAvailability, getWallet } from '../../utils/api'
 import { getSession, hasRole } from '../../utils/auth'
 import { DEPOSIT_PERCENT, rangeInfo, selectRange } from '../../utils/bookingRules'
-import { formatVnd } from '../../utils/format'
-import { addDays, clampDate, slotErrorText, todayIn } from '../../utils/publicRules'
+import { formatDayDate, formatVnd } from '../../utils/format'
+import { slotErrorText } from '../../utils/publicRules'
 import AsyncView from '../common/AsyncView'
 import ConfirmDialog from '../common/ConfirmDialog'
 
 const topUpLink = <Link to="/tai-khoan#wallet">Nạp coin</Link>
 const hhmm = (t) => t.slice(0, 5)
 
-export default function CourtSlots({ court }) {
+export default function CourtSlots({ court, date }) {
   const { id: venueId } = useParams()
-  // Recomputed each render so a page left open past midnight never asks for a past date.
-  const today = todayIn()
-  const [raw, setRaw] = useState(today)
-  const date = clampDate(raw, today)
   const availability = useApi(() => getCourtAvailability(court.id, date), [court.id, date])
   const data = availability.data
   const deadEnd = slotErrorText(availability.error?.status)
@@ -61,7 +57,7 @@ export default function CourtSlots({ court }) {
       toast.error(
         <span>
           {e.message}
-          {e.message === 'Insufficient coins' && <> · {topUpLink}</>}
+          {e.detail === 'Insufficient coins' && <> · {topUpLink}</>}
         </span>,
       )
     } finally {
@@ -76,11 +72,6 @@ export default function CourtSlots({ court }) {
 
   return (
     <div className="pub-slots">
-      <label className="ui-field pub-date">
-        <span>Ngày</span>
-        {/* No clamping in onChange: Chrome fires it while each date segment is still being typed. */}
-        <input type="date" min={today} max={addDays(today, 30)} value={raw} onChange={(e) => setRaw(e.target.value)} onBlur={() => setRaw(date)} />
-      </label>
       {deadEnd ? (
         <p className="ui-muted" role="alert">{deadEnd}</p>
       ) : (
@@ -116,32 +107,34 @@ export default function CourtSlots({ court }) {
           </div>
         </AsyncView>
       )}
-      {info && (
-        <div className="pub-summary" aria-live="polite">
-          <span>
-            Đã chọn {hhmm(info.startTime)}–{hhmm(info.endTime)} · {info.minutes} phút
-          </span>
-          {info.error ? (
-            <span className="err">{info.error}</span>
-          ) : (
+      <div className="pub-bar">
+        {info && (
+          <div className="pub-summary" aria-live="polite">
             <span>
-              Tổng {formatVnd(info.subtotal)} · Cọc ước tính {info.depositCoins} coin ({DEPOSIT_PERCENT}%), trả phần còn lại tại sân
+              Đã chọn {hhmm(info.startTime)}–{hhmm(info.endTime)} · {info.minutes} phút
             </span>
+            {info.error ? (
+              <span className="err">{info.error}</span>
+            ) : (
+              <span>
+                Tổng {formatVnd(info.subtotal)} · Cọc ước tính {info.depositCoins} coin ({DEPOSIT_PERCENT}%), trả phần còn lại tại sân
+              </span>
+            )}
+          </div>
+        )}
+        <div className="pub-book">
+          {loggedIn && !canBook ? (
+            <span className="ui-muted">Tài khoản này không đặt sân được, hãy dùng tài khoản khách hàng.</span>
+          ) : loggedIn ? (
+            <button type="button" className="ui-btn primary" disabled={!info || !!info.error || busy} onClick={openConfirm}>
+              Đặt sân
+            </button>
+          ) : (
+            <Link className="ui-btn primary" to={`/dang-nhap?next=/san/${venueId}`}>
+              Đăng nhập để đặt
+            </Link>
           )}
         </div>
-      )}
-      <div className="pub-book">
-        {loggedIn && !canBook ? (
-          <span className="ui-muted">Tài khoản này không đặt sân được, hãy dùng tài khoản khách hàng.</span>
-        ) : loggedIn ? (
-          <button type="button" className="ui-btn primary" disabled={!info || !!info.error || busy} onClick={openConfirm}>
-            Đặt sân
-          </button>
-        ) : (
-          <Link className="ui-btn primary" to={`/dang-nhap?next=/san/${venueId}`}>
-            Đăng nhập để đặt
-          </Link>
-        )}
       </div>
       <ConfirmDialog
         open={!!confirm}
@@ -155,7 +148,7 @@ export default function CourtSlots({ court }) {
           confirm && (
             <>
               <p>
-                {court.name} · {date} · {hhmm(confirm.info.startTime)}–{hhmm(confirm.info.endTime)}
+                {court.name} · {formatDayDate(date)} · {hhmm(confirm.info.startTime)}–{hhmm(confirm.info.endTime)}
               </p>
               <p>
                 Tổng {formatVnd(confirm.info.subtotal)} · Cọc ước tính {confirm.info.depositCoins} coin

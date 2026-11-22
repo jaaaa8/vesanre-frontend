@@ -64,7 +64,6 @@ export default function Footer() {
             <li><a href="#venues">Tìm sân</a></li>
             <li><a href="#sports">Bảng giá</a></li>
             <li><a href="#owners">Cổng chủ sân</a></li>
-            <li><a href="#contact">Ứng dụng di động</a></li>
           </ul>
         </nav>
         <nav className="fnav" aria-label="Công ty">
@@ -72,19 +71,12 @@ export default function Footer() {
           <ul>
             <li><a href="#trust">Về chúng tôi</a></li>
             <li><a href="#owners">Hợp tác cùng SportHub</a></li>
-            <li><a href="#contact">Tuyển dụng</a></li>
             <li><a href="#contact">Liên hệ</a></li>
           </ul>
         </nav>
       </div>
       <div className="foot-bottom">
         <span>© 2026 SportHub. Bảo lưu mọi quyền.</span>
-        <nav>
-          <a href="#instagram">Instagram</a>
-          <a href="#x">X</a>
-          <a href="#youtube">YouTube</a>
-          <a href="#linkedin">LinkedIn</a>
-        </nav>
         <nav>
           <Link to="/login">Đăng nhập</Link>
           <Link to="/register">Đăng ký</Link>

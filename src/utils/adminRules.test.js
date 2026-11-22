@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { changeRows, fallbackPage, parseDocuments, readListParams, needsRewrite } from './adminRules.js'
+import { AUDIT_ACTION_LABELS, auditActionLabel, canReactivate, canSuspend, changeRows, fallbackPage, isMonth, parseDocuments, patchParams, readListParams, needsRewrite } from './adminRules.js'
 
 const S = ['PENDING', 'VERIFIED']
 const read = (qs, statuses = S, extra) => readListParams(new URLSearchParams(qs), statuses, extra)
@@ -54,4 +54,42 @@ test('needsRewrite: true only when a present param differs from its normalized v
   assert.equal(check('status=FOO'), true)
   assert.equal(check('page=abc'), true)
   assert.equal(check('targetType=X'), true)
+})
+
+test('readListParams giữ tab ALL không đứng đầu, thiếu status thì về mặc định', () => {
+  const W = ['PENDING', 'PAID', 'REJECTED', 'ALL']
+  assert.equal(read('status=ALL', W).status, 'ALL')
+  assert.equal(read('', W).status, 'PENDING')
+})
+
+test('isMonth chỉ nhận YYYY-MM hợp lệ', () => {
+  assert.equal(isMonth('2026-11'), true)
+  for (const bad of ['2026-13', '2026-00', 'abc', '']) assert.equal(isMonth(bad), false)
+})
+
+test('readListParams đọc tham số phụ kiểu test', () => {
+  const extra = [{ key: 'q', test: (v) => v.length <= 100 }]
+  assert.equal(read('q=%20an%20', ['ALL'], extra).q, 'an')
+  assert.equal(read('', ['ALL'], extra).q, '')
+})
+
+test('patchParams đưa page về 0 khi đổi bộ lọc', () => {
+  assert.equal(patchParams({ status: 'ALL', page: 3, q: '' }, { q: 'an' }).page, 0)
+  assert.equal(patchParams({ status: 'ALL', page: 3 }, { page: 4 }).page, 4)
+  assert.equal(patchParams({ status: 'PENDING', page: 2, targetType: '' }, { targetType: 'SHOP' }).page, 0)
+})
+
+test('canSuspend và canReactivate', () => {
+  assert.equal(canSuspend({ status: 'ACTIVE', roles: ['CUSTOMER'] }), true)
+  assert.equal(canSuspend({ status: 'ACTIVE', roles: ['CUSTOMER', 'ADMIN'] }), false)
+  assert.equal(canSuspend({ status: 'SUSPENDED', roles: ['CUSTOMER'] }), false)
+  assert.equal(canReactivate({ status: 'SUSPENDED' }), true)
+  assert.equal(canReactivate({ status: 'ACTIVE' }), false)
+  assert.equal(canReactivate({ status: 'DEACTIVATED' }), false)
+})
+
+test('nhãn action audit đủ 14 và action lạ hiện mã gốc', () => {
+  assert.equal(Object.keys(AUDIT_ACTION_LABELS).length, 14)
+  assert.equal(auditActionLabel('WITHDRAWAL_PAID'), 'Đã chuyển tiền rút')
+  assert.equal(auditActionLabel('FOO'), 'FOO')
 })

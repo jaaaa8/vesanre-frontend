@@ -34,3 +34,15 @@ export function formatTimeIn(iso, timeZone) {
 }
 
 export const formatCoins = (n) => `${vnd.format(Number(n)).replace(/\s/g, '.')} coin`
+
+export const formatStars = (rating) => '★'.repeat(rating) + '☆'.repeat(5 - rating)
+
+export const formatDecimal1 = (n) => Number(n).toFixed(1).replace('.', ',').replace('-', '−')
+
+const SHORT_WEEKDAYS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+
+// 'YYYY-MM-DD' (a calendar date, no time zone) → 'T7, 22/11/2026'.
+export function formatDayDate(iso) {
+  const [y, m, d] = iso.split('-').map(Number)
+  return `${SHORT_WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]}, ${pad(d)}/${pad(m)}/${y}`
+}

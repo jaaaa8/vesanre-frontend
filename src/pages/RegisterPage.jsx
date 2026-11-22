@@ -59,7 +59,7 @@ export default function RegisterPage({ onRegister }) {
   return (
     <main className="auth-page">
       <div className="auth-bg" aria-hidden="true">
-        <img src={BG_URL} alt="" fetchpriority="high" />
+        <img src={BG_URL} alt="" fetchPriority="high" />
         <div className="auth-shade" />
       </div>
       <Link className="backFab" to="/">

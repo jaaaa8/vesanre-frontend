@@ -6,15 +6,17 @@
 .ui-btn:disabled{opacity:.5;cursor:not-allowed}
 .ui-btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
 .ui-btn.primary:hover:not(:disabled){background:var(--brand-deep)}
-.ui-btn.danger{color:#b42318;border-color:#f3c2b3}
+.ui-btn.danger{color:var(--danger);border-color:#f3c2b3}
 .ui-btn.ghost{background:transparent}
 .ui-badge{display:inline-block;padding:.15rem .6rem;border-radius:var(--radius-pill);font-size:.75rem;background:var(--surface);color:var(--ink-soft);white-space:nowrap}
-.ui-badge.is-active,.ui-badge.is-verified,.ui-badge.is-approved{background:#e6f6ec;color:#146c2e}
+.ui-badge.is-active,.ui-badge.is-verified,.ui-badge.is-approved{background:var(--success-soft);color:var(--success)}
 .ui-badge.is-pending_review,.ui-badge.is-pending{background:#fff4dc;color:#8a5a00}
-.ui-badge.is-rejected{background:#fde8e4;color:#b42318}
+.ui-badge.is-rejected{background:var(--danger-soft);color:var(--danger)}
 .ui-badge.is-suspended{background:#ece9f8;color:#4b3a9a}
 .ui-badge.is-inactive,.ui-badge.is-cancelled{background:var(--surface);color:var(--ink-soft)}
 .ui-badge.is-draft{background:var(--blue-soft);color:var(--brand-deep)}
+.ui-badge.is-paid,.ui-badge.is-published{background:var(--success-soft);color:var(--success)}
+.ui-badge.is-hidden{background:var(--surface);color:var(--ink-soft)}
 .ui-dialog{margin:auto;border:none;border-radius:var(--radius-card);padding:1.5rem;width:min(30rem,calc(100vw - 2rem));box-shadow:0 20px 60px rgba(0,0,0,.2)}
 .ui-dialog::backdrop{background:rgba(10,10,10,.45)}
 .ui-dialog form{display:grid;gap:1rem}

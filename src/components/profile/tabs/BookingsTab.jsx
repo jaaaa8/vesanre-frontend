@@ -7,6 +7,7 @@ import { BOOKING_FILTERS } from '../../../utils/bookingRules'
 import StatusTabs from '../../admin/StatusTabs'
 import BookingCard from '../../booking/BookingCard'
 import BookingDetailView from '../../booking/BookingDetailView'
+import ReviewBlock from '../../booking/ReviewBlock'
 import AsyncView from '../../common/AsyncView'
 import ConfirmDialog from '../../common/ConfirmDialog'
 import EmptyState from '../../common/EmptyState'
@@ -78,6 +79,7 @@ export default function BookingsTab({ active, onToast, openBookingId, onOpenHand
             ← Quay lại
           </button>
           <BookingDetailView booking={detail} onCancel={() => setCancelOpen(true)} />
+          <ReviewBlock key={detail.id} booking={detail} onSubmitted={() => open(detail.id)} onToast={onToast} />
           <ConfirmDialog
             open={cancelOpen}
             title={`Hủy ${detail.bookingCode}?`}

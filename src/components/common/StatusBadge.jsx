@@ -9,6 +9,9 @@ const LABELS = {
   VERIFIED: 'Đã duyệt',
   APPROVED: 'Đã duyệt',
   CANCELLED: 'Đã hủy',
+  PAID: 'Đã chuyển',
+  HIDDEN: 'Đã ẩn',
+  PUBLISHED: 'Đang hiện',
 }
 
 export default function StatusBadge({ status }) {

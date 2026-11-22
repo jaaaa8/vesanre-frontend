@@ -4,10 +4,25 @@ import { toQuery } from './query'
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 export class ApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, detail = message) {
     super(message)
     this.status = status
+    // Raw backend text, kept for comparisons so the shown message can be translated freely.
+    this.detail = detail
   }
+}
+
+// Backend messages a customer meets while booking; anything else is shown as sent.
+const VI_MESSAGES = {
+  'Insufficient coins': 'Số dư coin không đủ',
+  'Slot is no longer available': 'Khung giờ này vừa có người đặt, hãy chọn giờ khác',
+  'Requested time is not bookable': 'Khung giờ đã chọn không đặt được',
+  'Booking duration is out of range': 'Thời lượng đặt không hợp lệ',
+  'date must be within the next 30 days': 'Chỉ đặt được trong 30 ngày tới',
+  'Court not found': 'Sân không còn hoạt động',
+  'Booking not found': 'Không tìm thấy lượt đặt',
+  'Booking already started': 'Lượt đặt đã bắt đầu, không thể huỷ',
+  'Deposit is too small': 'Tiền cọc quá nhỏ',
 }
 
 // auth: false skips the bearer token: an expired token on a permitAll endpoint still gets 401 from the resource server.
@@ -26,7 +41,8 @@ async function request(path, options = {}) {
   if (response.status === 401 && session) expireSession()
   if (!response.ok) {
     const body = await response.json().catch(() => null)
-    throw new ApiError(body?.detail || body?.message || (response.status === 401 ? 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.' : null) || 'Không thể xử lý yêu cầu. Vui lòng thử lại.', response.status)
+    const detail = body?.detail || body?.message || (response.status === 401 ? 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.' : null) || 'Không thể xử lý yêu cầu. Vui lòng thử lại.'
+    throw new ApiError(VI_MESSAGES[detail] ?? detail, response.status, detail)
   }
   return response.status === 204 ? null : response.json()
 }
@@ -123,6 +139,24 @@ export const listChangeRequests = (q) => request(`/api/admin/change-requests${to
 export const approveChangeRequest = (id) => post(`/api/admin/change-requests/${id}/approve`)
 export const rejectChangeRequest = (id, reason) => post(`/api/admin/change-requests/${id}/reject`, { reason })
 
+// Admin: Sprint 4
+export const listAdminUsers = (q) => request(`/api/admin/users${toQuery(q)}`)
+export const suspendUser = (id, reason) => post(`/api/admin/users/${id}/suspend`, { reason })
+export const reactivateUser = (id) => post(`/api/admin/users/${id}/reactivate`)
+
+export const listAuditLogs = (q) => request(`/api/admin/audit-logs${toQuery(q)}`)
+
+export const listAdminReviews = (q) => request(`/api/admin/reviews${toQuery(q)}`)
+export const hideReview = (id, reason) => post(`/api/admin/reviews/${id}/hide`, { reason })
+export const unhideReview = (id) => post(`/api/admin/reviews/${id}/unhide`)
+
+export const listAdminWithdrawals = (q) => request(`/api/admin/withdrawals${toQuery(q)}`)
+export const markWithdrawalPaid = (id, bankTransactionRef) => post(`/api/admin/withdrawals/${id}/mark-paid`, { bankTransactionRef })
+export const rejectWithdrawal = (id, reason) => post(`/api/admin/withdrawals/${id}/reject`, { reason })
+
+export const getTopShops = (q) => request(`/api/admin/reports/top-shops${toQuery(q)}`)
+export const getFinanceReport = (q) => request(`/api/admin/reports/finance${toQuery(q)}`)
+
 // Wallet
 export const getWallet = () => request('/api/wallet')
 export const getWalletEntries = (q) => request(`/api/wallet/entries${toQuery(q)}`)
@@ -144,3 +178,14 @@ export const listProviderBookings = (q) => request(`/api/provider/bookings${toQu
 export const getProviderBooking = (id) => request(`/api/provider/bookings/${id}`)
 export const cancelProviderBooking = (id, reason) => post(`/api/provider/bookings/${id}/cancel`, { reason })
 export const getShopWallet = () => request('/api/provider/wallet')
+
+// Provider: Sprint 4
+export const createWithdrawal = (body) => post('/api/provider/withdrawals', body)
+export const listShopWithdrawals = (q) => request(`/api/provider/withdrawals${toQuery(q)}`)
+export const listProviderReviews = (q) => request(`/api/provider/reviews${toQuery(q)}`)
+export const replyReview = (id, reply) => post(`/api/provider/reviews/${id}/reply`, { reply })
+export const getMonthlyBookings = (months) => request(`/api/provider/reports/monthly-bookings${toQuery({ months })}`)
+
+// Reviews
+export const createReview = (bookingId, body) => post(`/api/bookings/${bookingId}/review`, body)
+export const listVenueReviews = (venueId, q) => request(`/api/catalog/venues/${venueId}/reviews${toQuery(q)}`, PUBLIC)

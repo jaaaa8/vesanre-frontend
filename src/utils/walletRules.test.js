@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { coinsToVnd, ENTRY_LABELS, isFinal, secondsLeft, topUpError } from './walletRules.js'
+import { coinsToVnd, ENTRY_LABELS, isFinal, secondsLeft, topUpError, withdrawalError, withdrawalFee, withdrawalPayoutVnd } from './walletRules.js'
 
 test('isFinal chỉ PAID', () => {
   assert.equal(isFinal('PAID'), true)
@@ -23,4 +23,19 @@ test('secondsLeft không âm', () => {
   const now = Date.parse('2026-11-21T10:00:00Z')
   assert.equal(secondsLeft('2026-11-21T09:59:00Z', now), 0)
   assert.equal(secondsLeft('2026-11-21T10:01:30Z', now), 90)
+})
+
+test('withdrawalFee và withdrawalPayoutVnd', () => {
+  assert.equal(withdrawalFee(100), 25)
+  assert.equal(withdrawalPayoutVnd(100), 75000)
+  assert.equal(withdrawalFee(1000), 70)
+  assert.equal(withdrawalPayoutVnd(1000), 930000)
+  assert.equal(withdrawalFee(101), 26)
+})
+
+test('withdrawalError', () => {
+  for (const v of ['1e3', ' 100', '100.0', '', '99']) assert.ok(withdrawalError(v, 5000), v)
+  assert.equal(withdrawalError('1101', 1100), 'Vượt quá số dư')
+  assert.equal(withdrawalError('1100', 1100), null)
+  assert.equal(withdrawalError('100', 100), null)
 })

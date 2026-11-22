@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { ShieldCheck, SignOut, SquaresFour, User } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getSession, hasRole } from '../utils/auth'
@@ -38,9 +39,12 @@ export default function Header({ user, onLogout }) {
   const name = displayNameOf(user)
   const isProvider = Boolean(user) && hasRole(getSession(), 'PROVIDER')
   const isAdmin = Boolean(user) && hasRole(getSession(), 'ADMIN')
+  const burgerRef = useRef(null)
+  const closeRef = useRef(null)
+  const wasMenuOpen = useRef(false)
 
   useEffect(() => {
-    if (!profileOpen) return
+    if (!profileOpen && !menuOpen) return
     const close = (e) => {
       if (!e.target.closest?.('.profile')) setProfileOpen(false)
     }
@@ -56,10 +60,14 @@ export default function Header({ user, onLogout }) {
       document.removeEventListener('click', close)
       document.removeEventListener('keydown', onKey)
     }
-  }, [profileOpen])
+  }, [profileOpen, menuOpen])
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
+    // Move focus into the overlay on open and back to the burger on close.
+    if (menuOpen) closeRef.current?.focus()
+    else if (wasMenuOpen.current) burgerRef.current?.focus()
+    wasMenuOpen.current = menuOpen
     return () => {
       document.body.style.overflow = ''
     }
@@ -102,7 +110,6 @@ export default function Header({ user, onLogout }) {
               <button
                 type="button"
                 className="capsule"
-                aria-haspopup="true"
                 aria-expanded={profileOpen}
                 onClick={() => setProfileOpen((v) => !v)}
               >
@@ -112,22 +119,22 @@ export default function Header({ user, onLogout }) {
                   <path d="M6 9l6 6 6-6" />
                 </svg>
               </button>
-              <span className="dropdown" role="menu">
+              <span className="dropdown" inert={!profileOpen}>
                 <Link to="/profile" onClick={() => setProfileOpen(false)}>
-                  ○ Thông tin cá nhân
+                  <User size={16} aria-hidden="true" /> Thông tin cá nhân
                 </Link>
                 {isProvider && (
                   <Link to="/provider" onClick={() => setProfileOpen(false)}>
-                    ▦ Quản lý sân
+                    <SquaresFour size={16} aria-hidden="true" /> Quản lý sân
                   </Link>
                 )}
                 {isAdmin && (
                   <Link to="/admin" onClick={() => setProfileOpen(false)}>
-                    ◆ Quản trị
+                    <ShieldCheck size={16} aria-hidden="true" /> Quản trị
                   </Link>
                 )}
                 <button type="button" className="danger" onClick={logout}>
-                  ↩ Đăng xuất
+                  <SignOut size={16} aria-hidden="true" /> Đăng xuất
                 </button>
               </span>
             </span>
@@ -141,7 +148,7 @@ export default function Header({ user, onLogout }) {
               </Link>
             </span>
           )}
-          <button type="button" className="burger" onClick={() => setMenuOpen(true)} aria-label="Mở menu">
+          <button type="button" className="burger" ref={burgerRef} onClick={() => setMenuOpen(true)} aria-label="Mở menu" aria-expanded={menuOpen}>
             <span>
               <i />
               <i />
@@ -150,7 +157,7 @@ export default function Header({ user, onLogout }) {
         </div>
       </header>
 
-      <div id="menuWrap" className={menuOpen ? 'open' : ''} aria-hidden={!menuOpen}>
+      <div id="menuWrap" className={menuOpen ? 'open' : ''} inert={!menuOpen} role="dialog" aria-modal="true" aria-label="Menu">
         <div className="menu-bg" onClick={() => setMenuOpen(false)} />
         <div className="menu-panel">
           <div className="menu-inner">
@@ -163,7 +170,7 @@ export default function Header({ user, onLogout }) {
                 </svg>
                 <span>SportHub</span>
               </div>
-              <button type="button" className="menu-x" onClick={() => setMenuOpen(false)} aria-label="Đóng menu">
+              <button type="button" className="menu-x" ref={closeRef} onClick={() => setMenuOpen(false)} aria-label="Đóng menu">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round">
                   <path d="M6 6l12 12M18 6L6 18" />
                 </svg>
@@ -224,12 +231,6 @@ export default function Header({ user, onLogout }) {
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
               </button>
-              <nav className="menu-social">
-                <a href="#instagram">Instagram</a>
-                <a href="#x">X</a>
-                <a href="#youtube">YouTube</a>
-                <a href="#linkedin">LinkedIn</a>
-              </nav>
             </div>
           </div>
         </div>

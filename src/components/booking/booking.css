@@ -12,6 +12,12 @@
 .bk-prices td,.bk-prices th{padding:.35rem 0;border-bottom:1px solid var(--hairline);text-align:left;font-weight:400}
 .bk-prices th{font-weight:500}
 .bk-prices td:last-child,.bk-prices th:last-child{text-align:right}
-.ui-badge.is-confirmed{background:#e6f6ec;color:#146c2e}
+.ui-badge.is-confirmed{background:var(--success-soft);color:var(--success)}
 .ui-badge.is-completed{background:var(--blue-soft);color:var(--brand-deep)}
 @media (max-width:640px){.bk-dl{grid-template-columns:1fr}}
+.bk-review{display:grid;gap:.75rem;overflow-wrap:anywhere;margin-top:1rem;padding:1rem;border:1px solid var(--hairline);border-radius:var(--radius-card,1rem)}
+.bk-review h4{font-weight:500}
+.bk-stars{display:flex;gap:.25rem}
+.bk-stars button{font-size:1.5rem;line-height:1;color:#f5a524;background:none;border:none;cursor:pointer;padding:.1rem}
+.bk-count{color:var(--ink-soft);font-size:.75rem}
+.bk-reply{background:var(--surface);border-radius:.75rem;padding:.75rem}
