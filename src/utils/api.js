@@ -4,10 +4,25 @@ import { toQuery } from './query'
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 export class ApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, detail = message) {
     super(message)
     this.status = status
+    // Raw backend text, kept for comparisons so the shown message can be translated freely.
+    this.detail = detail
   }
+}
+
+// Backend messages a customer meets while booking; anything else is shown as sent.
+const VI_MESSAGES = {
+  'Insufficient coins': 'Số dư coin không đủ',
+  'Slot is no longer available': 'Khung giờ này vừa có người đặt, hãy chọn giờ khác',
+  'Requested time is not bookable': 'Khung giờ đã chọn không đặt được',
+  'Booking duration is out of range': 'Thời lượng đặt không hợp lệ',
+  'date must be within the next 30 days': 'Chỉ đặt được trong 30 ngày tới',
+  'Court not found': 'Sân không còn hoạt động',
+  'Booking not found': 'Không tìm thấy lượt đặt',
+  'Booking already started': 'Lượt đặt đã bắt đầu, không thể huỷ',
+  'Deposit is too small': 'Tiền cọc quá nhỏ',
 }
 
 // auth: false skips the bearer token: an expired token on a permitAll endpoint still gets 401 from the resource server.
@@ -26,7 +41,8 @@ async function request(path, options = {}) {
   if (response.status === 401 && session) expireSession()
   if (!response.ok) {
     const body = await response.json().catch(() => null)
-    throw new ApiError(body?.detail || body?.message || (response.status === 401 ? 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.' : null) || 'Không thể xử lý yêu cầu. Vui lòng thử lại.', response.status)
+    const detail = body?.detail || body?.message || (response.status === 401 ? 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.' : null) || 'Không thể xử lý yêu cầu. Vui lòng thử lại.'
+    throw new ApiError(VI_MESSAGES[detail] ?? detail, response.status, detail)
   }
   return response.status === 204 ? null : response.json()
 }

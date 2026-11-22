@@ -61,7 +61,7 @@ export default function CourtSlots({ court }) {
       toast.error(
         <span>
           {e.message}
-          {e.message === 'Insufficient coins' && <> · {topUpLink}</>}
+          {e.detail === 'Insufficient coins' && <> · {topUpLink}</>}
         </span>,
       )
     } finally {
