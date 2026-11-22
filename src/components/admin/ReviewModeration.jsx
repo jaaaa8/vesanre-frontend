@@ -66,7 +66,7 @@ export default function ReviewModeration({ onLogout }) {
                     <td>
                       <span aria-label={`${review.rating} sao`}>{formatStars(review.rating)}</span>
                     </td>
-                    <td>
+                    <td className="pv-comment">
                       {review.comment || '—'}
                       {review.providerReply && <div className="pv-muted">Chủ sân trả lời: {review.providerReply}</div>}
                     </td>

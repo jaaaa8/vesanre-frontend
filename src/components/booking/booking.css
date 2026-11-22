@@ -15,7 +15,7 @@
 .ui-badge.is-confirmed{background:var(--success-soft);color:var(--success)}
 .ui-badge.is-completed{background:var(--blue-soft);color:var(--brand-deep)}
 @media (max-width:640px){.bk-dl{grid-template-columns:1fr}}
-.bk-review{display:grid;gap:.75rem;margin-top:1rem;padding:1rem;border:1px solid var(--hairline);border-radius:var(--radius-card,1rem)}
+.bk-review{display:grid;gap:.75rem;overflow-wrap:anywhere;margin-top:1rem;padding:1rem;border:1px solid var(--hairline);border-radius:var(--radius-card,1rem)}
 .bk-review h4{font-weight:500}
 .bk-stars{display:flex;gap:.25rem}
 .bk-stars button{font-size:1.5rem;line-height:1;color:#f5a524;background:none;border:none;cursor:pointer;padding:.1rem}
