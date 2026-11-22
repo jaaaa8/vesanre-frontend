@@ -6,20 +6,17 @@ import ProfileSidebar from '../components/profile/ProfileSidebar'
 import ProviderApplication from '../components/profile/ProviderApplication'
 import BookingsTab from '../components/profile/tabs/BookingsTab'
 import NotificationsTab from '../components/profile/tabs/NotificationsTab'
-import PaymentsTab from '../components/profile/tabs/PaymentsTab'
 import ProfileInfoTab from '../components/profile/tabs/ProfileInfoTab'
 import SecurityTab from '../components/profile/tabs/SecurityTab'
+import WalletTab from '../components/wallet/WalletTab'
 import '../components/profile/Profile.css'
 import { useFluidRem } from '../hooks/useFluidRem'
 import { ApiError, getProfile, updateProfile } from '../utils/api'
 import { validPhone } from '../utils/auth'
 import {
-  BOOKINGS_KEY,
-  INITIAL_NOTIFS,
+  HASH_TABS,
   initialsOf,
   normalizeForm,
-  persistBookings,
-  readStoredBookings,
   readStoredUser,
   resolveInitialTab,
   saveStoredUser,
@@ -34,9 +31,7 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
   const [storedUser, setStoredUser] = useState(() => user || readStoredUser())
   const [form, setForm] = useState(() => normalizeForm(user || readStoredUser()))
   const [profileErr, setProfileErr] = useState('')
-  const [bookings, setBookings] = useState(readStoredBookings)
-  const [qrBooking, setQrBooking] = useState(null)
-  const [notifs, setNotifs] = useState(INITIAL_NOTIFS)
+  const [openBookingId, setOpenBookingId] = useState(null)
   const [toasts, setToasts] = useState([])
   const [profileOpen, setProfileOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -75,15 +70,6 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate])
 
-  /* ---------- Cross-tab bookings sync ---------- */
-  useEffect(() => {
-    const onStorage = (event) => {
-      if (!event.key || event.key === BOOKINGS_KEY) setBookings(readStoredBookings())
-    }
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
-  }, [])
-
   /* ---------- Best-effort backend profile sync ---------- */
   useEffect(() => {
     let cancelled = false
@@ -103,13 +89,12 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  /* ---------- Escape closes menu / dropdown / QR ---------- */
+  /* ---------- Escape closes menu / dropdown ---------- */
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape') {
         setProfileOpen(false)
         setMenuOpen(false)
-        setQrBooking(null)
       }
     }
     const onClick = (e) => {
@@ -144,7 +129,8 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
   const switchTab = (name) => {
     setActiveTab(name)
     try {
-      if (name === 'bookings') window.history.replaceState(null, '', '#bookings')
+      if (HASH_TABS.includes(name)) window.history.replaceState(null, '', `#${name}`)
+      else window.history.replaceState(null, '', window.location.pathname + window.location.search)
     } catch {
       /* ignore */
     }
@@ -222,28 +208,9 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
     setProfileErr('')
   }
 
-  const handleCancelBooking = (qr) => {
-    setBookings((current) => {
-      const next = current.filter((b) => b.qr !== qr && b.id !== qr)
-      persistBookings(next)
-      return next
-    })
-    setQrBooking((current) => (current && (current.qr === qr || current.id === qr) ? null : current))
-    pushToast('Đã hủy đặt sân thành công.')
-  }
-
-  const handleQr = (booking) => {
-    setQrBooking(booking)
-    pushToast(`Mã vé ${booking.qr} — xuất trình QR tại quầy check-in!`)
-  }
-
-  const toggleNotif = (id) => {
-    setNotifs((current) => {
-      const next = current.map((n) => (n.id === id ? { ...n, on: !n.on } : n))
-      const changed = next.find((n) => n.id === id)
-      pushToast(changed.on ? 'Đã bật thông báo!' : 'Đã tắt thông báo.')
-      return next
-    })
+  const openBookingFromNotification = (id) => {
+    setOpenBookingId(id)
+    switchTab('bookings')
   }
 
   return (
@@ -252,7 +219,6 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
         <ProfileHero
           displayName={displayName}
           initials={initialsOf(displayName)}
-          bookingCount={bookings.length}
           profileOpen={profileOpen}
           onToggleProfile={() => setProfileOpen((v) => !v)}
           onBookings={gotoBookings}
@@ -289,18 +255,16 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
               />
               <BookingsTab
                 active={activeTab === 'bookings'}
-                bookings={bookings}
-                qrBooking={qrBooking}
-                onQr={handleQr}
-                onCancel={handleCancelBooking}
-                onCloseQr={() => setQrBooking(null)}
+                onToast={pushToast}
+                openBookingId={openBookingId}
+                onOpenHandled={() => setOpenBookingId(null)}
               />
-              <PaymentsTab
-                active={activeTab === 'payments'}
-                onAddCard={() => pushToast('Liên kết thẻ mới — đang mở cổng thanh toán...')}
-                onSetDefault={() => pushToast('Đã đặt MoMo làm mặc định!')}
+              <WalletTab active={activeTab === 'wallet'} onToast={pushToast} />
+              <NotificationsTab
+                active={activeTab === 'notifications'}
+                onToast={pushToast}
+                onOpenBooking={openBookingFromNotification}
               />
-              <NotificationsTab active={activeTab === 'notifications'} notifs={notifs} onToggle={toggleNotif} />
               <SecurityTab active={activeTab === 'security'} onToast={pushToast} />
             </div>
           </div>

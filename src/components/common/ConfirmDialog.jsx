@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function ConfirmDialog({ open, title, message, requireReason, confirmText = 'Xác nhận', onConfirm, onCancel, busy }) {
+export default function ConfirmDialog({
+  open,
+  title,
+  message,
+  requireReason,
+  reasonOptional,
+  maxLength = 1000,
+  confirmText = 'Xác nhận',
+  onConfirm,
+  onCancel,
+  busy,
+  confirmDisabled,
+}) {
   const ref = useRef(null)
   const [reason, setReason] = useState('')
 
@@ -19,7 +31,7 @@ export default function ConfirmDialog({ open, title, message, requireReason, con
     event.preventDefault()
     const value = reason.trim()
     setReason('')
-    onConfirm(requireReason ? value : undefined)
+    onConfirm(requireReason || reasonOptional ? value : undefined)
   }
 
   return (
@@ -33,18 +45,18 @@ export default function ConfirmDialog({ open, title, message, requireReason, con
     >
       <form onSubmit={submit}>
         <h3>{title}</h3>
-        {message && <p>{message}</p>}
-        {requireReason && (
+        {message && <div>{message}</div>}
+        {(requireReason || reasonOptional) && (
           <label className="ui-field">
-            <span>Lý do</span>
-            <textarea required maxLength={1000} rows={4} value={reason} onChange={(e) => setReason(e.target.value)} />
+            <span>{requireReason ? 'Lý do' : 'Lý do (không bắt buộc)'}</span>
+            <textarea required={!!requireReason} maxLength={maxLength} rows={4} value={reason} onChange={(e) => setReason(e.target.value)} />
           </label>
         )}
         <div className="ui-actions">
           <button type="button" className="ui-btn ghost" onClick={cancel} disabled={busy}>
             Hủy
           </button>
-          <button type="submit" className="ui-btn primary" disabled={busy || (requireReason && !reason.trim())}>
+          <button type="submit" className="ui-btn primary" disabled={busy || confirmDisabled || (requireReason && !reason.trim())}>
             {busy ? 'Đang xử lý…' : confirmText}
           </button>
         </div>

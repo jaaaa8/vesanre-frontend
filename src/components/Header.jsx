@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getSession, hasRole } from '../utils/auth'
 import { scrollToSection } from '../utils/scroll'
+import NotificationBell from './common/NotificationBell'
 
 const links = [
   ['#venues', 'Sân & Địa điểm'],
@@ -95,6 +96,7 @@ export default function Header({ user, onLogout }) {
           <button type="button" className="book-visit-link" onClick={scrollToVenues}>
             Tìm sân
           </button>
+          {user && <NotificationBell />}
           {user ? (
             <span className={`profile${profileOpen ? ' open' : ''}`}>
               <button

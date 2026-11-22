@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import '../styles/Auth.css'
@@ -38,7 +38,9 @@ export default function RegisterPage({ onRegister }) {
     try {
       await register({ email, password, displayName: trimmedName })
       // Register returns only the profile; log in to obtain the access token.
-      onRegister?.(await login(email, password), true)
+      const session = await login(email, password)
+      // Same transition as the router's location update, so the /dang-ky route never renders a logged-in user and bounces to "/".
+      startTransition(() => onRegister?.(session, true))
       toast.success(`Chào mừng ${trimmedName} đến với SportHub!`)
       navigate(redirect, { replace: true })
     } catch (cause) {

@@ -15,3 +15,22 @@ export const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 
 
 export const formatDate = (iso) =>
   new Date(iso).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric' })
+
+const dateTimeParts = (iso, timeZone) =>
+  Object.fromEntries(
+    new Intl.DateTimeFormat('en-GB', { timeZone, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+      .formatToParts(new Date(iso))
+      .map((p) => [p.type, p.value]),
+  )
+
+export function formatDateTimeIn(iso, timeZone) {
+  const p = dateTimeParts(iso, timeZone)
+  return `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}`
+}
+
+export function formatTimeIn(iso, timeZone) {
+  const p = dateTimeParts(iso, timeZone)
+  return `${p.hour}:${p.minute}`
+}
+
+export const formatCoins = (n) => `${vnd.format(Number(n)).replace(/\s/g, '.')} coin`
