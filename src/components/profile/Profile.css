@@ -351,7 +351,7 @@
 .provider-cta{position:relative;overflow:hidden;border-radius:var(--radius-card);padding:1.25rem;color:#fff;background:linear-gradient(135deg,#0f2f63 0%,#1e4b8f 55%,#0f2f63 100%);border:1px solid rgba(255,77,18,.55);box-shadow:0 0 0 1px rgba(255,77,18,.25),0 1.5rem 3rem -1.25rem rgba(255,77,18,.55),0 1.5rem 3rem -1.25rem rgba(15,47,99,.55),inset 0 1px 0 rgba(255,255,255,.22);transition:transform .35s var(--spring),box-shadow .35s var(--spring)}
 .provider-cta:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,77,18,.4),0 0 28px rgba(255,77,18,.45),0 1.75rem 3.25rem -1.25rem rgba(15,47,99,.6)}
 .pv-badge-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.65rem}
-.pv-mini{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:62.5rem;padding:.32rem .65rem;color:#ffd9c7}
+.pv-mini{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:62.5rem;padding:.32rem .65rem;color:#ffd9c7}
 .provider-cta h3{font-size:1.08rem;font-weight:700;letter-spacing:-0.01em;line-height:1.25}
 .provider-cta p{font-size:.8rem;line-height:1.6;color:rgba(255,255,255,.82);margin:.5rem 0 .95rem}
 .provider-cta p b{color:#fecaca}
