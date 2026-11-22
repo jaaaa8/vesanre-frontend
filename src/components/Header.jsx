@@ -224,12 +224,6 @@ export default function Header({ user, onLogout }) {
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
               </button>
-              <nav className="menu-social">
-                <a href="#instagram">Instagram</a>
-                <a href="#x">X</a>
-                <a href="#youtube">YouTube</a>
-                <a href="#linkedin">LinkedIn</a>
-              </nav>
             </div>
           </div>
         </div>

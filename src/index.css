@@ -288,8 +288,6 @@ address .mut{color:rgba(255,255,255,.55)}
 .menu-nav a:hover{color:var(--brand-light)}
 .menu-bottom{border-top:1px solid rgba(255,255,255,.15);padding-top:2rem;display:flex;flex-direction:column;gap:1.25rem}
 @media(min-width:640px){.menu-bottom{flex-direction:row;justify-content:space-between;align-items:center}}
-.menu-social{display:flex;gap:1.25rem;color:rgba(255,255,255,.7);font-size:.875rem}
-.menu-social a:hover{color:#fff}
 /* reveal defaults */
 [data-inview]{opacity:0;transform:translateY(1.75rem)}
 [data-inview].in{opacity:1;transform:none;transition:opacity .8s var(--spring),transform .8s var(--spring)}
