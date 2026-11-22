@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatVnd } from '../../utils/format'
 import { districtsOf } from '../../utils/publicRules'
 
 const SORT_LABELS = [
@@ -24,6 +25,16 @@ export default function SearchFilters({ params, sports, locations, loading, onSu
   }
   // Selects apply at once; typed fields (keyword, price) wait for "Tìm".
   const choose = (key, extra) => (e) => apply({ ...form, [key]: e.target.value, ...extra })
+
+  // Chips show the applied filters (URL), not unsubmitted edits; removing city also clears its district.
+  const chips = [
+    params.q && ['q', `"${params.q}"`],
+    params.city && ['city', params.city, { district: '' }],
+    params.district && ['district', params.district],
+    params.sport && ['sport', sports.find((s) => s.code === params.sport)?.name ?? params.sport],
+    params.minPrice && ['minPrice', `Từ ${formatVnd(params.minPrice)}`],
+    params.maxPrice && ['maxPrice', `Đến ${formatVnd(params.maxPrice)}`],
+  ].filter(Boolean)
 
   const submit = (e) => {
     e.preventDefault()
@@ -96,6 +107,17 @@ export default function SearchFilters({ params, sports, locations, loading, onSu
         <p className="pub-error pub-wide" role="alert">
           {error}
         </p>
+      )}
+      {chips.length > 0 && (
+        <ul className="pub-chips pub-wide" aria-label="Bộ lọc đang bật">
+          {chips.map(([key, label, extra]) => (
+            <li key={key}>
+              <button type="button" className="pub-chip" aria-label={`Bỏ lọc ${label}`} onClick={() => onSubmit({ ...params, [key]: '', ...extra, page: 0 })}>
+                {label} <span aria-hidden="true">×</span>
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
       <div className="ui-actions pub-wide">
         <button type="button" className="ui-btn ghost" onClick={() => onSubmit(CLEARED)}>
