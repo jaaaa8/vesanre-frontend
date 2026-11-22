@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { addDays, clampDate, districtsOf, legacySportCode, mapsUrl, readSearchParams, searchHref, slotErrorText, todayIn } from './publicRules.js'
+import { addDays, clampDate, districtsOf, formatRating, legacySportCode, mapsUrl, readSearchParams, searchHref, slotErrorText, todayIn } from './publicRules.js'
 
 const read = (qs) => readSearchParams(new URLSearchParams(qs))
 const EMPTY = { q: '', city: '', district: '', sport: '', minPrice: '', maxPrice: '', sort: 'newest', page: 0 }
@@ -77,4 +77,10 @@ test('slotErrorText maps dead-end statuses to Vietnamese, leaves others retryabl
   assert.equal(slotErrorText(400), 'Ngày không hợp lệ, hãy chọn ngày khác')
   assert.equal(slotErrorText(500), null)
   assert.equal(slotErrorText(undefined), null)
+})
+
+test('formatRating', () => {
+  assert.equal(formatRating(4, 1), '★ 4,0 (1 đánh giá)')
+  assert.equal(formatRating(4.25, 12), '★ 4,3 (12 đánh giá)')
+  assert.equal(formatRating(null, 0), 'Chưa có đánh giá')
 })
