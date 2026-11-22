@@ -3,12 +3,13 @@ import { Link, useParams } from 'react-router-dom'
 import AsyncView from '../components/common/AsyncView'
 import EmptyState from '../components/common/EmptyState'
 import CourtSlots from '../components/public/CourtSlots'
+import VenueReviews from '../components/public/VenueReviews'
 import PublicTopbar from '../components/public/PublicTopbar'
 import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
 import { getPublicVenue } from '../utils/api'
 import { formatVnd, WEEKDAYS } from '../utils/format'
-import { mapsUrl } from '../utils/publicRules'
+import { formatRating, mapsUrl } from '../utils/publicRules'
 
 function Gallery({ images, name }) {
   const [selected, setSelected] = useState(0)
@@ -67,6 +68,7 @@ function VenueDetail({ venue }) {
       <Gallery images={venue.images} name={venue.name} />
       <section className="pub-info">
         <h1>{venue.name}</h1>
+        <p className="pub-rating">{formatRating(venue.ratingAverage, venue.ratingCount)}</p>
         <p>{[venue.addressLine, venue.ward, venue.district, venue.city].filter(Boolean).join(', ')}</p>
         {venue.phone && <a href={`tel:${venue.phone}`}>{venue.phone}</a>}
         {venue.fromPrice != null && <p className="pub-price">Từ {formatVnd(venue.fromPrice)}/giờ</p>}
@@ -95,6 +97,7 @@ function VenueDetail({ venue }) {
         <h2>Sân con</h2>
         {venue.courts.length === 0 ? <p className="ui-muted">Chưa có sân con đang hoạt động</p> : venue.courts.map((c) => <Court key={c.id} court={c} />)}
       </section>
+      <VenueReviews venueId={venue.id} />
     </>
   )
 }
