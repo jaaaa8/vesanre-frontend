@@ -5,7 +5,7 @@ import { useApi } from '../../hooks/useApi'
 import { createBooking, getCourtAvailability, getWallet } from '../../utils/api'
 import { getSession, hasRole } from '../../utils/auth'
 import { DEPOSIT_PERCENT, rangeInfo, selectRange } from '../../utils/bookingRules'
-import { formatVnd } from '../../utils/format'
+import { formatDayDate, formatVnd } from '../../utils/format'
 import { addDays, clampDate, slotErrorText, todayIn } from '../../utils/publicRules'
 import AsyncView from '../common/AsyncView'
 import ConfirmDialog from '../common/ConfirmDialog'
@@ -155,7 +155,7 @@ export default function CourtSlots({ court }) {
           confirm && (
             <>
               <p>
-                {court.name} · {date} · {hhmm(confirm.info.startTime)}–{hhmm(confirm.info.endTime)}
+                {court.name} · {formatDayDate(date)} · {hhmm(confirm.info.startTime)}–{hhmm(confirm.info.endTime)}
               </p>
               <p>
                 Tổng {formatVnd(confirm.info.subtotal)} · Cọc ước tính {confirm.info.depositCoins} coin
