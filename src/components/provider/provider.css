@@ -62,7 +62,8 @@ a.pv-stat:not(.is-hot){opacity:.6}
 .pv-bar-fill{background:var(--brand);height:100%;border-radius:var(--radius-pill)}
 .pv-json{overflow:auto;max-height:20rem;background:var(--surface);border-radius:.75rem;padding:.75rem;font-size:.75rem;white-space:pre}
 .pv-reviews{display:grid;gap:.75rem}
-.pv-review{display:grid;gap:.5rem;padding:1rem;border:1px solid var(--hairline);border-radius:1rem;font-size:.875rem}
+.pv-review{display:grid;gap:.5rem;overflow-wrap:anywhere;padding:1rem;border:1px solid var(--hairline);border-radius:1rem;font-size:.875rem}
+.pv-comment{min-width:16rem;overflow-wrap:anywhere}
 .pv-reply{background:var(--surface);border-radius:.75rem;padding:.75rem;display:grid;gap:.25rem}
 .pv-vbars{display:flex;gap:.5rem;align-items:stretch;overflow-x:auto}
 .pv-vbar{flex:1;min-width:2.5rem;display:grid;gap:.35rem;justify-items:center;font-size:.75rem}
