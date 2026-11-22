@@ -6,9 +6,9 @@
 .pv-top .ui-btn{background:transparent;color:var(--on-brand);border-color:rgba(255,255,255,.35)}
 .pv-body{display:grid;gap:.75rem}
 @media(min-width:900px){.pv-body{grid-template-columns:14rem 1fr;align-items:start}}
-.pv-nav{background:var(--surface-card);border-radius:var(--radius-card);padding:.75rem;display:flex;gap:.25rem}
+.pv-nav{background:var(--surface-card);border-radius:var(--radius-card);padding:.75rem;display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none}
 @media(min-width:900px){.pv-nav{flex-direction:column;position:sticky;top:.75rem}}
-.pv-nav a{padding:.6rem .9rem;border-radius:var(--radius-pill);font-size:.875rem;color:var(--ink-soft)}
+.pv-nav a{flex-shrink:0;white-space:nowrap;padding:.6rem .9rem;border-radius:var(--radius-pill);font-size:.875rem;color:var(--ink-soft)}
 .pv-nav a.active{background:var(--brand);color:var(--on-brand)}
 .pv-main{display:grid;gap:.75rem;min-width:0}
 .pv-card{background:var(--surface-card);border-radius:var(--radius-card);padding:1.5rem;display:grid;gap:1rem;min-width:0}
