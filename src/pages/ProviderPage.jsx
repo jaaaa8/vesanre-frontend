@@ -2,6 +2,7 @@ import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import CourtDetail from '../components/provider/CourtDetail'
 import ProviderBookingDetail from '../components/provider/ProviderBookingDetail'
 import ProviderBookings from '../components/provider/ProviderBookings'
+import ShopReviews from '../components/provider/ShopReviews'
 import ShopSection from '../components/provider/ShopSection'
 import ShopWallet from '../components/provider/ShopWallet'
 import VenueDetail from '../components/provider/VenueDetail'
@@ -28,6 +29,7 @@ export default function ProviderPage({ onLogout }) {
           <NavLink to="/provider/venues">Cơ sở</NavLink>
           <NavLink to="/provider/bookings">Lịch đặt</NavLink>
           <NavLink to="/provider/wallet">Ví shop</NavLink>
+          <NavLink to="/provider/reviews">Đánh giá</NavLink>
         </nav>
         <main className="pv-main">
           <Routes>
@@ -38,6 +40,7 @@ export default function ProviderPage({ onLogout }) {
             <Route path="bookings" element={<ProviderBookings onLogout={onLogout} />} />
             <Route path="bookings/:id" element={<ProviderBookingDetail onLogout={onLogout} />} />
             <Route path="wallet" element={<ShopWallet onLogout={onLogout} />} />
+            <Route path="reviews" element={<ShopReviews onLogout={onLogout} />} />
             <Route path="*" element={<p className="pv-muted">Không tìm thấy trang.</p>} />
           </Routes>
         </main>
