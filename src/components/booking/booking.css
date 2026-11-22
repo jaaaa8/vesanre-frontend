@@ -12,7 +12,7 @@
 .bk-prices td,.bk-prices th{padding:.35rem 0;border-bottom:1px solid var(--hairline);text-align:left;font-weight:400}
 .bk-prices th{font-weight:500}
 .bk-prices td:last-child,.bk-prices th:last-child{text-align:right}
-.ui-badge.is-confirmed{background:#e6f6ec;color:#146c2e}
+.ui-badge.is-confirmed{background:var(--success-soft);color:var(--success)}
 .ui-badge.is-completed{background:var(--blue-soft);color:var(--brand-deep)}
 @media (max-width:640px){.bk-dl{grid-template-columns:1fr}}
 .bk-review{display:grid;gap:.75rem;margin-top:1rem;padding:1rem;border:1px solid var(--hairline);border-radius:var(--radius-card,1rem)}

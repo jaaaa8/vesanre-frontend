@@ -170,7 +170,7 @@ main.auth-page {
 }
 
 .finput:focus {
-  border-color: #5790e6;
+  border-color: var(--brand-light);
   box-shadow: 0 0 0 4px rgba(87, 144, 230, 0.2);
 }
 
@@ -265,8 +265,8 @@ main.auth-page {
 }
 
 .chk input:checked + .box {
-  background: #ff4d12;
-  border-color: #ff4d12;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .chk input:checked + .box svg {
@@ -294,7 +294,7 @@ main.auth-page {
 
 .ferr {
   font-size: 0.75rem;
-  color: #dc2626;
+  color: var(--danger);
   min-height: 1.1rem;
   margin-top: 0.1rem;
 }
@@ -310,7 +310,7 @@ main.auth-page {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: #ff4d12;
+  background: var(--accent);
   color: #fff;
   border-radius: var(--radius-pill);
   padding: 0.875rem 1.75rem;
@@ -323,12 +323,12 @@ main.auth-page {
 }
 
 .auth-card--register .authSubmit {
-  background: #5790e6;
+  background: var(--brand-light);
   box-shadow: 0 0.8rem 1.8rem -0.8rem rgba(87, 144, 230, 0.7);
 }
 
 .authSubmit:hover {
-  background: #0f2f63;
+  background: var(--brand-deep);
   color: #fff;
   transform: translateY(-1px);
   box-shadow: 0 1rem 2rem -0.8rem rgba(15, 47, 99, 0.6);
@@ -392,7 +392,7 @@ main.auth-page {
 }
 
 .switcher a {
-  color: #ff4d12;
+  color: var(--accent);
   font-weight: 500;
 }
 

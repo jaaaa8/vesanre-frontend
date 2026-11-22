@@ -139,7 +139,7 @@ export default function ProfileInfoTab({ active, form, profileErr, onField, onTo
         <div
           className="ferr"
           id="profileErr"
-          style={{ fontSize: '0.75rem', color: '#dc2626', minHeight: '1.1rem', marginTop: '0.8rem' }}
+          style={{ fontSize: '0.75rem', color: 'var(--danger)', minHeight: '1.1rem', marginTop: '0.8rem' }}
         >
           {profileErr}
         </div>

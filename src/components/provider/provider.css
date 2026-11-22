@@ -38,7 +38,7 @@
 .pv-checks{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr))}
 .pv-check{display:flex;gap:.5rem;align-items:center;font-size:.875rem;flex-wrap:wrap}
 .pv-check input[type="text"]{flex:1;min-width:8rem;font:inherit;padding:.35rem .6rem;border:1px solid var(--hairline);border-radius:.6rem}
-.pv-error{color:#b42318;font-size:.875rem}
+.pv-error{color:var(--danger);font-size:.875rem}
 .pv-back{font-size:.875rem;color:var(--ink-soft)}
 
 .pv-reloading {

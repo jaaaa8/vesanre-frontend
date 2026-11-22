@@ -5,13 +5,13 @@
 .wl-entries li{display:grid;grid-template-columns:9rem 1fr auto 6rem;gap:.75rem;align-items:baseline;padding:.6rem 0;border-bottom:1px solid var(--hairline)}
 .wl-entries small{color:var(--ink-soft)}
 .wl-plus{color:#127a3d}
-.wl-minus{color:#b42318}
+.wl-minus{color:var(--danger)}
 .wl-tight{padding:0}
 .wl-dialog{width:min(26rem,calc(100vw - 2rem))}
 .wl-step{display:grid;gap:.75rem}
 .wl-presets{display:flex;gap:.5rem;flex-wrap:wrap}
 .wl-presets .is-on{border-color:var(--brand);color:var(--brand)}
-.wl-err{color:#b42318;font-size:.875rem}
+.wl-err{color:var(--danger);font-size:.875rem}
 .wl-ok{color:#127a3d}
 .wl-qr-wrap{display:flex;justify-content:center}
 .wl-qr{image-rendering:pixelated;background:#fff}
