@@ -162,3 +162,14 @@ export const listProviderBookings = (q) => request(`/api/provider/bookings${toQu
 export const getProviderBooking = (id) => request(`/api/provider/bookings/${id}`)
 export const cancelProviderBooking = (id, reason) => post(`/api/provider/bookings/${id}/cancel`, { reason })
 export const getShopWallet = () => request('/api/provider/wallet')
+
+// Provider: Sprint 4
+export const createWithdrawal = (body) => post('/api/provider/withdrawals', body)
+export const listShopWithdrawals = (q) => request(`/api/provider/withdrawals${toQuery(q)}`)
+export const listProviderReviews = (q) => request(`/api/provider/reviews${toQuery(q)}`)
+export const replyReview = (id, reply) => post(`/api/provider/reviews/${id}/reply`, { reply })
+export const getMonthlyBookings = (months) => request(`/api/provider/reports/monthly-bookings${toQuery({ months })}`)
+
+// Reviews
+export const createReview = (bookingId, body) => post(`/api/bookings/${bookingId}/review`, body)
+export const listVenueReviews = (venueId, q) => request(`/api/catalog/venues/${venueId}/reviews${toQuery(q)}`, PUBLIC)

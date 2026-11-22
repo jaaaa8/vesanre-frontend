@@ -34,6 +34,8 @@ export function rangeInfo(slots, selection, { minBookingMinutes }) {
   return { startTime: picked[0].start, endTime: picked.at(-1).end, minutes, subtotal, depositCoins, error }
 }
 
+export const canReview = (booking) => booking.status === 'COMPLETED' && booking.review == null
+
 export const canCancel = (booking, now = Date.now()) => booking.status === 'CONFIRMED' && Date.parse(booking.startAt) > now
 
 export const BOOKING_STATUS_LABELS = {
