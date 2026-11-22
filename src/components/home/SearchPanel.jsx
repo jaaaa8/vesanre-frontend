@@ -1,36 +1,23 @@
 import { useState } from 'react'
-import { toast } from 'react-toastify'
-import { scrollToSection } from '../../utils/scroll'
+import { useNavigate } from 'react-router-dom'
+import { useApi } from '../../hooks/useApi'
+import { getLocations, getSports } from '../../utils/api'
+import { districtsOf, searchHref } from '../../utils/publicRules'
 
-const sportOptions = ['Bóng đá', 'Pickleball', 'Cầu lông', 'Tennis', 'Bóng rổ', 'Bóng chuyền']
-
-const cityOptions = [
-  'TP.HCM · Quận 1',
-  'TP.HCM · Quận 7',
-  'TP.HCM · Thủ Đức',
-  'Đà Nẵng · Gần biển',
-  'Hà Nội · Cầu Giấy',
-]
-
-const slotOptions = [
-  'Hôm nay · 18:00',
-  'Hôm nay · 19:30',
-  'Ngày mai · 07:00',
-  'Ngày mai · 17:00',
-  'Cuối tuần · 09:00',
-]
+const PRICE_MAX = 800000
 
 export default function SearchPanel() {
-  const [sport, setSport] = useState(sportOptions[0])
-  const [city, setCity] = useState('Chọn tỉnh / khu vực')
-  const [slot, setSlot] = useState(slotOptions[0])
-  const [price, setPrice] = useState(350000)
+  const navigate = useNavigate()
+  const sports = useApi(getSports, [])
+  const locations = useApi(getLocations, [])
+  const [sport, setSport] = useState('')
+  const [city, setCity] = useState('')
+  const [district, setDistrict] = useState('')
+  const [price, setPrice] = useState(PRICE_MAX)
 
-  const search = () => {
-    if (!city || city.startsWith('Chọn')) return toast.error('Vui lòng chọn khu vực')
-    toast.success(`Đang tìm sân ${sport} · ${city} · ${slot}`)
-    scrollToSection('venues')
-  }
+  const search = () => navigate(searchHref({ sport, city, district, maxPrice: price < PRICE_MAX ? price : '' }))
+  const sportOptions = [{ code: '', name: 'Tất cả' }, ...(sports.data ?? [])]
+  const cityList = locations.data ?? []
 
   return (
     <div className="search-widget" data-inview id="searchWidget">
@@ -41,45 +28,57 @@ export default function SearchPanel() {
       <div className="spills" aria-label="Chọn môn thể thao">
         {sportOptions.map((option) => (
           <button
-            key={option}
+            key={option.code}
             type="button"
-            className={`spill${sport === option ? ' on' : ''}`}
-            data-sport={option}
-            onClick={() => setSport(option)}
+            className={`spill${sport === option.code ? ' on' : ''}`}
+            aria-pressed={sport === option.code}
+            onClick={() => setSport(option.code)}
           >
-            {option}
+            {option.name}
           </button>
         ))}
       </div>
       <div className="sfield">
         <label htmlFor="citySelect">Khu vực</label>
-        <select id="citySelect" value={city} onChange={(e) => setCity(e.target.value)}>
-          <option>Chọn tỉnh / khu vực</option>
-          {cityOptions.map((c) => (
-            <option key={c}>{c}</option>
+        <select
+          id="citySelect"
+          value={city}
+          onChange={(e) => {
+            setCity(e.target.value)
+            setDistrict('')
+          }}
+        >
+          <option value="">Tất cả thành phố</option>
+          {cityList.map((l) => (
+            <option key={l.city} value={l.city}>
+              {l.city}
+            </option>
           ))}
         </select>
       </div>
       <div className="sfield">
-        <label htmlFor="slotSelect">Ngày / Giờ</label>
-        <select id="slotSelect" value={slot} onChange={(e) => setSlot(e.target.value)}>
-          {slotOptions.map((s) => (
-            <option key={s}>{s}</option>
+        <label htmlFor="districtSelect">Quận</label>
+        <select id="districtSelect" value={district} onChange={(e) => setDistrict(e.target.value)} disabled={!city}>
+          <option value="">Tất cả quận</option>
+          {districtsOf(cityList, city).map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
           ))}
         </select>
       </div>
       <div className="sfield">
-        <label>
-          Giá tối đa · <span className="srange-val">{price.toLocaleString('vi-VN')}đ/giờ</span>
+        <label htmlFor="priceRange">
+          Giá tối đa · <span className="srange-val">{price < PRICE_MAX ? `${price.toLocaleString('vi-VN')}đ/giờ` : 'Không giới hạn'}</span>
         </label>
         <input
+          id="priceRange"
           type="range"
           min="80000"
-          max="800000"
+          max={PRICE_MAX}
           step="10000"
           value={price}
           onChange={(e) => setPrice(Number(e.target.value))}
-          aria-label="Giá tối đa"
         />
       </div>
       <button type="button" className="sw-btn" onClick={search}>

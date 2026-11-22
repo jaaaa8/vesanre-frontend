@@ -1,12 +1,18 @@
 import { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { stats, testimonials, venues } from '../../data/content'
+import { Link, useNavigate } from 'react-router-dom'
+import AsyncView from '../common/AsyncView'
+import '../public/public.css'
+import { useApi } from '../../hooks/useApi'
+import { searchVenues } from '../../utils/api'
+import { formatVnd } from '../../utils/format'
+import { searchHref } from '../../utils/publicRules'
+import { stats, testimonials } from '../../data/content'
 
 const SPORT_ROWS = [
-  { idx: '01', name: 'Bóng đá & Futsal', desc: 'Sân 5, sân 7 và mặt cỏ nhân tạo có đèn chiếu sáng.', slug: 'football' },
-  { idx: '02', name: 'Pickleball & Tennis', desc: 'Sân cứng cao cấp, sân trong nhà kèm dịch vụ cho thuê dụng cụ.', slug: 'pickleball' },
-  { idx: '03', name: 'Cầu lông & Bóng chuyền', desc: 'Nhà thi đấu trần cao, sàn gỗ và thảm cao su chuyên nghiệp.', slug: 'badminton' },
-  { idx: '04', name: 'Bóng rổ & Squash', desc: 'Thuê nguyên sân, bảng điểm và phòng thay đồ đầy đủ.', slug: 'basketball' },
+  { idx: '01', name: 'Bóng đá & Futsal', desc: 'Sân 5, sân 7 và mặt cỏ nhân tạo có đèn chiếu sáng.', code: 'FOOTBALL_5' },
+  { idx: '02', name: 'Pickleball & Tennis', desc: 'Sân cứng cao cấp, sân trong nhà kèm dịch vụ cho thuê dụng cụ.', code: 'PICKLEBALL' },
+  { idx: '03', name: 'Cầu lông & Bóng chuyền', desc: 'Nhà thi đấu trần cao, sàn gỗ và thảm cao su chuyên nghiệp.', code: 'BADMINTON' },
+  { idx: '04', name: 'Bóng rổ & Squash', desc: 'Thuê nguyên sân, bảng điểm và phòng thay đồ đầy đủ.', code: 'BASKETBALL' },
 ]
 
 const TRUST_SLIDES = [
@@ -132,7 +138,7 @@ export function TrustSection() {
 
 export function SportsSection() {
   const navigate = useNavigate()
-  const goSport = (slug) => navigate(`/sports-detail?sport=${slug}`)
+  const goSport = (code) => navigate(searchHref({ sport: code }))
 
   return (
     <section className="programs" id="sports">
@@ -150,8 +156,8 @@ export function SportsSection() {
               type="button"
               className="prog-row"
               data-inview
-              onClick={() => goSport(row.slug)}
-              aria-label={`${row.name} — xem chi tiết`}
+              onClick={() => goSport(row.code)}
+              aria-label={`${row.name} — tìm sân`}
             >
               <div className="prog-inner">
                 <span className="prog-idx">{row.idx}</span>
@@ -174,6 +180,7 @@ export function SportsSection() {
 }
 
 export function VenuesSection() {
+  const featured = useApi(() => searchVenues({ sort: 'newest', size: 6 }), [])
   return (
     <section className="facilities" id="venues">
       <div className="fac-grid">
@@ -198,17 +205,27 @@ export function VenuesSection() {
             ))}
           </p>
         </div>
-        <div className="court-row">
-          {venues.map((venue, i) => (
-            <figure key={venue.name} className={`court${i === 1 ? ' offset' : ''}`} data-inview>
-              <img src={venue.image} alt={venue.alt} loading="lazy" />
-              <figcaption className={i === 1 ? 'cap-blue' : 'cap-clay'}>
-                <b>{venue.name}</b>
-                <span>{venue.detail}</span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        {/* No data-inview/offset on fetched cards: useHomeReveal only scans at mount, late cards would stay invisible. */}
+        <AsyncView state={featured} empty={featured.data?.items.length === 0} emptyText="Chưa có sân nào">
+          <div className="court-row">
+            {featured.data?.items.map((v, i) => (
+              <Link key={v.id} className="court" to={`/san/${v.id}`}>
+                <figure>
+                  {v.coverImageUrl ? <img src={v.coverImageUrl} alt={v.name} loading="lazy" /> : <div className="pub-noimg" />}
+                  <figcaption className={i % 2 ? 'cap-blue' : 'cap-clay'}>
+                    <b>{v.name}</b>
+                    <span>
+                      {[v.district, v.city].filter(Boolean).join(', ')} · {v.fromPrice != null ? `Từ ${formatVnd(v.fromPrice)}/giờ` : 'Chưa có giá'}
+                    </span>
+                  </figcaption>
+                </figure>
+              </Link>
+            ))}
+          </div>
+          <Link className="court-all" to="/san">
+            Xem tất cả sân →
+          </Link>
+        </AsyncView>
       </div>
     </section>
   )

@@ -186,6 +186,7 @@ export function persistBookings(next) {
   try {
     window.localStorage.setItem(BOOKINGS_KEY, JSON.stringify(next))
   } catch {
+    // Storage unavailable (private mode, quota): keep the in-memory state only.
   }
 }
 
@@ -203,6 +204,7 @@ export function resolveInitialTab() {
     if (window.location.hash === '#bookings') return 'bookings'
     if (new URLSearchParams(window.location.search).get('tab') === 'bookings') return 'bookings'
   } catch {
+    // Malformed location: fall back to the default tab.
   }
   return 'profile'
 }

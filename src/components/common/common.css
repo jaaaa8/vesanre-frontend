@@ -1,0 +1,26 @@
+.ui-muted{color:var(--ink-soft);padding:1rem 0}
+.ui-empty,.ui-error{padding:2rem;border:1px dashed var(--hairline);border-radius:var(--radius-card);text-align:center;color:var(--ink-soft);display:grid;gap:.75rem;justify-items:center}
+.ui-error{border-style:solid;border-color:#f3c2b3;background:#fff6f2;color:#9a2b07}
+.ui-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:var(--radius-pill);border:1px solid var(--hairline);background:var(--surface-card);color:var(--ink);font-size:.875rem;line-height:1.2}
+.ui-btn:hover:not(:disabled){border-color:var(--ink-soft)}
+.ui-btn:disabled{opacity:.5;cursor:not-allowed}
+.ui-btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.ui-btn.primary:hover:not(:disabled){background:var(--brand-deep)}
+.ui-btn.danger{color:#b42318;border-color:#f3c2b3}
+.ui-btn.ghost{background:transparent}
+.ui-badge{display:inline-block;padding:.15rem .6rem;border-radius:var(--radius-pill);font-size:.75rem;background:var(--surface);color:var(--ink-soft);white-space:nowrap}
+.ui-badge.is-active,.ui-badge.is-verified,.ui-badge.is-approved{background:#e6f6ec;color:#146c2e}
+.ui-badge.is-pending_review,.ui-badge.is-pending{background:#fff4dc;color:#8a5a00}
+.ui-badge.is-rejected{background:#fde8e4;color:#b42318}
+.ui-badge.is-suspended{background:#ece9f8;color:#4b3a9a}
+.ui-badge.is-inactive,.ui-badge.is-cancelled{background:var(--surface);color:var(--ink-soft)}
+.ui-badge.is-draft{background:var(--blue-soft);color:var(--brand-deep)}
+.ui-dialog{margin:auto;border:none;border-radius:var(--radius-card);padding:1.5rem;width:min(30rem,calc(100vw - 2rem));box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.ui-dialog::backdrop{background:rgba(10,10,10,.45)}
+.ui-dialog form{display:grid;gap:1rem}
+.ui-dialog h3{font-weight:500;font-size:1.125rem}
+.ui-field{display:grid;gap:.35rem;font-size:.875rem}
+.ui-field>span{color:var(--ink-soft)}
+.ui-field input,.ui-field textarea,.ui-field select{font:inherit;padding:.6rem .8rem;border:1px solid var(--hairline);border-radius:.75rem;background:var(--surface-card);color:var(--ink);width:100%}
+.ui-actions{display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap}
+.ui-pagination{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1rem 0;font-size:.875rem}

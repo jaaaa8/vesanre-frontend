@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { getSession, hasRole } from '../utils/auth'
 import { scrollToSection } from '../utils/scroll'
 
 const links = [
@@ -34,6 +35,8 @@ export default function Header({ user, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const name = displayNameOf(user)
+  const isProvider = Boolean(user) && hasRole(getSession(), 'PROVIDER')
+  const isAdmin = Boolean(user) && hasRole(getSession(), 'ADMIN')
 
   useEffect(() => {
     if (!profileOpen) return
@@ -111,6 +114,16 @@ export default function Header({ user, onLogout }) {
                 <Link to="/profile" onClick={() => setProfileOpen(false)}>
                   ○ Thông tin cá nhân
                 </Link>
+                {isProvider && (
+                  <Link to="/provider" onClick={() => setProfileOpen(false)}>
+                    ▦ Quản lý sân
+                  </Link>
+                )}
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setProfileOpen(false)}>
+                    ◆ Quản trị
+                  </Link>
+                )}
                 <button type="button" className="danger" onClick={logout}>
                   ↩ Đăng xuất
                 </button>
@@ -176,6 +189,16 @@ export default function Header({ user, onLogout }) {
                     <Link className="pill-btn light" to="/profile" onClick={() => setMenuOpen(false)}>
                       Hồ sơ
                     </Link>
+                    {isProvider && (
+                      <Link className="pill-btn light" to="/provider" onClick={() => setMenuOpen(false)}>
+                        Quản lý sân
+                      </Link>
+                    )}
+                    {isAdmin && (
+                      <Link className="pill-btn light" to="/admin" onClick={() => setMenuOpen(false)}>
+                        Quản trị
+                      </Link>
+                    )}
                     <button type="button" className="pill-btn orange" onClick={logout}>
                       Đăng xuất
                     </button>

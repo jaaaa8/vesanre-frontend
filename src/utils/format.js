@@ -1,0 +1,17 @@
+const vnd = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 })
+
+export const formatVnd = (n) => `${vnd.format(Number(n)).replace(/\s/g, '.')} đ`
+
+const pad = (n) => String(n).padStart(2, '0')
+
+export const minutesToTime = (m) => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`
+
+export function timeToMinutes(time) {
+  const [h, m] = time.split(':').map(Number)
+  return h * 60 + m
+}
+
+export const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật']
+
+export const formatDate = (iso) =>
+  new Date(iso).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric' })

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Link } from 'react-router-dom'
 import { ApiError, applyProvider } from '../../utils/api'
+import { getSession, hasRole } from '../../utils/auth'
 
 const MAX = { legalName: 200, taxId: 50, shopName: 160, shopDescription: 2000 }
 const EMPTY = { legalName: '', taxId: '', shopName: '', shopDescription: '' }
@@ -54,7 +56,9 @@ export default function ProviderApplication({ status, roles, onApplied, onUnauth
     }
   }
 
-  const isProvider = status === 'APPROVED' || roles?.includes('PROVIDER')
+  const tokenProvider = hasRole(getSession(), 'PROVIDER')
+  // Roles in the JWT only change on the next login, so a just-approved owner must sign in again.
+  const needsRelogin = !tokenProvider && (status === 'VERIFIED' || status === 'APPROVED' || roles?.includes('PROVIDER'))
   const pending = status === 'PENDING'
 
   return (
@@ -63,8 +67,20 @@ export default function ProviderApplication({ status, roles, onApplied, onUnauth
         <div className="pv-badge-row">
           <span className="pv-mini">SportHub Partners</span>
         </div>
-        {isProvider ? (
-          <h3>Bạn đã là Chủ sân</h3>
+        {tokenProvider ? (
+          <>
+            <h3>Bạn đã là Chủ sân</h3>
+            <Link className="pv-cta-btn" to="/provider">
+              Quản lý sân <span aria-hidden="true">↗</span>
+            </Link>
+          </>
+        ) : needsRelogin ? (
+          <>
+            <h3>Hồ sơ đã được duyệt, đăng nhập lại để mở trang quản lý sân</h3>
+            <button className="pv-cta-btn" type="button" onClick={() => onUnauthorized?.()}>
+              Đăng nhập lại <span aria-hidden="true">↗</span>
+            </button>
+          </>
         ) : pending ? (
           <h3>Đơn đăng ký chủ sân đang chờ duyệt</h3>
         ) : (

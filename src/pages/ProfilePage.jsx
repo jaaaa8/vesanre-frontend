@@ -12,6 +12,7 @@ import SecurityTab from '../components/profile/tabs/SecurityTab'
 import '../components/profile/Profile.css'
 import { useFluidRem } from '../hooks/useFluidRem'
 import { ApiError, getProfile, updateProfile } from '../utils/api'
+import { validPhone } from '../utils/auth'
 import {
   BOOKINGS_KEY,
   INITIAL_NOTIFS,
@@ -174,8 +175,8 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
       setProfileErr('Vui lòng nhập họ và tên.')
       return
     }
-    if (phone && !/^[0-9+\s.()-]{9,15}$/.test(phone)) {
-      setProfileErr('Số điện thoại chưa hợp lệ.')
+    if (phone && !validPhone(phone)) {
+      setProfileErr('Số điện thoại chưa hợp lệ (VD: 0901234567 hoặc +84901234567).')
       return
     }
     setProfileErr('')
