@@ -31,7 +31,7 @@ export default function ShopReports({ onLogout }) {
         <AsyncView state={report} onLogout={onLogout}>
           <div className="pv-vbars" aria-hidden="true">
             {rows.map((r) => (
-              <div key={r.month} className="pv-vbar">
+              <div key={r.month} className="pv-vbar" title={`${monthLabel(r.month)}: ${r.bookings} đơn`}>
                 <div className="pv-vbar-track">
                   <span className="pv-vbar-value">{r.bookings}</span>
                   <div className="pv-vbar-fill" style={{ height: `${barPercent(r.bookings, max)}%` }} />
