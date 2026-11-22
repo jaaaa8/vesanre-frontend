@@ -24,12 +24,15 @@ export function TopShopBars({ items }) {
   return (
     <div className="pv-bars">
       {items.map((i) => (
-        <div key={i.shopId} className="pv-bar">
+        <div key={i.shopId} className="pv-bar" title={`${i.shopName}: ${i.bookings} đơn`}>
           <span>{i.shopName}</span>
           <div className="pv-bar-track">
             <div className="pv-bar-fill" style={{ width: `${barPercent(i.bookings, max)}%` }} />
           </div>
-          <span>{i.bookings}</span>
+          <span>
+            {i.bookings}
+            <span className="sr-only"> đơn</span>
+          </span>
         </div>
       ))}
     </div>
