@@ -1,3 +1,4 @@
+import { formatDecimal1 } from './format.js'
 import { toQuery } from './query.js'
 
 export const SORTS = ['newest', 'price_asc', 'price_desc']
@@ -52,3 +53,5 @@ export const legacySportCode = (slug) => (Object.hasOwn(LEGACY_SPORTS, slug) ? L
 // 404/400 from availability are dead ends (venue gone, date rejected): retrying cannot help.
 const SLOT_ERRORS = { 404: 'Sân không còn hoạt động', 400: 'Ngày không hợp lệ, hãy chọn ngày khác' }
 export const slotErrorText = (status) => SLOT_ERRORS[status] ?? null
+
+export const formatRating = (avg, count) => (count === 0 ? 'Chưa có đánh giá' : `★ ${formatDecimal1(avg)} (${count} đánh giá)`)
