@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { formatVnd } from '../../utils/format'
+import { venueCover } from '../../utils/publicRules'
 
 export default function VenueCard({ venue }) {
   return (
     <Link className="pub-card" to={`/san/${venue.id}`}>
-      {venue.coverImageUrl ? <img src={venue.coverImageUrl} alt={venue.name} loading="lazy" /> : <div className="pub-noimg">Chưa có ảnh</div>}
+      <img src={venueCover(venue)} alt={venue.name} loading="lazy" />
       <div className="pub-card-body">
         <h3>{venue.name}</h3>
         <p>{`${venue.district}, ${venue.city}`}</p>

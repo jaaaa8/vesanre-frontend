@@ -9,11 +9,11 @@ import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
 import { getPublicVenue } from '../utils/api'
 import { formatVnd, WEEKDAYS } from '../utils/format'
-import { formatRating, mapsUrl } from '../utils/publicRules'
+import { formatRating, mapsUrl, venueCover } from '../utils/publicRules'
 
-function Gallery({ images, name }) {
+function Gallery({ images, name, venue }) {
   const [selected, setSelected] = useState(0)
-  if (images.length === 0) return <div className="pub-noimg pub-hero">Chưa có ảnh</div>
+  if (images.length === 0) return <img className="pub-hero" src={venueCover(venue)} alt={name} />
   const current = images[Math.min(selected, images.length - 1)]
   return (
     <div className="pub-gallery">
@@ -65,7 +65,7 @@ function VenueDetail({ venue }) {
   const map = mapsUrl(venue.latitude, venue.longitude)
   return (
     <>
-      <Gallery images={venue.images} name={venue.name} />
+      <Gallery images={venue.images} name={venue.name} venue={venue} />
       <section className="pub-info">
         <h1>{venue.name}</h1>
         <p className="pub-rating">{formatRating(venue.ratingAverage, venue.ratingCount)}</p>
