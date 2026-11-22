@@ -64,3 +64,7 @@ a.pv-stat:not(.is-hot){opacity:.6}
 .pv-reviews{display:grid;gap:.75rem}
 .pv-review{display:grid;gap:.5rem;padding:1rem;border:1px solid var(--hairline);border-radius:1rem;font-size:.875rem}
 .pv-reply{background:var(--surface);border-radius:.75rem;padding:.75rem;display:grid;gap:.25rem}
+.pv-vbars{display:flex;gap:.5rem;align-items:stretch;overflow-x:auto}
+.pv-vbar{flex:1;min-width:2.5rem;display:grid;gap:.35rem;justify-items:center;font-size:.75rem}
+.pv-vbar-track{height:10rem;width:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.25rem}
+.pv-vbar-fill{width:60%;background:var(--brand);border-radius:.4rem .4rem 0 0}
