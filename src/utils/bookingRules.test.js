@@ -3,6 +3,7 @@ import test from 'node:test'
 import {
   BOOKING_STATUS_LABELS,
   canCancel,
+  canReview,
   estimateDeposit,
   rangeInfo,
   readProviderBookingParams,
@@ -76,4 +77,10 @@ test('readProviderBookingParams chuẩn hóa bộ lọc', () => {
     status: 'CANCELLED',
     page: 2,
   })
+})
+
+test('canReview chỉ COMPLETED chưa có đánh giá', () => {
+  assert.equal(canReview({ status: 'COMPLETED', review: null }), true)
+  assert.equal(canReview({ status: 'COMPLETED', review: { id: 'x' } }), false)
+  assert.equal(canReview({ status: 'CONFIRMED', review: null }), false)
 })
