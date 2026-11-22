@@ -46,17 +46,25 @@ export default function SearchPage() {
           loading={result.loading}
           onSubmit={(next) => navigate(searchHref(next))}
         />
-        <AsyncView state={result} empty={result.data?.items.length === 0} emptyText="Không tìm thấy sân phù hợp">
-          <div aria-busy={result.loading} className={result.loading ? 'pub-reloading' : undefined}>
-            <p className="pub-count">{result.data?.totalElements} sân phù hợp</p>
-            <div className="pub-grid">
-              {result.data?.items.map((v) => (
-                <VenueCard key={v.id} venue={v} />
-              ))}
-            </div>
-            <Pagination page={page} totalPages={result.data?.totalPages ?? 0} onChange={(p) => navigate(searchHref({ ...params, page: p }))} />
+        {result.loading && !result.data ? (
+          <div className="pub-grid" role="status" aria-label="Đang tải danh sách sân">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="pub-card pub-skeleton" />
+            ))}
           </div>
-        </AsyncView>
+        ) : (
+          <AsyncView state={result} empty={result.data?.items.length === 0} emptyText="Không tìm thấy sân phù hợp">
+            <div aria-busy={result.loading} className={result.loading ? 'pub-reloading' : undefined}>
+              <p className="pub-count">{result.data?.totalElements} sân phù hợp</p>
+              <div className="pub-grid">
+                {result.data?.items.map((v) => (
+                  <VenueCard key={v.id} venue={v} />
+                ))}
+              </div>
+              <Pagination page={page} totalPages={result.data?.totalPages ?? 0} onChange={(p) => navigate(searchHref({ ...params, page: p }))} />
+            </div>
+          </AsyncView>
+        )}
       </main>
     </div>
   )
