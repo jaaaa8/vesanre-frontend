@@ -43,7 +43,7 @@ export default function Hero({ user, onLogout }) {
           <img
             src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=2000&q=80&auto=format&fit=crop"
             alt="Sân vận động đa môn rực rỡ ánh đèn về đêm"
-            fetchpriority="high"
+            fetchPriority="high"
           />
           <div className="hero-shade" />
         </div>
