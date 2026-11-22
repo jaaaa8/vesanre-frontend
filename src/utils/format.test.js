@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { formatCoins, formatDate, formatDateTimeIn, formatDecimal1, formatStars, formatTimeIn, formatVnd, minutesToTime, timeToMinutes, WEEKDAYS } from './format.js'
+import { formatCoins, formatDate, formatDayDate, formatDateTimeIn, formatDecimal1, formatStars, formatTimeIn, formatVnd, minutesToTime, timeToMinutes, WEEKDAYS } from './format.js'
 
 test('format tiền, giờ, thứ, ngày', () => {
   assert.equal(formatVnd(150000), '150.000 đ')
@@ -32,4 +32,10 @@ test('formatDecimal1 dùng dấu phẩy và dấu trừ U+2212', () => {
   assert.equal(formatDecimal1(4), '4,0')
   assert.equal(formatDecimal1(-66.7), '−66,7')
   assert.equal(formatDecimal1(50), '50,0')
+})
+
+test('format ngày kèm thứ', () => {
+  assert.equal(formatDayDate('2026-11-22'), 'CN, 22/11/2026')
+  assert.equal(formatDayDate('2026-11-21'), 'T7, 21/11/2026')
+  assert.equal(formatDayDate('2026-01-05'), 'T2, 05/01/2026')
 })
