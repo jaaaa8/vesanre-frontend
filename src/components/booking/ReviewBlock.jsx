@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createReview } from '../../utils/api'
+import { validReviewComment } from '../../utils/auth'
 import { canReview } from '../../utils/bookingRules'
 import { formatStars } from '../../utils/format'
 import './booking.css'
@@ -12,6 +13,7 @@ export default function ReviewBlock({ booking, onSubmitted, onToast }) {
 
   const submit = async (e) => {
     e.preventDefault()
+    if (!validReviewComment(comment)) return onToast('Bình luận 10–500 ký tự và không chỉ lặp một ký tự.')
     setBusy(true)
     try {
       await createReview(booking.id, { rating, comment: comment.trim() || undefined })
@@ -38,8 +40,8 @@ export default function ReviewBlock({ booking, onSubmitted, onToast }) {
         </div>
         <label className="ui-field">
           <span>Bình luận (không bắt buộc)</span>
-          <textarea rows={3} maxLength={1000} value={comment} onChange={(e) => setComment(e.target.value)} />
-          <small className="bk-count">{comment.length}/1000</small>
+          <textarea rows={3} maxLength={500} value={comment} onChange={(e) => setComment(e.target.value)} />
+          <small className="bk-count">{comment.length}/500</small>
         </label>
         <div className="ui-actions">
           <button type="submit" className="ui-btn primary" disabled={!rating || busy}>

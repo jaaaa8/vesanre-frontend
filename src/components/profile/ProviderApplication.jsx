@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { ApiError, applyProvider } from '../../utils/api'
-import { getSession, hasRole } from '../../utils/auth'
+import { getSession, hasRole, validLegalName, validShopName, validTaxId } from '../../utils/auth'
 
 const MAX = { legalName: 200, taxId: 50, shopName: 160, shopDescription: 2000 }
 const EMPTY = { legalName: '', taxId: '', shopName: '', shopDescription: '' }
@@ -32,7 +32,9 @@ export default function ProviderApplication({ status, roles, onApplied, onUnauth
   const handleSubmit = async (event) => {
     event.preventDefault()
     const payload = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim()]))
-    if (!payload.legalName) return setErr('Vui lòng nhập tên pháp lý.')
+    if (!validLegalName(payload.legalName)) return setErr('Tên pháp lý 2–200 ký tự, chỉ gồm chữ, số, khoảng trắng và . , - & ( ).')
+    if (!validTaxId(payload.taxId)) return setErr('Mã số thuế gồm 10 số hoặc 10 số-3 số.')
+    if (!validShopName(payload.shopName)) return setErr('Tên cơ sở 2–160 ký tự, chỉ gồm chữ, số, khoảng trắng và . , - & ( ).')
     const tooLong = Object.keys(MAX).find((k) => payload[k].length > MAX[k])
     if (tooLong) return setErr(`Nội dung vượt quá ${MAX[tooLong]} ký tự.`)
     setErr('')

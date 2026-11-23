@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { clearSession, expireSession, SESSION_EXPIRED, getSession, hasRole, saveSession, tokenRoles, toBackendRole, validEmail, validPhone } from './auth.js'
+import { clearSession, expireSession, SESSION_EXPIRED, getSession, hasRole, saveSession, tokenRoles, toBackendRole, validEmail, validLegalName, validName, validPassword, validPhone, validReviewComment, validShopName, validTaxId } from './auth.js'
 
 function memoryStorage() {
   const values = new Map()
@@ -70,4 +70,39 @@ test('clearSession xoá luôn hồ sơ cục bộ sporthub_user', () => {
   clearSession()
   assert.equal(window.localStorage.getItem('sporthub_user'), null)
   delete globalThis.window
+})
+
+test('validators theo bảng regex', () => {
+  assert.equal(validName('Phạm Thị Hồng'), true)
+  assert.equal(validName('Nguyễn An'), true)
+  assert.equal(validName('A'), false)
+  assert.equal(validName('An1'), false)
+  assert.equal(validName('An  Bình'), false)
+  assert.equal(validName('a'.repeat(51)), false)
+
+  assert.equal(validPassword('Demo@123'), true)
+  assert.equal(validPassword('abcdefgh'), false)
+  assert.equal(validPassword('12345678'), false)
+  assert.equal(validPassword('abc 12345'), false)
+  assert.equal(validPassword('a1'.repeat(17)), false)
+
+  assert.equal(validLegalName('Công ty TNHH Goal Time (CN 2)'), true)
+  assert.equal(validLegalName('A'), false)
+  assert.equal(validLegalName('Shop<script>'), false)
+
+  assert.equal(validTaxId(''), true)
+  assert.equal(validTaxId('0401234567'), true)
+  assert.equal(validTaxId('0401234567-001'), true)
+  assert.equal(validTaxId('04012'), false)
+  assert.equal(validTaxId('TAX1'), false)
+
+  assert.equal(validShopName(''), true)
+  assert.equal(validShopName('Goal Time Stadium'), true)
+  assert.equal(validShopName('X'), false)
+
+  assert.equal(validReviewComment(''), true)
+  assert.equal(validReviewComment('Sân đẹp, nhân viên thân thiện'), true)
+  assert.equal(validReviewComment('ngắn'), false)
+  assert.equal(validReviewComment('aaaaaaaaaaaa'), false)
+  assert.equal(validReviewComment('x'.repeat(501)), false)
 })

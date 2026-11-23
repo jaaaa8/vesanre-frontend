@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import '../styles/Auth.css'
 import { ApiError, login, register } from '../utils/api'
-import { validEmail } from '../utils/auth'
+import { validEmail, validName, validPassword } from '../utils/auth'
 
 const BG_URL = 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=2000&q=80&auto=format&fit=crop'
 
@@ -28,9 +28,9 @@ export default function RegisterPage({ onRegister }) {
     event.preventDefault()
     const trimmedName = name.trim()
     const email = contact.trim()
-    if (trimmedName.length < 2) return setError('Vui lòng nhập họ và tên.')
+    if (!validName(trimmedName)) return setError('Họ tên 2–50 ký tự, chỉ gồm chữ và khoảng trắng.')
     if (!validEmail(email)) return setError('Vui lòng nhập email hợp lệ.')
-    if (password.length < 8) return setError('Mật khẩu cần ít nhất 8 ký tự.')
+    if (!validPassword(password)) return setError('Mật khẩu 8–32 ký tự, có ít nhất 1 chữ và 1 số, không chứa khoảng trắng.')
     if (password !== confirmPassword) return setError('Mật khẩu xác nhận chưa khớp.')
     if (!terms) return setError('Bạn cần đồng ý với Điều khoản & Chính sách của SportHub.')
     setError('')
@@ -91,6 +91,7 @@ export default function RegisterPage({ onRegister }) {
               onChange={(e) => setName(e.target.value)}
               placeholder="VD: Nguyễn Văn A"
               autoComplete="name"
+              maxLength={50}
             />
           </div>
           <div>
@@ -120,6 +121,7 @@ export default function RegisterPage({ onRegister }) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Tối thiểu 8 ký tự"
                 autoComplete="new-password"
+                maxLength={32}
               />
               <button
                 type="button"
