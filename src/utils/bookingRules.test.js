@@ -59,7 +59,6 @@ test('readProviderBookingParams chuẩn hóa bộ lọc', () => {
   assert.equal(read('page=-1').page, 0)
   assert.deepEqual(read(`venueId=${ID}&courtId=${ID}&date=2026-11-21&status=CANCELLED&page=2`), {
     venueId: ID,
-    courtId: ID,
     date: '2026-11-21',
     status: 'CANCELLED',
     page: 2,

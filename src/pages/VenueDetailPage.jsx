@@ -10,8 +10,8 @@ import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
 import { useHomeReveal } from '../hooks/useHomeReveal'
 import { getPublicVenue } from '../utils/api'
-import { formatVnd, minutesToTime, WEEKDAYS } from '../utils/format'
-import { addDays, clampDate, formatRating, mapsUrl, todayIn, venueCover } from '../utils/publicRules'
+import { formatVnd } from '../utils/format'
+import { addDays, clampDate, formatRating, mapsUrl, priceRows, todayIn, venueCover } from '../utils/publicRules'
 
 function Gallery({ images, name, venue }) {
   const [selected, setSelected] = useState(0)
@@ -34,21 +34,6 @@ function Gallery({ images, name, venue }) {
 }
 
 const amenityText = (a) => (a.details ? `${a.name} (${a.details})` : a.name)
-
-// Same band on several weekdays collapses into one row; the weekdays are listed only when not all 7 share it.
-function priceRows(rules) {
-  const rows = new Map()
-  for (const r of rules) {
-    const key = `${r.startMinute}-${r.endMinute}-${Number(r.pricePerHour)}`
-    if (!rows.has(key)) rows.set(key, { ...r, weekdays: [] })
-    rows.get(key).weekdays.push(r.weekday)
-  }
-  return [...rows.values()].map((r) => ({
-    key: `${r.startMinute}-${r.endMinute}-${r.pricePerHour}`,
-    days: r.weekdays.length === 7 ? 'Mỗi ngày' : r.weekdays.map((d) => WEEKDAYS[d]).join(', '),
-    text: `${minutesToTime(r.startMinute)}–${minutesToTime(r.endMinute)} · ${formatVnd(r.pricePerHour)}/giờ`,
-  }))
-}
 
 function VenueDetail({ venue }) {
   const map = mapsUrl(venue.latitude, venue.longitude)

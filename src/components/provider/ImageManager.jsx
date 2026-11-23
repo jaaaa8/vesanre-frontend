@@ -7,7 +7,7 @@ import ImageField from './ImageField'
 
 const MAX_IMAGES = 10
 
-export default function ImageManager({ kind, ownerId, images, onChange }) {
+export default function ImageManager({ ownerId, images, onChange }) {
   const [busy, setBusy] = useState(false)
   const [removing, setRemoving] = useState(null)
 
@@ -23,14 +23,14 @@ export default function ImageManager({ kind, ownerId, images, onChange }) {
     }
   }
 
-  const upload = (file) => run(async () => onChange([...images, await uploadImage(kind, ownerId, file)]), 'Đã tải ảnh lên')
+  const upload = (file) => run(async () => onChange([...images, await uploadImage(ownerId, file)]), 'Đã tải ảnh lên')
 
   const move = (index, delta) =>
-    run(async () => onChange(await reorderImages(kind, ownerId, imageOrderPayload(moveItem(images, index, delta)))))
+    run(async () => onChange(await reorderImages(ownerId, imageOrderPayload(moveItem(images, index, delta)))))
 
   const remove = () =>
     run(async () => {
-      await deleteImage(kind, ownerId, removing.id)
+      await deleteImage(ownerId, removing.id)
       onChange(images.filter((img) => img.id !== removing.id))
       setRemoving(null)
     }, 'Đã xóa ảnh')

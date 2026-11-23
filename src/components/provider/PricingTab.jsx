@@ -1,32 +1,23 @@
 import { useState } from 'react'
 import { formatVnd, minutesToTime, WEEKDAYS } from '../../utils/format'
-import { validatePricing } from '../../utils/providerRules'
 
-const SLOTS = Array.from({ length: 49 }, (_, i) => i * 30)
-let seq = 0
-const row = (r) => ({ key: ++seq, weekday: r.weekday, startMinute: r.startMinute, endMinute: r.endMinute, pricePerHour: String(r.pricePerHour) })
+// Whole hours only, matching the hourly booking grid.
+const SLOTS = Array.from({ length: 25 }, (_, i) => i * 60)
 
-export default function PricingTab({ value, onSave, busy }) {
-  const [rows, setRows] = useState(() => value.map(row))
+// value: PricingRuleRequest items; pricePerHour stays as typed until the parent sends it.
+export default function PricingTab({ value: rows, onChange: setRows, busy }) {
   const [sourceDay, setSourceDay] = useState(0)
-  const payload = rows.map(({ weekday, startMinute, endMinute, pricePerHour }) => ({ weekday, startMinute, endMinute, pricePerHour: Number(pricePerHour) }))
-  const error = validatePricing(payload)
 
-  const set = (key, patch) => setRows(rows.map((r) => (r.key === key ? { ...r, ...patch } : r)))
-  const add = () => setRows([...rows, row({ weekday: sourceDay, startMinute: 360, endMinute: 1320, pricePerHour: '' })])
+  const set = (index, patch) => setRows(rows.map((r, i) => (i === index ? { ...r, ...patch } : r)))
+  const add = () => setRows([...rows, { weekday: sourceDay, startMinute: 360, endMinute: 1320, pricePerHour: '' }])
   const copyToAll = () => {
     const source = rows.filter((r) => r.weekday === sourceDay)
-    const copies = WEEKDAYS.flatMap((_, d) => (d === sourceDay ? [] : source.map((r) => row({ ...r, weekday: d }))))
+    const copies = WEEKDAYS.flatMap((_, d) => (d === sourceDay ? [] : source.map((r) => ({ ...r, weekday: d }))))
     setRows([...source, ...copies])
   }
 
-  const save = (event) => {
-    event.preventDefault()
-    if (!error) onSave(payload)
-  }
-
   return (
-    <form className="pv-grid" onSubmit={save}>
+    <div className="pv-grid">
       {rows.length === 0 ? (
         <p className="ui-empty">Chưa có khung giá nào.</p>
       ) : (
@@ -42,10 +33,11 @@ export default function PricingTab({ value, onSave, busy }) {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
-                <tr key={r.key}>
+              {/* Index keys are safe: every cell is controlled by value, so nothing goes stale on delete. */}
+              {rows.map((r, index) => (
+                <tr key={index}>
                   <td>
-                    <select aria-label="Ngày" value={r.weekday} onChange={(e) => set(r.key, { weekday: Number(e.target.value) })}>
+                    <select aria-label="Ngày" value={r.weekday} onChange={(e) => set(index, { weekday: Number(e.target.value) })}>
                       {WEEKDAYS.map((label, d) => (
                         <option key={d} value={d}>
                           {label}
@@ -55,7 +47,8 @@ export default function PricingTab({ value, onSave, busy }) {
                   </td>
                   {['startMinute', 'endMinute'].map((field) => (
                     <td key={field}>
-                      <select aria-label={field === 'startMinute' ? 'Từ giờ' : 'Đến giờ'} value={r[field]} onChange={(e) => set(r.key, { [field]: Number(e.target.value) })}>
+                      <select aria-label={field === 'startMinute' ? 'Từ giờ' : 'Đến giờ'} value={r[field]} onChange={(e) => set(index, { [field]: Number(e.target.value) })}>
+                        {!SLOTS.includes(r[field]) && <option value={r[field]}>{minutesToTime(r[field])}</option>}
                         {SLOTS.map((m) => (
                           <option key={m} value={m}>
                             {minutesToTime(m)}
@@ -65,11 +58,11 @@ export default function PricingTab({ value, onSave, busy }) {
                     </td>
                   ))}
                   <td>
-                    <input type="number" aria-label="Giá mỗi giờ" min={1} step="any" value={r.pricePerHour} onChange={(e) => set(r.key, { pricePerHour: e.target.value })} />
+                    <input type="number" aria-label="Giá mỗi giờ" min={1} step="any" value={r.pricePerHour} onChange={(e) => set(index, { pricePerHour: e.target.value })} />
                     {Number(r.pricePerHour) > 0 && <div className="pv-muted">{formatVnd(r.pricePerHour)}</div>}
                   </td>
                   <td>
-                    <button type="button" className="ui-btn ghost" onClick={() => setRows(rows.filter((x) => x.key !== r.key))} disabled={busy}>
+                    <button type="button" className="ui-btn ghost" onClick={() => setRows(rows.filter((_, i) => i !== index))} disabled={busy}>
                       Xóa dòng
                     </button>
                   </td>
@@ -79,7 +72,6 @@ export default function PricingTab({ value, onSave, busy }) {
           </table>
         </div>
       )}
-      {error && <p className="pv-error">{error}</p>}
       <div className="ui-actions" style={{ flexWrap: 'wrap' }}>
         <select aria-label="Ngày nguồn" value={sourceDay} onChange={(e) => setSourceDay(Number(e.target.value))}>
           {WEEKDAYS.map((label, d) => (
@@ -94,10 +86,7 @@ export default function PricingTab({ value, onSave, busy }) {
         <button type="button" className="ui-btn ghost" onClick={copyToAll} disabled={busy || !rows.some((r) => r.weekday === sourceDay)}>
           Sao chép sang mọi ngày
         </button>
-        <button type="submit" className="ui-btn primary" disabled={busy || Boolean(error)}>
-          {busy ? 'Đang lưu…' : 'Lưu bảng giá'}
-        </button>
       </div>
-    </form>
+    </div>
   )
 }

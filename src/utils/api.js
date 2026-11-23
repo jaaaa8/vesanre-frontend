@@ -23,6 +23,7 @@ const VI_MESSAGES = {
   'Booking not found': 'Không tìm thấy lượt đặt',
   'Booking already started': 'Lượt đặt đã bắt đầu, không thể huỷ',
   'Deposit is too small': 'Tiền cọc quá nhỏ',
+  'Venue needs at least one ACTIVE court to submit': 'Cần lưu "Sân & lịch" trước khi gửi duyệt',
 }
 
 // auth: false skips the bearer token: an expired token on a permitAll endpoint still gets 401 from the resource server.
@@ -107,23 +108,14 @@ export const deleteVenue = (id) => request(`/api/provider/venues/${id}`, { metho
 export const submitVenue = (id) => request(`/api/provider/venues/${id}/submit`, { method: 'POST' })
 export const setVenueAmenities = (id, items) => request(`/api/provider/venues/${id}/amenities`, json('PUT', items))
 
-// Provider: courts
-export const createCourt = (venueId, body) => request(`/api/provider/venues/${venueId}/courts`, json('POST', body))
-export const getCourt = (id) => request(`/api/provider/courts/${id}`)
-export const updateCourt = (id, body) => request(`/api/provider/courts/${id}`, json('PATCH', body))
-export const setCourtSports = (id, items) => request(`/api/provider/courts/${id}/sports`, json('PUT', items))
-export const setCourtAmenities = (id, items) => request(`/api/provider/courts/${id}/amenities`, json('PUT', items))
-export const setOperatingHours = (id, items) => request(`/api/provider/courts/${id}/operating-hours`, json('PUT', items))
-export const setPricingRules = (id, items) => request(`/api/provider/courts/${id}/pricing-rules`, json('PUT', items))
-
 // Provider: venue setup (sport, court count, deposit, hours, prices)
 export const getVenueSetup = (id) => request(`/api/provider/venues/${id}/setup`)
 export const setVenueSetup = (id, body) => request(`/api/provider/venues/${id}/setup`, json('PUT', body))
 
-// Provider: images. kind is 'venues' or 'courts'.
-export const uploadImage = (kind, id, file) => request(`/api/provider/${kind}/${id}/images`, { method: 'POST', body: fileForm(file) })
-export const reorderImages = (kind, id, items) => request(`/api/provider/${kind}/${id}/images`, json('PUT', items))
-export const deleteImage = (kind, id, imageId) => request(`/api/provider/${kind}/${id}/images/${imageId}`, { method: 'DELETE' })
+// Provider: venue images
+export const uploadImage = (id, file) => request(`/api/provider/venues/${id}/images`, { method: 'POST', body: fileForm(file) })
+export const reorderImages = (id, items) => request(`/api/provider/venues/${id}/images`, json('PUT', items))
+export const deleteImage = (id, imageId) => request(`/api/provider/venues/${id}/images/${imageId}`, { method: 'DELETE' })
 
 // Admin
 const post = (path, body) => request(path, body === undefined ? { method: 'POST' } : json('POST', body))
