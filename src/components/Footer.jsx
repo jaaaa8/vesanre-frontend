@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { scrollToSection } from '../utils/scroll'
 
 export default function Footer() {
-  const scrollToVenues = () => scrollToSection('venues')
+  const navigate = useNavigate()
+  // Pages without a #venues section (venue detail) go to the search page instead.
+  const scrollToVenues = () => (document.getElementById('venues') ? scrollToSection('venues') : navigate('/san'))
 
   return (
     <footer className="footer" id="contact">
@@ -51,26 +53,26 @@ export default function Footer() {
         <nav className="fnav" aria-label="Môn thể thao">
           <h4>Môn thể thao</h4>
           <ul>
-            <li><a href="#sports">Bóng đá</a></li>
-            <li><a href="#sports">Pickleball</a></li>
-            <li><a href="#sports">Tennis</a></li>
-            <li><a href="#sports">Cầu lông</a></li>
-            <li><a href="#sports">Bóng rổ</a></li>
+            <li><a href="/#sports">Bóng đá</a></li>
+            <li><a href="/#sports">Pickleball</a></li>
+            <li><a href="/#sports">Tennis</a></li>
+            <li><a href="/#sports">Cầu lông</a></li>
+            <li><a href="/#sports">Bóng rổ</a></li>
           </ul>
         </nav>
         <nav className="fnav" aria-label="Nền tảng">
           <h4>Nền tảng</h4>
           <ul>
-            <li><a href="#venues">Tìm sân</a></li>
-            <li><a href="#sports">Bảng giá</a></li>
-            <li><a href="#owners">Cổng chủ sân</a></li>
+            <li><Link to="/san">Tìm sân</Link></li>
+            <li><a href="/#sports">Bảng giá</a></li>
+            <li><a href="/#owners">Cổng chủ sân</a></li>
           </ul>
         </nav>
         <nav className="fnav" aria-label="Công ty">
           <h4>Công ty</h4>
           <ul>
-            <li><a href="#trust">Về chúng tôi</a></li>
-            <li><a href="#owners">Hợp tác cùng SportHub</a></li>
+            <li><a href="/#trust">Về chúng tôi</a></li>
+            <li><a href="/#owners">Hợp tác cùng SportHub</a></li>
             <li><a href="#contact">Liên hệ</a></li>
           </ul>
         </nav>

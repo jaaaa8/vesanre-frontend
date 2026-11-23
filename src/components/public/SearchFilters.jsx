@@ -23,7 +23,7 @@ export default function SearchFilters({ params, sports, locations, loading, onSu
     setError('')
     onSubmit({ ...next, page: 0 })
   }
-  // Selects apply at once; typed fields (keyword, price) wait for "Tìm".
+  // Selects and sport pills apply at once; typed fields (keyword, price) wait for "Tìm".
   const choose = (key, extra) => (e) => apply({ ...form, [key]: e.target.value, ...extra })
 
   // Chips show the applied filters (URL), not unsubmitted edits; removing city also clears its district.
@@ -41,75 +41,90 @@ export default function SearchFilters({ params, sports, locations, loading, onSu
     apply(form)
   }
 
+  const sportOptions = [{ code: '', name: 'Tất cả' }, ...sports]
+
   return (
-    <form className="pub-filters" onSubmit={submit}>
-      <label className="ui-field pub-wide">
-        <span>Từ khóa</span>
-        <input value={form.q} onChange={set('q')} maxLength={100} placeholder="Tên sân, địa chỉ" />
-      </label>
-      <label className="ui-field">
-        <span>Thành phố</span>
-        <select value={form.city} onChange={choose('city', { district: '' })}>
-          <option value="">Tất cả thành phố</option>
-          {locations.map((l) => (
-            <option key={l.city} value={l.city}>
-              {l.city}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="ui-field">
-        <span>Quận</span>
-        <select value={form.district} onChange={choose('district')} disabled={!form.city}>
-          <option value="">Tất cả quận</option>
-          {districtsOf(locations, form.city).map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="ui-field">
-        <span>Môn</span>
-        <select value={form.sport} onChange={choose('sport')}>
-          <option value="">Tất cả môn</option>
-          {sports.map((s) => (
-            <option key={s.code} value={s.code}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="ui-field">
-        <span>Sắp xếp</span>
-        <select value={form.sort} onChange={choose('sort')}>
-          {SORT_LABELS.map(([v, l]) => (
-            <option key={v} value={v}>
-              {l}
-            </option>
-          ))}
-        </select>
-      </label>
-      <details className="pub-more pub-wide" open={!!(params.minPrice || params.maxPrice)}>
-        <summary>Lọc thêm theo giá</summary>
-        <div className="pub-more-body">
-          <label className="ui-field">
-            <span>Giá từ (đ/giờ)</span>
-            <input type="number" min={0} step={1} value={form.minPrice} onChange={set('minPrice')} />
-          </label>
-          <label className="ui-field">
-            <span>Giá đến (đ/giờ)</span>
-            <input type="number" min={0} step={1} value={form.maxPrice} onChange={set('maxPrice')} />
-          </label>
+    <form className="search-widget sr-filters" role="search" onSubmit={submit}>
+      <div className="sw-bar sr-bar">
+        <div className="sfield sfield-wide">
+          <label htmlFor="srQ">Từ khóa</label>
+          <input id="srQ" value={form.q} onChange={set('q')} maxLength={100} placeholder="Tên sân, địa chỉ" />
         </div>
-      </details>
+        <div className="sfield">
+          <label htmlFor="srCity">Thành phố</label>
+          <select id="srCity" value={form.city} onChange={choose('city', { district: '' })}>
+            <option value="">Tất cả thành phố</option>
+            {locations.map((l) => (
+              <option key={l.city} value={l.city}>
+                {l.city}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="sfield">
+          <label htmlFor="srDistrict">Quận</label>
+          <select id="srDistrict" value={form.district} onChange={choose('district')} disabled={!form.city}>
+            <option value="">Tất cả quận</option>
+            {districtsOf(locations, form.city).map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className="sw-btn" disabled={loading}>
+          Tìm sân{' '}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="spills" role="group" aria-label="Chọn môn thể thao">
+        {sportOptions.map((s) => (
+          <button
+            key={s.code}
+            type="button"
+            className={`spill${form.sport === s.code ? ' on' : ''}`}
+            aria-pressed={form.sport === s.code}
+            onClick={() => apply({ ...form, sport: s.code })}
+          >
+            {s.name}
+          </button>
+        ))}
+      </div>
+
+      <div className="sr-extra">
+        <div className="sfield">
+          <label htmlFor="srMin">Giá từ (đ/giờ)</label>
+          <input id="srMin" type="number" inputMode="numeric" min={0} step={1} value={form.minPrice} onChange={set('minPrice')} placeholder="0" />
+        </div>
+        <div className="sfield">
+          <label htmlFor="srMax">Giá đến (đ/giờ)</label>
+          <input id="srMax" type="number" inputMode="numeric" min={0} step={1} value={form.maxPrice} onChange={set('maxPrice')} placeholder="Không giới hạn" />
+        </div>
+        <div className="sfield">
+          <label htmlFor="srSort">Sắp xếp</label>
+          <select id="srSort" value={form.sort} onChange={choose('sort')}>
+            {SORT_LABELS.map(([v, l]) => (
+              <option key={v} value={v}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="button" className="sw-btn ghost" onClick={() => onSubmit(CLEARED)}>
+          Xóa lọc
+        </button>
+      </div>
+
       {error && (
-        <p className="pub-error pub-wide" role="alert">
+        <p className="pub-error" role="alert">
           {error}
         </p>
       )}
       {chips.length > 0 && (
-        <ul className="pub-chips pub-wide" aria-label="Bộ lọc đang bật">
+        <ul className="pub-chips" aria-label="Bộ lọc đang bật">
           {chips.map(([key, label, extra]) => (
             <li key={key}>
               <button type="button" className="pub-chip" aria-label={`Bỏ lọc ${label}`} onClick={() => onSubmit({ ...params, [key]: '', ...extra, page: 0 })}>
@@ -119,14 +134,6 @@ export default function SearchFilters({ params, sports, locations, loading, onSu
           ))}
         </ul>
       )}
-      <div className="ui-actions pub-wide">
-        <button type="button" className="ui-btn ghost" onClick={() => onSubmit(CLEARED)}>
-          Xóa lọc
-        </button>
-        <button type="submit" className="ui-btn primary" disabled={loading}>
-          Tìm
-        </button>
-      </div>
     </form>
   )
 }

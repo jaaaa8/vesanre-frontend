@@ -4,9 +4,11 @@ import AsyncView from '../components/common/AsyncView'
 import EmptyState from '../components/common/EmptyState'
 import CourtSlots from '../components/public/CourtSlots'
 import VenueReviews from '../components/public/VenueReviews'
-import PublicTopbar from '../components/public/PublicTopbar'
+import Footer from '../components/Footer'
+import Header from '../components/Header'
 import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
+import { useHomeReveal } from '../hooks/useHomeReveal'
 import { getPublicVenue } from '../utils/api'
 import { formatVnd, WEEKDAYS } from '../utils/format'
 import { addDays, clampDate, formatRating, mapsUrl, todayIn, venueCover } from '../utils/publicRules'
@@ -43,8 +45,9 @@ function Court({ court, date }) {
         {court.name} <small>({court.code})</small>
       </h3>
       <p>
-        {sports.map((s) => (s.primary ? `${s.name} (chính)` : s.name)).join(' · ')}
-        {court.capacity != null && ` · ${court.capacity} người`}
+        {[...sports.map((s) => (s.primary ? `${s.name} (chính)` : s.name)), court.capacity != null && `${court.capacity} người`]
+          .filter(Boolean)
+          .join(' · ')}
       </p>
       {court.amenities.length > 0 && <p className="pub-muted">{court.amenities.map(amenityText).join(' · ')}</p>}
       {hours.length > 0 && (
@@ -69,36 +72,60 @@ function VenueDetail({ venue }) {
   const date = clampDate(raw, today)
   return (
     <>
-      <Gallery images={venue.images} name={venue.name} venue={venue} />
-      <section className="pub-info">
-        <h1>{venue.name}</h1>
-        <p className="pub-rating">{formatRating(venue.ratingAverage, venue.ratingCount)}</p>
-        <p>{[venue.addressLine, venue.ward, venue.district, venue.city].filter(Boolean).join(', ')}</p>
-        {venue.phone && <a href={`tel:${venue.phone}`}>{venue.phone}</a>}
-        {venue.fromPrice != null && <p className="pub-price">Từ {formatVnd(venue.fromPrice)}/giờ</p>}
-        {venue.description && <p className="pub-desc">{venue.description}</p>}
-        {map && (
-          <a href={map} target="_blank" rel="noopener noreferrer">
-            Xem trên Google Maps
-          </a>
-        )}
-      </section>
-      <section className="pub-shop">
-        {venue.shop.logoUrl && <img src={venue.shop.logoUrl} alt="" />}
-        <span>{venue.shop.name}</span>
-      </section>
-      {venue.amenities.length > 0 && (
-        <section>
-          <h2>Tiện ích</h2>
-          <ul className="pub-tags">
-            {venue.amenities.map((a) => (
-              <li key={a.amenityId}>{amenityText(a)}</li>
-            ))}
-          </ul>
+      <div className="pub-overview">
+        <Gallery images={venue.images} name={venue.name} venue={venue} />
+        <section className="pub-info">
+          <h1>{venue.name}</h1>
+          <p className="pub-rating">{formatRating(venue.ratingAverage, venue.ratingCount)}</p>
+          <p className="pub-address">{[venue.addressLine, venue.ward, venue.district, venue.city].filter(Boolean).join(', ')}</p>
+          {venue.fromPrice != null && (
+            <p className="pub-price">
+              <small>Giá từ</small>
+              {formatVnd(venue.fromPrice)}
+              <small>/giờ</small>
+            </p>
+          )}
+          <div className="pub-actions">
+            {venue.courts.length > 0 && (
+              <a className="ui-btn primary" href="#courts">
+                Chọn khung giờ
+              </a>
+            )}
+            {venue.phone && (
+              <a className="ui-btn" href={`tel:${venue.phone}`}>
+                {venue.phone}
+              </a>
+            )}
+            {map && (
+              <a className="ui-btn" href={map} target="_blank" rel="noopener noreferrer">
+                Xem trên Google Maps
+              </a>
+            )}
+          </div>
+          <div className="pub-shop">
+            {venue.shop.logoUrl && <img src={venue.shop.logoUrl} alt="" />}
+            <span>
+              <small>Chủ sân</small>
+              {venue.shop.name}
+            </span>
+          </div>
+        </section>
+      </div>
+      {(venue.description || venue.amenities.length > 0) && (
+        <section className="pub-section">
+          <h2>Giới thiệu</h2>
+          {venue.description && <p className="pub-desc">{venue.description}</p>}
+          {venue.amenities.length > 0 && (
+            <ul className="pub-tags" aria-label="Tiện ích">
+              {venue.amenities.map((a) => (
+                <li key={a.amenityId}>{amenityText(a)}</li>
+              ))}
+            </ul>
+          )}
         </section>
       )}
-      <section className="pub-courts">
-        <h2>Sân con</h2>
+      <section className="pub-courts" id="courts">
+        <h2>Chọn sân &amp; khung giờ</h2>
         {venue.courts.length === 0 ? (
           <p className="ui-muted">Chưa có sân con đang hoạt động</p>
         ) : (
@@ -119,7 +146,8 @@ function VenueDetail({ venue }) {
   )
 }
 
-export default function VenueDetailPage() {
+export default function VenueDetailPage({ user, onLogout }) {
+  useHomeReveal()
   const { id } = useParams()
   const venue = useApi(() => getPublicVenue(id), [id])
   const name = venue.data?.name
@@ -136,7 +164,16 @@ export default function VenueDetailPage() {
   const missing = venue.error?.status === 404 || venue.error?.status === 400
   return (
     <div className="pub-page">
-      <PublicTopbar />
+      {/* Same Header and photo backdrop as the home page, kept to a single navbar strip. */}
+      <section className="hero vd-nav">
+        <div className="hero-bg">
+          <div className="hero-bg-inner">
+            <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=2000&q=80&auto=format&fit=crop" alt="" />
+            <div className="hero-shade" />
+          </div>
+        </div>
+        <Header user={user} onLogout={onLogout} />
+      </section>
       <main className="pub-main">
         {missing ? (
           <EmptyState text="Sân không tồn tại hoặc đã ngừng hoạt động">
@@ -148,6 +185,7 @@ export default function VenueDetailPage() {
           <AsyncView state={venue}>{venue.data && <VenueDetail key={venue.data.id} venue={venue.data} />}</AsyncView>
         )}
       </main>
+      <Footer />
     </div>
   )
 }

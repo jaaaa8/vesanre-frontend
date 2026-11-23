@@ -1,24 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { ShieldCheck, SignOut, SquaresFour, User } from '@phosphor-icons/react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getSession, hasRole } from '../utils/auth'
 import { scrollToSection } from '../utils/scroll'
 import NotificationBell from './common/NotificationBell'
 
 const links = [
-  ['#venues', 'Sân & Địa điểm'],
-  ['#sports', 'Môn thể thao & Giá'],
-  ['#owners', 'Dành cho chủ sân'],
-  ['#testimonials', 'Đánh giá'],
+  ['/#venues', 'Sân & Địa điểm'],
+  ['/#sports', 'Môn thể thao & Giá'],
+  ['/#owners', 'Dành cho chủ sân'],
+  ['/#testimonials', 'Đánh giá'],
 ]
 
 const menuLinks = [
-  ['#venues', 'Địa điểm'],
-  ['#sports', 'Môn thể thao'],
-  ['#owners', 'Chủ sân'],
-  ['#testimonials', 'Đánh giá'],
-  ['#contact', 'Liên hệ'],
+  ['/#venues', 'Địa điểm'],
+  ['/#sports', 'Môn thể thao'],
+  ['/#owners', 'Chủ sân'],
+  ['/#testimonials', 'Đánh giá'],
+  ['/#contact', 'Liên hệ'],
 ]
 
 function initials(name) {
@@ -80,7 +80,9 @@ export default function Header({ user, onLogout }) {
     toast.success('Đã đăng xuất thành công')
   }
 
-  const scrollToVenues = () => scrollToSection('venues')
+  const navigate = useNavigate()
+  // Pages without a #venues section (venue detail) go to the search page instead.
+  const scrollToVenues = () => (document.getElementById('venues') ? scrollToSection('venues') : navigate('/san'))
 
   return (
     <>

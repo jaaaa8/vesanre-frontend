@@ -4,15 +4,19 @@ import { formatRating, venueCover } from '../../utils/publicRules'
 
 export default function VenueCard({ venue }) {
   return (
-    <Link className="pub-card" to={`/san/${venue.id}`}>
-      <img src={venueCover(venue)} alt={venue.name} loading="lazy" />
-      <div className="pub-card-body">
-        <h3>{venue.name}</h3>
-        <p>{`${venue.district}, ${venue.city}`}</p>
-        <p>{venue.sports.join(' · ')}</p>
-        <p className="pub-rating">{formatRating(venue.ratingAverage, venue.ratingCount)}</p>
-        <p className="pub-price">{venue.fromPrice != null ? `Từ ${formatVnd(venue.fromPrice)}/giờ` : 'Chưa có giá'}</p>
-      </div>
+    <Link className="court sr-card" to={`/san/${venue.id}`}>
+      <figure>
+        <img src={venueCover(venue)} alt={venue.name} loading="lazy" />
+        <figcaption>
+          <h3>{venue.name}</h3>
+          <span>{`${venue.district}, ${venue.city}`}</span>
+          {venue.sports.length > 0 && <span>{venue.sports.join(' · ')}</span>}
+          <span className="sr-card-foot">
+            <span>{formatRating(venue.ratingAverage, venue.ratingCount)}</span>
+            <strong>{venue.fromPrice != null ? `Từ ${formatVnd(venue.fromPrice)}/giờ` : 'Chưa có giá'}</strong>
+          </span>
+        </figcaption>
+      </figure>
     </Link>
   )
 }

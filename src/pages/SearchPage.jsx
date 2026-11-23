@@ -2,16 +2,19 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import AsyncView from '../components/common/AsyncView'
 import Pagination from '../components/common/Pagination'
-import PublicTopbar from '../components/public/PublicTopbar'
+import Footer from '../components/Footer'
+import Header from '../components/Header'
 import SearchFilters from '../components/public/SearchFilters'
 import VenueCard from '../components/public/VenueCard'
 import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
+import { useHomeReveal } from '../hooks/useHomeReveal'
 import { fallbackPage, needsRewrite } from '../utils/adminRules'
 import { getLocations, getSports, searchVenues } from '../utils/api'
 import { readSearchParams, SEARCH_SIZE, searchHref } from '../utils/publicRules'
 
-export default function SearchPage() {
+export default function SearchPage({ user, onLogout }) {
+  useHomeReveal()
   const [search] = useSearchParams()
   const navigate = useNavigate()
   const params = readSearchParams(search)
@@ -34,29 +37,57 @@ export default function SearchPage() {
   }, [result.data, result.loading])
 
   return (
-    <div className="pub-page">
-      <PublicTopbar />
-      <main className="pub-main">
-        <h1>Tìm sân</h1>
-        <SearchFilters
-          key={search.toString()}
-          params={params}
-          sports={sports.data ?? []}
-          locations={locations.data ?? []}
-          loading={result.loading}
-          onSubmit={(next) => navigate(searchHref(next))}
-        />
+    <main>
+      <section className="hero sr-hero">
+        <div className="hero-bg">
+          <div className="hero-bg-inner">
+            <img
+              src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=2000&q=80&auto=format&fit=crop"
+              alt=""
+              fetchPriority="high"
+            />
+            <div className="hero-shade" />
+          </div>
+        </div>
+        <Header user={user} onLogout={onLogout} />
+        <div className="sr-head">
+          <span className="eyebrow light">
+            <i />
+            Đặt sân trực tiếp · Gần bạn
+          </span>
+          <h1 className="sr-title">Tìm sân</h1>
+        </div>
+        <div className="hero-search">
+          <SearchFilters
+            key={search.toString()}
+            params={params}
+            sports={sports.data ?? []}
+            locations={locations.data ?? []}
+            loading={result.loading}
+            onSubmit={(next) => navigate(searchHref(next))}
+          />
+        </div>
+      </section>
+
+      {/* id="venues" lets the shared Header/Footer "Tìm sân" buttons scroll here, as on the home page. */}
+      <section className="sr-results" id="venues">
+        <span className="eyebrow dark">
+          <i />
+          Kết quả tìm kiếm
+        </span>
         {result.loading && !result.data ? (
-          <div className="pub-grid" role="status" aria-label="Đang tải danh sách sân">
+          <div className="sr-grid" role="status" aria-label="Đang tải danh sách sân">
             {Array.from({ length: 6 }, (_, i) => (
-              <div key={i} className="pub-card pub-skeleton" />
+              <div key={i} className="court pub-skeleton" />
             ))}
           </div>
         ) : (
           <AsyncView state={result} empty={result.data?.items.length === 0} emptyText="Không tìm thấy sân phù hợp">
             <div aria-busy={result.loading} className={result.loading ? 'pub-reloading' : undefined}>
-              <p className="pub-count">{result.data?.totalElements} sân phù hợp</p>
-              <div className="pub-grid">
+              <h2 className="sr-count">
+                <b>{result.data?.totalElements}</b> sân phù hợp
+              </h2>
+              <div className="sr-grid">
                 {result.data?.items.map((v) => (
                   <VenueCard key={v.id} venue={v} />
                 ))}
@@ -65,7 +96,8 @@ export default function SearchPage() {
             </div>
           </AsyncView>
         )}
-      </main>
-    </div>
+      </section>
+      <Footer />
+    </main>
   )
 }
