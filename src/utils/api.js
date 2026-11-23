@@ -23,6 +23,7 @@ const VI_MESSAGES = {
   'Booking not found': 'Không tìm thấy lượt đặt',
   'Booking already started': 'Lượt đặt đã bắt đầu, không thể huỷ',
   'Deposit is too small': 'Tiền cọc quá nhỏ',
+  'Top-up expired': 'Mã nạp đã hết hạn',
   'Venue needs at least one ACTIVE court to submit': 'Cần lưu "Sân & lịch" trước khi gửi duyệt',
 }
 
