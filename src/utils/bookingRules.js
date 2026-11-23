@@ -43,18 +43,16 @@ export const PROVIDER_BOOKING_FILTERS = [
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const PROVIDER_STATUSES = PROVIDER_BOOKING_FILTERS.map(([key]) => key)
 
-// Backend answers 400 to a date filter without venueId/courtId, so date is dropped in that case.
+// Backend answers 400 to a date filter without venueId, so date is dropped in that case.
 export function readProviderBookingParams(search) {
   const uuid = (key) => (UUID.test(search.get(key) ?? '') ? search.get(key) : '')
   const venueId = uuid('venueId')
-  const courtId = uuid('courtId')
   const rawDate = search.get('date') ?? ''
   const status = search.get('status')
   const page = search.get('page') ?? ''
   return {
     venueId,
-    courtId,
-    date: /^\d{4}-\d{2}-\d{2}$/.test(rawDate) && (venueId || courtId) ? rawDate : '',
+    date: /^\d{4}-\d{2}-\d{2}$/.test(rawDate) && venueId ? rawDate : '',
     status: PROVIDER_STATUSES.includes(status) ? status : 'CONFIRMED',
     page: /^\d{1,9}$/.test(page) ? Number(page) : 0,
   }

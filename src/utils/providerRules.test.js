@@ -3,31 +3,13 @@ import test from 'node:test'
 import {
   imageOrderPayload,
   moveItem,
-  validateCourt,
+  setupError,
   validateImageFile,
   validateOperatingHours,
   validatePricing,
-  validateSports,
   venueChangePayload,
   venuePatchPayload,
 } from './providerRules.js'
-
-test('validateCourt: số dương, bội số của bước, min ≤ max', () => {
-  const base = { capacity: 10, bookingStepMinutes: 30, minBookingMinutes: 60, maxBookingMinutes: 120 }
-  assert.equal(validateCourt(base), null)
-  assert.ok(validateCourt({ ...base, minBookingMinutes: 45 }))
-  assert.ok(validateCourt({ ...base, maxBookingMinutes: 100 }))
-  assert.ok(validateCourt({ ...base, minBookingMinutes: 180 }))
-  assert.ok(validateCourt({ ...base, capacity: 0 }))
-  assert.ok(validateCourt({ ...base, bookingStepMinutes: '' }))
-})
-
-test('validateSports: ≥ 1 môn, đúng 1 môn chính', () => {
-  assert.ok(validateSports([]))
-  assert.ok(validateSports([{ sportId: 'a', primary: false }]))
-  assert.ok(validateSports([{ sportId: 'a', primary: true }, { sportId: 'b', primary: true }]))
-  assert.equal(validateSports([{ sportId: 'a', primary: true }, { sportId: 'b', primary: false }]), null)
-})
 
 const week = () => Array.from({ length: 7 }, (_, weekday) => ({ weekday, opensAt: '06:00', closesAt: '22:00', closed: false }))
 
@@ -113,4 +95,18 @@ test('validatePricing: giá VND phải là số nguyên, tối đa 10 chữ số
   assert.equal(validatePricing(r(9999999999)), null)
   assert.equal(validatePricing(r(150000.5)), 'Giá phải là số nguyên, tối đa 10 chữ số')
   assert.equal(validatePricing(r(1e10)), 'Giá phải là số nguyên, tối đa 10 chữ số')
+})
+
+test('setupError: số sân 1–50, giờ tròn, form hợp lệ trả null', () => {
+  const valid = { sportCode: 'BADMINTON', courtCount: 4, depositPercent: 30, operatingHours: week(), pricingRules: [{ weekday: 0, startMinute: 360, endMinute: 1020, pricePerHour: 60000 }] }
+  assert.equal(setupError({ courtCount: 0 }), 'Số sân từ 1 đến 50')
+  assert.equal(setupError({ ...valid, courtCount: 51 }), 'Số sân từ 1 đến 50')
+  const halfHour = week()
+  halfHour[0].opensAt = '06:30'
+  assert.ok(setupError({ ...valid, operatingHours: halfHour }))
+  assert.ok(setupError({ ...valid, pricingRules: [{ ...valid.pricingRules[0], startMinute: 390 }] }))
+  assert.ok(setupError({ ...valid, sportCode: '' }))
+  assert.ok(setupError({ ...valid, depositPercent: 101 }))
+  assert.equal(setupError(valid), null)
+  assert.equal(setupError({ ...valid, courtCount: '4', depositPercent: '0' }), null)
 })

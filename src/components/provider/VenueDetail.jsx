@@ -7,15 +7,15 @@ import AsyncView from '../common/AsyncView'
 import ConfirmDialog from '../common/ConfirmDialog'
 import StatusBadge from '../common/StatusBadge'
 import AmenityPicker from './AmenityPicker'
-import CourtList from './CourtList'
 import ImageManager from './ImageManager'
 import VenueInfoTab from './VenueInfoTab'
+import VenueSetupTab from './VenueSetupTab'
 
 const TABS = [
   ['info', 'Thông tin'],
   ['amenities', 'Tiện ích'],
   ['images', 'Hình ảnh'],
-  ['courts', 'Sân con'],
+  ['setup', 'Sân & lịch'],
 ]
 
 export default function VenueDetail({ onLogout }) {
@@ -35,7 +35,6 @@ function VenueBody({ venue, setVenue, reload }) {
   const [busy, setBusy] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const canSubmit = venue.status === 'DRAFT' || venue.status === 'REJECTED'
-  const hasActiveCourt = venue.courts.some((c) => c.status === 'ACTIVE')
 
   const submit = async () => {
     setBusy(true)
@@ -84,7 +83,7 @@ function VenueBody({ venue, setVenue, reload }) {
         <div className="pv-row">
           <StatusBadge status={venue.status} />
           {canSubmit && (
-            <button type="button" className="ui-btn primary" onClick={submit} disabled={busy || !hasActiveCourt}>
+            <button type="button" className="ui-btn primary" onClick={submit} disabled={busy}>
               Gửi duyệt
             </button>
           )}
@@ -95,7 +94,7 @@ function VenueBody({ venue, setVenue, reload }) {
           )}
         </div>
       </div>
-      {canSubmit && !hasActiveCourt && <p className="pv-muted">Cần ít nhất 1 sân con đang hoạt động để gửi duyệt.</p>}
+      {canSubmit && <p className="pv-muted">Lưu tab "Sân &amp; lịch" trước khi gửi duyệt.</p>}
       {venue.status === 'REJECTED' && <p className="pv-error">Bị từ chối, xem lý do trong email. Sửa thông tin rồi gửi duyệt lại.</p>}
 
       <div className="pv-tabs" role="tablist">
@@ -108,9 +107,9 @@ function VenueBody({ venue, setVenue, reload }) {
 
       {tab === 'info' && <VenueInfoTab key={JSON.stringify(venue)} venue={venue} onSaved={setVenue} reload={reload} />}
       {tab === 'amenities' && <AmenityPicker scope="VENUE" value={venue.amenities} onSave={saveAmenities} busy={busy} />}
-      {tab === 'courts' && <CourtList venueId={venue.id} courts={venue.courts} />}
+      {tab === 'setup' && <VenueSetupTab venueId={venue.id} />}
       {tab === 'images' && (
-        <ImageManager kind="venues" ownerId={venue.id} images={venue.images} onChange={(images) => setVenue({ ...venue, images })} />
+        <ImageManager ownerId={venue.id} images={venue.images} onChange={(images) => setVenue({ ...venue, images })} />
       )}
 
       <ConfirmDialog
