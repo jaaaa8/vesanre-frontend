@@ -67,6 +67,8 @@
 .pub-summary{display:grid;gap:.15rem;font-size:.9rem}
 .pub-summary .err,.pub-short{color:var(--danger)}
 .pub-slot-note{color:var(--ink-soft);font-size:.8rem;margin-top:.5rem}
+.pub-slot-head{font-weight:500}
+.pub-slot-step{color:var(--ink-soft);font-size:.85rem;margin:.5rem 0 .35rem}
 .pub-book{display:flex;align-items:center;gap:.75rem;font-size:.85rem;color:var(--ink-soft)}
 @media (max-width:640px){.pub-bar{position:sticky;bottom:0;z-index:1;display:grid;gap:.5rem;padding:.75rem 0;background:var(--surface-card);border-top:1px solid var(--hairline)}}
 .pub-rating{color:#b26b00;font-weight:500}

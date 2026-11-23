@@ -86,8 +86,8 @@ export const getAmenities = () => request('/api/catalog/amenities', PUBLIC)
 export const searchVenues = (params) => request(`/api/catalog/venues${toQuery(params)}`, PUBLIC)
 export const getLocations = () => request('/api/catalog/locations', PUBLIC)
 export const getPublicVenue = (id) => request(`/api/catalog/venues/${id}`, PUBLIC)
-export const getCourtAvailability = (courtId, date) =>
-  request(`/api/catalog/courts/${courtId}/availability${toQuery({ date })}`, PUBLIC)
+export const getVenueAvailability = (venueId, date) =>
+  request(`/api/catalog/venues/${venueId}/availability${toQuery({ date })}`, PUBLIC)
 
 // Provider: shop
 export const getShop = () => request('/api/provider/shop')
@@ -115,6 +115,10 @@ export const setCourtSports = (id, items) => request(`/api/provider/courts/${id}
 export const setCourtAmenities = (id, items) => request(`/api/provider/courts/${id}/amenities`, json('PUT', items))
 export const setOperatingHours = (id, items) => request(`/api/provider/courts/${id}/operating-hours`, json('PUT', items))
 export const setPricingRules = (id, items) => request(`/api/provider/courts/${id}/pricing-rules`, json('PUT', items))
+
+// Provider: venue setup (sport, court count, deposit, hours, prices)
+export const getVenueSetup = (id) => request(`/api/provider/venues/${id}/setup`)
+export const setVenueSetup = (id, body) => request(`/api/provider/venues/${id}/setup`, json('PUT', body))
 
 // Provider: images. kind is 'venues' or 'courts'.
 export const uploadImage = (kind, id, file) => request(`/api/provider/${kind}/${id}/images`, { method: 'POST', body: fileForm(file) })
@@ -162,6 +166,7 @@ export const getWallet = () => request('/api/wallet')
 export const getWalletEntries = (q) => request(`/api/wallet/entries${toQuery(q)}`)
 export const createTopUp = (coins) => post('/api/wallet/top-ups', { coins })
 export const getTopUp = (id) => request(`/api/wallet/top-ups/${id}`)
+export const simulateTopUpPaid = (id) => post(`/api/wallet/top-ups/${id}/simulate-paid`)
 
 // Bookings (customer)
 export const createBooking = (body) => post('/api/bookings', body)

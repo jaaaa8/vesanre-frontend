@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import AsyncView from '../components/common/AsyncView'
 import EmptyState from '../components/common/EmptyState'
-import CourtSlots from '../components/public/CourtSlots'
 import VenueReviews from '../components/public/VenueReviews'
+import VenueSlots from '../components/public/VenueSlots'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import '../components/public/public.css'
 import { useApi } from '../hooks/useApi'
 import { useHomeReveal } from '../hooks/useHomeReveal'
 import { getPublicVenue } from '../utils/api'
-import { formatVnd, WEEKDAYS } from '../utils/format'
+import { formatVnd, minutesToTime, WEEKDAYS } from '../utils/format'
 import { addDays, clampDate, formatRating, mapsUrl, todayIn, venueCover } from '../utils/publicRules'
 
 function Gallery({ images, name, venue }) {
@@ -33,35 +33,21 @@ function Gallery({ images, name, venue }) {
   )
 }
 
-const hoursText = (h) => (h.closed ? 'Nghỉ' : `${h.opensAt.slice(0, 5)}–${h.closesAt.slice(0, 5)}`)
 const amenityText = (a) => (a.details ? `${a.name} (${a.details})` : a.name)
 
-function Court({ court, date }) {
-  const sports = [...court.sports].sort((a, b) => b.primary - a.primary)
-  const hours = [...court.operatingHours].sort((a, b) => a.weekday - b.weekday)
-  return (
-    <article className="pub-court">
-      <h3>
-        {court.name} <small>({court.code})</small>
-      </h3>
-      <p>
-        {[...sports.map((s) => (s.primary ? `${s.name} (chính)` : s.name)), court.capacity != null && `${court.capacity} người`]
-          .filter(Boolean)
-          .join(' · ')}
-      </p>
-      {court.amenities.length > 0 && <p className="pub-muted">{court.amenities.map(amenityText).join(' · ')}</p>}
-      {hours.length > 0 && (
-        <ul className="pub-hours">
-          {hours.map((h) => (
-            <li key={h.weekday}>
-              <span>{WEEKDAYS[h.weekday]}</span> {hoursText(h)}
-            </li>
-          ))}
-        </ul>
-      )}
-      <CourtSlots court={court} date={date} />
-    </article>
-  )
+// Same band on several weekdays collapses into one row; the weekdays are listed only when not all 7 share it.
+function priceRows(rules) {
+  const rows = new Map()
+  for (const r of rules) {
+    const key = `${r.startMinute}-${r.endMinute}-${Number(r.pricePerHour)}`
+    if (!rows.has(key)) rows.set(key, { ...r, weekdays: [] })
+    rows.get(key).weekdays.push(r.weekday)
+  }
+  return [...rows.values()].map((r) => ({
+    key: `${r.startMinute}-${r.endMinute}-${r.pricePerHour}`,
+    days: r.weekdays.length === 7 ? 'Mỗi ngày' : r.weekdays.map((d) => WEEKDAYS[d]).join(', '),
+    text: `${minutesToTime(r.startMinute)}–${minutesToTime(r.endMinute)} · ${formatVnd(r.pricePerHour)}/giờ`,
+  }))
 }
 
 function VenueDetail({ venue }) {
@@ -86,7 +72,7 @@ function VenueDetail({ venue }) {
             </p>
           )}
           <div className="pub-actions">
-            {venue.courts.length > 0 && (
+            {venue.courtCount > 0 && (
               <a className="ui-btn primary" href="#courts">
                 Chọn khung giờ
               </a>
@@ -125,19 +111,27 @@ function VenueDetail({ venue }) {
         </section>
       )}
       <section className="pub-courts" id="courts">
-        <h2>Chọn sân &amp; khung giờ</h2>
-        {venue.courts.length === 0 ? (
+        <h2>Chọn khung giờ</h2>
+        {venue.courtCount === 0 ? (
           <p className="ui-muted">Chưa có sân con đang hoạt động</p>
         ) : (
           <>
+            <p>{[venue.sport, `${venue.courtCount} sân`].filter(Boolean).join(' · ')}</p>
+            {venue.pricingRules.length > 0 && (
+              <ul className="pub-hours" aria-label="Bảng giá">
+                {priceRows(venue.pricingRules).map((r) => (
+                  <li key={r.key}>
+                    <span>{r.days}</span> {r.text}
+                  </li>
+                ))}
+              </ul>
+            )}
             <label className="ui-field pub-date">
               <span>Ngày đặt sân</span>
               {/* No clamping in onChange: Chrome fires it while each date segment is still being typed. */}
               <input type="date" min={today} max={addDays(today, 30)} value={raw} onChange={(e) => setRaw(e.target.value)} onBlur={() => setRaw(date)} />
             </label>
-            {venue.courts.map((c) => (
-              <Court key={c.id} court={c} date={date} />
-            ))}
+            <VenueSlots venue={venue} date={date} />
           </>
         )}
       </section>
