@@ -63,3 +63,11 @@ test('expireSession xóa phiên và báo SESSION_EXPIRED cho App', () => {
   assert.deepEqual(events, [SESSION_EXPIRED])
   delete globalThis.window
 })
+
+test('clearSession xoá luôn hồ sơ cục bộ sporthub_user', () => {
+  globalThis.window = { localStorage: memoryStorage(), sessionStorage: memoryStorage() }
+  window.localStorage.setItem('sporthub_user', JSON.stringify({ name: 'Bileyghas1ye' }))
+  clearSession()
+  assert.equal(window.localStorage.getItem('sporthub_user'), null)
+  delete globalThis.window
+})

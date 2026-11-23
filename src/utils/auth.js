@@ -24,7 +24,10 @@ export function saveSession(session, remember) {
 }
 
 export function clearSession() {
-  storage().forEach((item) => item.removeItem(AUTH_KEY))
+  storage().forEach((item) => {
+    item.removeItem(AUTH_KEY)
+    item.removeItem('sporthub_user')
+  })
 }
 
 // Kept identical to AuthPatterns.java in the backend.
