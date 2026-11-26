@@ -86,7 +86,6 @@ export default function Hero({ user, onLogout }) {
           ))}
         </p>
         <div className="hero-cluster">
-          <SearchPanel />
           <article className="member-card glass" data-inview id="memberCard">
             <div className="member-left">
               <div className="member-val">12K+</div>
@@ -105,6 +104,9 @@ export default function Hero({ user, onLogout }) {
             />
           </article>
         </div>
+      </div>
+      <div className="hero-search">
+        <SearchPanel />
       </div>
     </section>
   )

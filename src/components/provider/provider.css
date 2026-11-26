@@ -1,4 +1,4 @@
-.pv-page{min-height:100vh;background:var(--surface);padding:.75rem;display:grid;gap:.75rem;align-content:start}
+.pv-page{min-height:100vh;padding:.75rem;display:grid;gap:.75rem;align-content:start}
 .pv-top{background:var(--brand-deep);color:var(--on-brand);border-radius:var(--radius-card-lg);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .pv-top a{color:inherit}
 .pv-top .brand{display:flex;align-items:center;gap:.6rem;font-weight:500;text-transform:uppercase;letter-spacing:.15em;font-size:.875rem}

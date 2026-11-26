@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { validPassword } from '../../../utils/auth'
 
 export default function SecurityTab({ active, onToast }) {
   const [pwOld, setPwOld] = useState('')
@@ -8,8 +9,8 @@ export default function SecurityTab({ active, onToast }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (pwNew.length < 6) {
-      setPwErr('Mật khẩu mới phải có ít nhất 6 ký tự.')
+    if (!validPassword(pwNew)) {
+      setPwErr('Mật khẩu 8–32 ký tự, có ít nhất 1 chữ và 1 số, không chứa khoảng trắng.')
       return
     }
     if (pwNew !== pwNew2) {
@@ -32,7 +33,7 @@ export default function SecurityTab({ active, onToast }) {
             Bảo mật
           </span>
           <h2>Đổi mật khẩu</h2>
-          <p>Mật khẩu tối thiểu 6 ký tự để bảo vệ tài khoản.</p>
+          <p>Mật khẩu 8–32 ký tự, có ít nhất 1 chữ và 1 số.</p>
         </div>
       </div>
       <form id="pwForm" className="modal-form" style={{ marginTop: 0 }} noValidate onSubmit={handleSubmit}>
@@ -58,7 +59,8 @@ export default function SecurityTab({ active, onToast }) {
             className="finput"
             id="pwNew"
             type="password"
-            placeholder="Tối thiểu 6 ký tự"
+            placeholder="8–32 ký tự"
+            maxLength={32}
             autoComplete="new-password"
             value={pwNew}
             onChange={(e) => setPwNew(e.target.value)}

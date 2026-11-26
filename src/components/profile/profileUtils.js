@@ -37,7 +37,7 @@ export function normalizeForm(source) {
   const contact = source.contact || ''
   const isEmail = contact.includes('@')
   return {
-    fFullName: source.name || source.displayName || '',
+    fFullName: source.displayName || source.name || '',
     fEmail: source.email || (isEmail ? contact : ''),
     fPhone: source.phone || (!isEmail ? contact : ''),
     fDob: source.dob || source.birthDate || '',

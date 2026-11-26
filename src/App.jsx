@@ -86,8 +86,8 @@ function App() {
             </RequireRole>
           }
         />
-        <Route path="/san" element={<SearchPage />} />
-        <Route path="/san/:id" element={<VenueDetailPage />} />
+        <Route path="/san" element={<SearchPage user={user} onLogout={logout} />} />
+        <Route path="/san/:id" element={<VenueDetailPage user={user} onLogout={logout} />} />
         <Route path="/sports-detail" element={<SportsDetailRedirect />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

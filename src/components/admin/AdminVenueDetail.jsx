@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useApi } from '../../hooks/useApi'
-import { approveVenue, getAdminVenue, reactivateVenue, rejectVenue, suspendVenue } from '../../utils/api'
-import { formatVnd, minutesToTime, WEEKDAYS } from '../../utils/format'
+import { approveVenue, getAdminVenue, getSports, reactivateVenue, rejectVenue, suspendVenue } from '../../utils/api'
+import { WEEKDAYS } from '../../utils/format'
+import { priceRows } from '../../utils/publicRules'
 import AsyncView from '../common/AsyncView'
 import ConfirmDialog from '../common/ConfirmDialog'
 import StatusBadge from '../common/StatusBadge'
@@ -34,7 +35,7 @@ export default function AdminVenueDetail({ onLogout }) {
     <AsyncView state={detail} onLogout={onLogout}>
       {detail.data && (
         <div aria-busy={detail.loading} className={detail.loading ? 'pv-reloading' : undefined}>
-          <VenueView venue={detail.data.venue} courts={detail.data.courts}>
+          <VenueView venue={detail.data.venue} setup={detail.data.setup}>
             {(ACTIONS[detail.data.venue.status] || []).map((a) => (
               <button key={a.key} type="button" className={a.reason ? 'ui-btn' : 'ui-btn primary'} disabled={busy || detail.loading} onClick={() => setAction(a)}>
                 {a.label}
@@ -57,7 +58,7 @@ export default function AdminVenueDetail({ onLogout }) {
   )
 }
 
-function VenueView({ venue, courts, children }) {
+function VenueView({ venue, setup, children }) {
   const hasCoords = venue.latitude != null && venue.longitude != null
   return (
     <>
@@ -104,8 +105,8 @@ function VenueView({ venue, courts, children }) {
         <Images images={venue.images} alt={venue.name} />
       </section>
       <section className="pv-card">
-        <h2>Sân con</h2>
-        {courts.length === 0 ? <p className="pv-muted">Chưa có sân con.</p> : courts.map((c) => <CourtView key={c.id} court={c} />)}
+        <h2>Sân &amp; lịch</h2>
+        <SetupSummary setup={setup} />
       </section>
     </>
   )
@@ -124,60 +125,29 @@ function Images({ images, alt }) {
   )
 }
 
-function hoursText(court, weekday) {
-  const d = court.operatingHours.find((h) => h.weekday === weekday)
-  if (!d) return 'Chưa đặt'
-  if (d.closed) return 'Nghỉ'
-  return `${d.opensAt.slice(0, 5)}–${d.closesAt.slice(0, 5)}`
+const hoursText = (d) => (d.closed ? 'Nghỉ' : `${d.opensAt.slice(0, 5)}–${d.closesAt.slice(0, 5)}`)
+
+// Weekdays with the same hours collapse into one entry, like the public price table.
+function hoursSummary(hours) {
+  const groups = new Map()
+  for (const d of hours) groups.set(hoursText(d), [...(groups.get(hoursText(d)) ?? []), WEEKDAYS[d.weekday]])
+  return [...groups].map(([text, days]) => (days.length === 7 ? `Mỗi ngày ${text}` : `${days.join(', ')}: ${text}`)).join(' · ')
 }
 
-function CourtView({ court }) {
+function SetupSummary({ setup }) {
+  const sports = useApi(getSports, [])
+  if (setup.courtCount === 0) return <p className="pv-muted">Chưa thiết lập sân.</p>
+  const sport = sports.data?.find((s) => s.code === setup.sportCode)?.name ?? setup.sportCode ?? '—'
   return (
-    <article className="pv-grid" style={{ borderTop: '1px solid var(--hairline)', paddingTop: '1rem' }}>
-      <div className="pv-row">
-        <strong>
-          {court.name} ({court.code})
-        </strong>
-        <StatusBadge status={court.status} />
-      </div>
-      <p className="pv-muted">
-        Sức chứa: {court.capacity ?? '—'} · Bước {court.bookingStepMinutes} phút · Tối thiểu {court.minBookingMinutes} phút · Tối đa {court.maxBookingMinutes} phút
+    <div className="pv-grid">
+      <p>
+        {sport} · {setup.courtCount} sân · {setup.depositPercent === 0 ? 'Không cọc' : `Cọc ${setup.depositPercent}%`}
       </p>
-      <p>Môn: {court.sports.length === 0 ? '—' : court.sports.map((s) => s.name + (s.primary ? ' (chính)' : '')).join(', ')}</p>
-      <div className="pv-grid two">
-        <table className="pv-table">
-          <caption>Giờ mở cửa</caption>
-          <tbody>
-            {WEEKDAYS.map((label, weekday) => (
-              <tr key={weekday}>
-                <td>{label}</td>
-                <td>{hoursText(court, weekday)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <table className="pv-table">
-          <caption>Bảng giá</caption>
-          <tbody>
-            {court.pricingRules.length === 0 ? (
-              <tr>
-                <td className="pv-muted">Chưa có bảng giá.</td>
-              </tr>
-            ) : (
-              court.pricingRules.map((r) => (
-                <tr key={r.id}>
-                  <td>{WEEKDAYS[r.weekday]}</td>
-                  <td>
-                    {minutesToTime(r.startMinute)}–{minutesToTime(r.endMinute)}
-                  </td>
-                  <td>{formatVnd(r.pricePerHour)}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-      <Images images={court.images} alt={court.name} />
-    </article>
+      <p>Giờ mở cửa: {setup.operatingHours.length === 0 ? 'Chưa đặt' : hoursSummary(setup.operatingHours)}</p>
+      <p>
+        Bảng giá:{' '}
+        {setup.pricingRules.length === 0 ? 'Chưa có bảng giá' : priceRows(setup.pricingRules).map((r) => `${r.days} ${r.text}`).join(' · ')}
+      </p>
+    </div>
   )
 }

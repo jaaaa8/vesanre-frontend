@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useApi } from '../../hooks/useApi'
-import { getVenue, listProviderBookings, listVenues } from '../../utils/api'
+import { listProviderBookings, listVenues } from '../../utils/api'
 import { needsRewrite } from '../../utils/adminRules'
 import { PROVIDER_BOOKING_FILTERS, readProviderBookingParams } from '../../utils/bookingRules'
 import StatusTabs from '../admin/StatusTabs'
@@ -16,7 +16,7 @@ export default function ProviderBookings({ onLogout }) {
   const navigate = useNavigate()
   const [search, setSearch] = useSearchParams()
   const params = readProviderBookingParams(search)
-  const { venueId, courtId, date, status, page } = params
+  const { venueId, date, status, page } = params
 
   // Replace dropped values (?date= without a venue, ?status=FOO) in the address bar with the ones actually used.
   useEffect(() => {
@@ -25,10 +25,9 @@ export default function ProviderBookings({ onLogout }) {
   }, [search])
 
   const venues = useApi(listVenues, [])
-  const venue = useApi(venueId ? () => getVenue(venueId) : () => Promise.resolve(null), [venueId])
   const list = useApi(
-    () => listProviderBookings({ venueId, courtId, date, status: status === 'ALL' ? '' : status, page, size: 10 }),
-    [venueId, courtId, date, status, page],
+    () => listProviderBookings({ venueId, date, status: status === 'ALL' ? '' : status, page, size: 10 }),
+    [venueId, date, status, page],
   )
 
   const update = (patch) => setSearch(toSearch({ ...params, page: 0, ...patch }), { replace: true })
@@ -41,22 +40,11 @@ export default function ProviderBookings({ onLogout }) {
       <div className="pv-filters">
         <label>
           <span>Cơ sở</span>
-          <select value={venueId} onChange={(e) => update({ venueId: e.target.value, courtId: '', date: '' })}>
+          <select value={venueId} onChange={(e) => update({ venueId: e.target.value, date: '' })}>
             <option value="">Tất cả</option>
             {venues.data?.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span>Sân</span>
-          <select value={courtId} disabled={!venueId} onChange={(e) => update({ courtId: e.target.value })}>
-            <option value="">—</option>
-            {venue.data?.courts?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
               </option>
             ))}
           </select>

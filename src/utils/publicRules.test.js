@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { addDays, clampDate, districtsOf, formatRating, legacySportCode, mapsUrl, readSearchParams, searchHref, slotErrorText, todayIn } from './publicRules.js'
+import { addDays, clampDate, districtsOf, formatRating, legacySportCode, mapsUrl, priceRows, readSearchParams, searchHref, slotErrorText, todayIn } from './publicRules.js'
 
 const read = (qs) => readSearchParams(new URLSearchParams(qs))
 const EMPTY = { q: '', city: '', district: '', sport: '', minPrice: '', maxPrice: '', sort: 'newest', page: 0 }
@@ -93,4 +93,13 @@ test('venueCover giữ ảnh thật, ảnh mặc định ổn định theo id', 
   assert.equal(venueCover({ id: 'abc' }), fallback)
   const ids = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
   assert.ok(new Set(ids.map((id) => venueCover({ id }))).size > 1)
+})
+
+test('priceRows gộp khung giá giống nhau giữa các ngày', () => {
+  const week = (startMinute, endMinute, pricePerHour) => Array.from({ length: 7 }, (_, weekday) => ({ weekday, startMinute, endMinute, pricePerHour }))
+  const rows = priceRows([...week(300, 1020, 60000), { weekday: 5, startMinute: 1020, endMinute: 1320, pricePerHour: 90000 }])
+  assert.equal(rows.length, 2)
+  assert.equal(rows[0].days, 'Mỗi ngày')
+  assert.equal(rows[0].text, '05:00–17:00 · 60.000 đ/giờ')
+  assert.equal(rows[1].days, 'Thứ 7')
 })

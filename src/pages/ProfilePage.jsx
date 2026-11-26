@@ -12,7 +12,7 @@ import WalletTab from '../components/wallet/WalletTab'
 import '../components/profile/Profile.css'
 import { useFluidRem } from '../hooks/useFluidRem'
 import { ApiError, getProfile, updateProfile } from '../utils/api'
-import { validPhone } from '../utils/auth'
+import { validName, validPhone } from '../utils/auth'
 import {
   HASH_TABS,
   initialsOf,
@@ -157,8 +157,8 @@ export default function ProfilePage({ user, onProfile, onUnauthorized }) {
     event.preventDefault()
     const name = form.fFullName.trim()
     const phone = form.fPhone.trim()
-    if (name.length < 2) {
-      setProfileErr('Vui lòng nhập họ và tên.')
+    if (!validName(name)) {
+      setProfileErr('Họ tên 2–50 ký tự, chỉ gồm chữ và khoảng trắng.')
       return
     }
     if (phone && !validPhone(phone)) {

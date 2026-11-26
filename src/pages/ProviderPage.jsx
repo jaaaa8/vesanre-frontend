@@ -1,5 +1,4 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
-import CourtDetail from '../components/provider/CourtDetail'
 import ProviderBookingDetail from '../components/provider/ProviderBookingDetail'
 import ProviderBookings from '../components/provider/ProviderBookings'
 import ShopReports from '../components/provider/ShopReports'
@@ -38,7 +37,6 @@ export default function ProviderPage({ onLogout }) {
             <Route index element={<ShopSection onLogout={onLogout} />} />
             <Route path="venues" element={<VenueList onLogout={onLogout} />} />
             <Route path="venues/:id" element={<VenueDetail onLogout={onLogout} />} />
-            <Route path="courts/:id" element={<CourtDetail onLogout={onLogout} />} />
             <Route path="bookings" element={<ProviderBookings onLogout={onLogout} />} />
             <Route path="bookings/:id" element={<ProviderBookingDetail onLogout={onLogout} />} />
             <Route path="wallet" element={<ShopWallet onLogout={onLogout} />} />

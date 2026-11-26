@@ -1,4 +1,4 @@
-import { formatDecimal1 } from './format.js'
+import { formatDecimal1, formatVnd, minutesToTime, WEEKDAYS } from './format.js'
 import { toQuery } from './query.js'
 
 export const SORTS = ['newest', 'price_asc', 'price_desc']
@@ -70,4 +70,19 @@ export function venueCover(venue) {
   let h = 0
   for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0
   return PLACEHOLDER_PHOTOS[h % PLACEHOLDER_PHOTOS.length]
+}
+
+// Same band on several weekdays collapses into one row; the weekdays are listed only when not all 7 share it.
+export function priceRows(rules) {
+  const rows = new Map()
+  for (const r of rules) {
+    const key = `${r.startMinute}-${r.endMinute}-${Number(r.pricePerHour)}`
+    if (!rows.has(key)) rows.set(key, { ...r, weekdays: [] })
+    rows.get(key).weekdays.push(r.weekday)
+  }
+  return [...rows.values()].map((r) => ({
+    key: `${r.startMinute}-${r.endMinute}-${r.pricePerHour}`,
+    days: r.weekdays.length === 7 ? 'Mỗi ngày' : r.weekdays.map((d) => WEEKDAYS[d]).join(', '),
+    text: `${minutesToTime(r.startMinute)}–${minutesToTime(r.endMinute)} · ${formatVnd(r.pricePerHour)}/giờ`,
+  }))
 }

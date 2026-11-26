@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { createTopUp, getTopUp } from '../../utils/api'
+import { createTopUp, getTopUp, simulateTopUpPaid } from '../../utils/api'
 import { formatVnd } from '../../utils/format'
 import QrCode from './QrCode'
 import { coinsToVnd, isFinal, secondsLeft, TOP_UP_PRESETS, topUpError } from '../../utils/walletRules'
@@ -67,6 +67,25 @@ export default function TopUpDialog({ onClose, onPaid, onToast }) {
       setTopUp(created)
     } catch (e) {
       setError(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  // Dev/demo only: the backend fake gateway confirms the payment as if the QR had been scanned.
+  const simulate = async () => {
+    setBusy(true)
+    setError(null)
+    try {
+      const t = await simulateTopUpPaid(topUp.id)
+      setTopUp(t)
+      // Setting PAID stops the poll before it can announce it, so announce here.
+      if (t.status === 'PAID') {
+        onToast(`Đã nạp ${t.coins} coin`)
+        onPaid()
+      }
+    } catch (e) {
+      setError(e.status === 404 ? { message: 'Chế độ giả lập đang tắt trên máy chủ' } : e)
     } finally {
       setBusy(false)
     }
@@ -165,9 +184,19 @@ export default function TopUpDialog({ onClose, onPaid, onToast }) {
               <a href={topUp.paymentUrl} target="_blank" rel="noreferrer">
                 Mở trang thanh toán
               </a>
+              {error && (
+                <p className="wl-err" role="alert">
+                  {error.message}
+                </p>
+              )}
             </>
           )}
           <div className="ui-actions">
+            {topUp.status === 'PENDING' && (
+              <button type="button" className="ui-btn primary" onClick={simulate} disabled={busy}>
+                {busy ? 'Đang xác nhận…' : 'Đã quét (giả lập)'}
+              </button>
+            )}
             {topUp.status === 'EXPIRED' && (
               <button type="button" className="ui-btn ghost" onClick={() => setTopUp(null)}>
                 Tạo mã mới

@@ -4,22 +4,6 @@ export const IMPORTANT_FIELDS = ['name', 'addressLine', 'ward', 'district', 'cit
 export const FREE_FIELDS = ['description', 'phone']
 export const ALL_FIELDS = [...IMPORTANT_FIELDS, ...FREE_FIELDS]
 
-const positive = (v) => v !== '' && v != null && Number.isInteger(Number(v)) && Number(v) > 0
-
-export function validateCourt({ capacity, bookingStepMinutes, minBookingMinutes, maxBookingMinutes }) {
-  if (![capacity, bookingStepMinutes, minBookingMinutes, maxBookingMinutes].every(positive)) return 'Các giá trị số phải là số nguyên dương'
-  const step = Number(bookingStepMinutes)
-  if (Number(minBookingMinutes) % step || Number(maxBookingMinutes) % step) return 'Thời lượng đặt tối thiểu/tối đa phải là bội số của bước đặt'
-  if (Number(minBookingMinutes) > Number(maxBookingMinutes)) return 'Thời lượng tối thiểu không được lớn hơn tối đa'
-  return null
-}
-
-export function validateSports(items) {
-  if (!items.length) return 'Chọn ít nhất 1 môn thể thao'
-  if (items.filter((s) => s.primary).length !== 1) return 'Chọn đúng 1 môn chính'
-  return null
-}
-
 const TIME = /^\d{2}:\d{2}(:\d{2})?$/
 
 export function validateOperatingHours(items) {
@@ -45,6 +29,23 @@ export function validatePricing(items) {
   for (let i = 1; i < sorted.length; i++) {
     if (sorted[i - 1].weekday === sorted[i].weekday && sorted[i - 1].endMinute > sorted[i].startMinute) return 'Các khung giá trong cùng ngày bị chồng lấn'
   }
+  return null
+}
+
+const intIn = (v, min, max) => v !== '' && v != null && Number.isInteger(Number(v)) && Number(v) >= min && Number(v) <= max
+const wholeHour = (t) => t == null || /^\d{2}:00(:00)?$/.test(t)
+
+// Mirrors backend VenueSetupService.validate.
+export function setupError({ sportCode, courtCount, depositPercent, operatingHours, pricingRules }) {
+  if (!intIn(courtCount, 1, 50)) return 'Số sân từ 1 đến 50'
+  if (!sportCode) return 'Chọn môn thể thao'
+  if (!intIn(depositPercent, 0, 100)) return '% cọc từ 0 đến 100'
+  const hoursError = validateOperatingHours(operatingHours)
+  if (hoursError) return hoursError
+  if (!operatingHours.every((d) => wholeHour(d.opensAt) && wholeHour(d.closesAt))) return 'Giờ mở/đóng cửa phải là giờ tròn'
+  const pricingError = validatePricing(pricingRules)
+  if (pricingError) return pricingError
+  if (pricingRules.some((r) => r.startMinute % 60 || r.endMinute % 60)) return 'Khung giá phải theo giờ tròn'
   return null
 }
 

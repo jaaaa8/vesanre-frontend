@@ -24,7 +24,10 @@ export function saveSession(session, remember) {
 }
 
 export function clearSession() {
-  storage().forEach((item) => item.removeItem(AUTH_KEY))
+  storage().forEach((item) => {
+    item.removeItem(AUTH_KEY)
+    item.removeItem('sporthub_user')
+  })
 }
 
 // Kept identical to AuthPatterns.java in the backend.
@@ -43,6 +46,22 @@ export function validEmail(value) {
 export function validPhone(value) {
   return /^(0|\+84)[35789][0-9]{8}$/.test(value.trim())
 }
+
+const NAME = /^(?=.{2,50}$)[\p{L}\p{M}]+( [\p{L}\p{M}]+)*$/u
+const PASSWORD = /^(?=.*\p{L})(?=.*\d)\S{8,32}$/u
+const LEGAL_NAME = /^(?=.{2,200}$)[\p{L}\p{M}\d .,&()-]+$/u
+const TAX_ID = /^$|^\d{10}(-\d{3})?$/u
+const SHOP_NAME = /^$|^(?=.{2,160}$)[\p{L}\p{M}\d .,&()-]+$/u
+const REVIEW_COMMENT = /^(?=[\s\S]{10,500}$)(?!([\s\S])\1*$)\S[\s\S]*\S$/u
+
+// Same rules as AuthPatterns.java in the backend.
+export const validName = (value) => NAME.test(value.trim())
+export const validPassword = (value) => PASSWORD.test(value)
+export const validLegalName = (value) => LEGAL_NAME.test(value.trim())
+export const validTaxId = (value) => TAX_ID.test(value.trim())
+export const validShopName = (value) => SHOP_NAME.test(value.trim())
+// Empty means "no comment".
+export const validReviewComment = (value) => value.trim() === '' || REVIEW_COMMENT.test(value.trim())
 
 export function toBackendRole(role) {
   return role === 'owner' ? 'PROVIDER' : 'CUSTOMER'

@@ -1,33 +1,45 @@
-import { useState } from 'react'
-import { WEEKDAYS } from '../../utils/format'
-import { validateOperatingHours } from '../../utils/providerRules'
+import { minutesToTime, WEEKDAYS } from '../../utils/format'
 
-const toRows = (items) =>
-  WEEKDAYS.map((_, weekday) => {
-    const d = items.find((x) => x.weekday === weekday)
-    if (!d) return { weekday, closed: false, opensAt: '06:00', closesAt: '22:00' }
-    return { weekday, closed: d.closed, opensAt: d.opensAt?.slice(0, 5) || '06:00', closesAt: d.closesAt?.slice(0, 5) || '22:00' }
-  })
+// Whole hours only (backend rejects 06:30); a booking slot is one hour.
+const HOURS = Array.from({ length: 24 }, (_, h) => minutesToTime(h * 60))
+const hhmm = (t, fallback) => t?.slice(0, 5) || fallback
 
-const toPayload = (rows) =>
-  rows.map((r) => (r.closed ? { weekday: r.weekday, closed: true, opensAt: null, closesAt: null } : { weekday: r.weekday, closed: false, opensAt: `${r.opensAt}:00`, closesAt: `${r.closesAt}:00` }))
+// value: 7 OperatingHourRequest items. Reopening a closed day restores 06:00–22:00.
+export default function OperatingHoursTab({ value, onChange, busy }) {
+  const set = (weekday, patch) =>
+    onChange(
+      value.map((d) => {
+        if (d.weekday !== weekday) return d
+        const next = { ...d, ...patch }
+        return next.closed
+          ? { weekday, closed: true, opensAt: null, closesAt: null }
+          : { weekday, closed: false, opensAt: `${hhmm(next.opensAt, '06:00')}:00`, closesAt: `${hhmm(next.closesAt, '22:00')}:00` }
+      }),
+    )
+  const copyMonday = () => onChange(value.map((d) => ({ ...value[0], weekday: d.weekday })))
 
-export default function OperatingHoursTab({ value, onSave, busy }) {
-  const [rows, setRows] = useState(() => toRows(value))
-  const payload = toPayload(rows)
-  const error = validateOperatingHours(payload)
-
-  const set = (weekday, patch) => setRows(rows.map((r) => (r.weekday === weekday ? { ...r, ...patch } : r)))
-  const copyMonday = () => setRows(rows.map((r) => ({ ...rows[0], weekday: r.weekday })))
-
-  const save = (event) => {
-    event.preventDefault()
-    if (!error) onSave(payload)
+  const select = (d, field) => {
+    const current = hhmm(d[field], '')
+    return (
+      <select
+        aria-label={`${field === 'opensAt' ? 'Mở cửa' : 'Đóng cửa'} ${WEEKDAYS[d.weekday]}`}
+        value={current}
+        disabled={d.closed || busy}
+        onChange={(e) => set(d.weekday, { [field]: e.target.value })}
+      >
+        {/* A closed day, or a stored non-whole hour, still needs an option to show. */}
+        {!HOURS.includes(current) && <option value={current}>{current || '—'}</option>}
+        {HOURS.map((h) => (
+          <option key={h} value={h}>
+            {h}
+          </option>
+        ))}
+      </select>
+    )
   }
 
   return (
-    <form className="pv-grid" onSubmit={save}>
-      {value.length === 0 && <p className="pv-muted">Chưa thiết lập giờ mở cửa — đang hiển thị mặc định 06:00–22:00.</p>}
+    <div className="pv-grid">
       <div className="pv-table-wrap">
         <table className="pv-table">
           <thead>
@@ -39,32 +51,24 @@ export default function OperatingHoursTab({ value, onSave, busy }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.weekday}>
-                <td>{WEEKDAYS[r.weekday]}</td>
+            {value.map((d) => (
+              <tr key={d.weekday}>
+                <td>{WEEKDAYS[d.weekday]}</td>
                 <td>
-                  <input type="checkbox" aria-label={`Nghỉ ${WEEKDAYS[r.weekday]}`} checked={r.closed} onChange={(e) => set(r.weekday, { closed: e.target.checked })} />
+                  <input type="checkbox" aria-label={`Nghỉ ${WEEKDAYS[d.weekday]}`} checked={d.closed} disabled={busy} onChange={(e) => set(d.weekday, { closed: e.target.checked })} />
                 </td>
-                <td>
-                  <input type="time" step={60} value={r.opensAt} disabled={r.closed} onChange={(e) => set(r.weekday, { opensAt: e.target.value })} />
-                </td>
-                <td>
-                  <input type="time" step={60} value={r.closesAt} disabled={r.closed} onChange={(e) => set(r.weekday, { closesAt: e.target.value })} />
-                </td>
+                <td>{select(d, 'opensAt')}</td>
+                <td>{select(d, 'closesAt')}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {error && <p className="pv-error">{error}</p>}
       <div className="ui-actions">
         <button type="button" className="ui-btn ghost" onClick={copyMonday} disabled={busy}>
           Áp dụng dòng Thứ 2 cho cả tuần
         </button>
-        <button type="submit" className="ui-btn primary" disabled={busy || Boolean(error)}>
-          {busy ? 'Đang lưu…' : 'Lưu giờ mở cửa'}
-        </button>
       </div>
-    </form>
+    </div>
   )
 }
